@@ -1,0 +1,1086 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="robot_humanoid">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-1.23973592181755E-17 -8.32667268468867E-17 0.00262245116523227"
+        rpy="0 0 0" />
+      <mass
+        value="0.0025162912702426" />
+      <inertia
+        ixx="5.47065409203217E-07"
+        ixy="-1.19715006621445E-22"
+        ixz="-1.7006770885315E-22"
+        iyy="5.47065409203216E-07"
+        iyz="-2.70947148614856E-21"
+        izz="1.09269341072992E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="base_hip_left_link">
+    <inertial>
+      <origin
+        xyz="-0.010539929338144 -0.0102302850975857 -0.0211771873022697"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198693898" />
+      <inertia
+        ixx="1.74833584475852E-05"
+        ixy="5.42621266305898E-11"
+        ixz="-4.65868120989865E-21"
+        iyy="2.77733120653056E-05"
+        iyz="1.5569249678189E-10"
+        izz="1.7482432927055E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0357002452027679 -0.0192546745613186 -0.0270000000000002"
+      rpy="1.5707963267949 0 -0.0352246775973257" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_hip_left_link">
+    <inertial>
+      <origin
+        xyz="-0.00424611195124171 -0.0343742172733459 -0.0183920186830357"
+        rpy="0 0 0" />
+      <mass
+        value="0.12988008385202" />
+      <inertia
+        ixx="3.54199501553719E-05"
+        ixy="3.64347850496245E-07"
+        ixz="-9.72480962325233E-09"
+        iyy="2.7425240525354E-05"
+        iyz="-9.88439396999626E-09"
+        izz="2.96024606419153E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_hip_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_hip_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_hip_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0295000000000003 -0.0205000000000002 -0.0105000000000001"
+      rpy="3.14159265358979 -1.5707963267949 0" />
+    <parent
+      link="base_hip_left_link" />
+    <child
+      link="hip_hip_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_knee_left_link">
+    <inertial>
+      <origin
+        xyz="5.54490481308179E-13 -0.0521312435295956 -0.018320019290471"
+        rpy="0 0 0" />
+      <mass
+        value="0.130204487068308" />
+      <inertia
+        ixx="4.59198297284826E-05"
+        ixy="-2.09954500483601E-10"
+        ixz="-7.13985670580805E-16"
+        iyy="2.02899102704369E-05"
+        iyz="-1.35611880230369E-15"
+        izz="3.28558642041372E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_knee_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_knee_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_knee_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0599999999999997 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_hip_left_link" />
+    <child
+      link="hip_knee_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="knee_ankle_left_link">
+    <inertial>
+      <origin
+        xyz="-0.000605766944934624 -0.0469801174439637 -0.0116109882348653"
+        rpy="0 0 0" />
+      <mass
+        value="0.0814463522717177" />
+      <inertia
+        ixx="1.86604517011287E-05"
+        ixy="1.64723788355279E-06"
+        ixz="4.58631415157033E-07"
+        iyy="2.38739038507343E-05"
+        iyz="-1.44797791059248E-06"
+        izz="1.7876768644325E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_ankle_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_ankle_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_ankle_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.1034 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_knee_left_link" />
+    <child
+      link="knee_ankle_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="knee_knee_left_link">
+    <inertial>
+      <origin
+        xyz="-0.00809509712634068 -0.00727461919403283 -0.0218892657362386"
+        rpy="0 0 0" />
+      <mass
+        value="0.0850053645564242" />
+      <inertia
+        ixx="2.80542145236208E-05"
+        ixy="5.9871952276625E-07"
+        ixz="-9.67413604292088E-09"
+        iyy="4.73017474375486E-05"
+        iyz="5.07151851072674E-11"
+        izz="2.35375503041348E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_knee_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_knee_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_knee_left_link"
+    type="revolute">
+    <origin
+      xyz="0.0214999999999998 -0.0570000000000001 -0.0179999999999996"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="knee_ankle_left_link" />
+    <child
+      link="knee_knee_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="base_hip_right_link">
+    <inertial>
+      <origin
+        xyz="0.0094919587339931 -0.0102300939247337 -0.0222251579322355"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198771709" />
+      <inertia
+        ixx="1.74833584185863E-05"
+        ixy="5.42621122748016E-11"
+        ixz="-7.99387343971246E-21"
+        iyy="2.77733119961605E-05"
+        iyz="-1.55692028629184E-10"
+        izz="1.74824328980561E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0342563320604241 -0.0217198921214098 -0.0270000000000003"
+      rpy="1.5707963267949 0 -0.0352246775973258" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_hip_right_link">
+    <inertial>
+      <origin
+        xyz="0.00424619136960289 -0.0343747407536703 -0.021892018672117"
+        rpy="0 0 0" />
+      <mass
+        value="0.129880083890925" />
+      <inertia
+        ixx="3.54199501199786E-05"
+        ixy="-3.64347510948121E-07"
+        ixz="9.62339732841198E-09"
+        iyy="2.74252404907814E-05"
+        iyz="-9.4638785584591E-09"
+        izz="2.96024606483097E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_hip_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_hip_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_hip_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0308999999999979 -0.0204999999999999 -0.0125999999999999"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="base_hip_right_link" />
+    <child
+      link="hip_hip_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_knee_right_link">
+    <inertial>
+      <origin
+        xyz="5.54431500709995E-13 -0.0521312435295964 -0.0218200192904851"
+        rpy="0 0 0" />
+      <mass
+        value="0.130204487068308" />
+      <inertia
+        ixx="4.59198297284826E-05"
+        ixy="-2.09954500429625E-10"
+        ixz="-7.13990964536725E-16"
+        iyy="2.02899102704369E-05"
+        iyz="-1.35615648145918E-15"
+        izz="3.28558642041372E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_knee_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_knee_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_knee_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0599999999999997 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_hip_right_link" />
+    <child
+      link="hip_knee_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="knee_ankle_right_link">
+    <inertial>
+      <origin
+        xyz="-0.000996730313931483 -0.0274353612822386 -0.0222052426925543"
+        rpy="0 0 0" />
+      <mass
+        value="0.0276035181342435" />
+      <inertia
+        ixx="9.49152414080072E-06"
+        ixy="1.6471871683677E-06"
+        ixz="4.48957279114108E-07"
+        iyy="9.98822104115909E-06"
+        iyz="-1.44787293328078E-06"
+        izz="9.56428420322295E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_ankle_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/knee_ankle_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_ankle_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.1034 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_knee_right_link" />
+    <child
+      link="knee_ankle_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="ankle_ankle_right_link">
+    <inertial>
+      <origin
+        xyz="-0.00800882305238798 -0.00719708942205471 -0.0220325515118805"
+        rpy="0 0 0" />
+      <mass
+        value="0.0859210745253493" />
+      <inertia
+        ixx="2.80785040387897E-05"
+        ixy="5.98719522766307E-07"
+        ixz="-9.67413604291474E-09"
+        iyy="4.73260369527174E-05"
+        iyz="5.07151851061799E-11"
+        izz="2.35857406634983E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/ankle_ankle_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/ankle_ankle_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_ankle_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0214999999999996 -0.0570000000000001 -0.0215000000000021"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="knee_ankle_right_link" />
+    <child
+      link="ankle_ankle_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="base_hip_middle_link">
+    <inertial>
+      <origin
+        xyz="-0.000143724810534948 0.0147280243467621 0.0797673295394494"
+        rpy="0 0 0" />
+      <mass
+        value="0.319775934585669" />
+      <inertia
+        ixx="0.000482594760707046"
+        ixy="-2.14638462617505E-07"
+        ixz="-2.40807211313226E-08"
+        iyy="0.000836183966131392"
+        iyz="4.64558426111002E-07"
+        izz="0.000519966258401027" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_middle_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/base_hip_middle_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_middle_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 0.0048"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_middle_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_shoulder_left_link">
+    <inertial>
+      <origin
+        xyz="0.0106949615040787 -0.0102300939254154 -0.0213508393667905"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198733174" />
+      <inertia
+        ixx="1.74833584295454E-05"
+        ixy="1.55692625088754E-10"
+        ixz="-5.88788038100753E-21"
+        iyy="2.77733120234834E-05"
+        iyz="5.42618233799719E-11"
+        izz="1.74824329090152E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_shoulder_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_shoulder_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_shoulder_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.108 0.0195000000000005 0.1093"
+      rpy="1.5707963267949 0 3.14159265358979" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_shoulder_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="shoulder_shoulder_left_link">
+    <inertial>
+      <origin
+        xyz="0.00698877986721992 -0.00900750540517552 -0.0222510209212032"
+        rpy="0 0 0" />
+      <mass
+        value="0.0772422226634494" />
+      <inertia
+        ixx="2.27816658550064E-05"
+        ixy="1.05146837617865E-10"
+        ixz="9.67409512652802E-09"
+        iyy="1.92566185038471E-05"
+        iyz="2.10254567357988E-10"
+        izz="2.18215807571957E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_shoulder_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_shoulder_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_shoulder_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0105000000000001 -0.0205 -0.0309"
+      rpy="3.14159265358979 -1.5707963267949 0" />
+    <parent
+      link="hip_shoulder_left_link" />
+    <child
+      link="shoulder_shoulder_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="shoulder_elbow_left_link">
+    <inertial>
+      <origin
+        xyz="9.54015963519628E-08 -0.00998733125339234 -0.0218258506936436"
+        rpy="0 0 0" />
+      <mass
+        value="0.054051364576062" />
+      <inertia
+        ixx="1.38876292348193E-05"
+        ixy="-1.0497722422203E-10"
+        ixz="-5.07154008581343E-11"
+        iyy="8.31443086285315E-06"
+        iyz="-9.67413631361214E-09"
+        izz="9.16994849231721E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_elbow_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_elbow_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_elbow_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0600000000000008 0"
+      rpy="0 0 0" />
+    <parent
+      link="shoulder_shoulder_left_link" />
+    <child
+      link="shoulder_elbow_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_shoulder_right_link">
+    <inertial>
+      <origin
+        xyz="-0.0106949615040785 -0.0102302850973797 -0.0178508393667906"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198733174" />
+      <inertia
+        ixx="1.74833584295454E-05"
+        ixy="1.55692625064392E-10"
+        ixz="-1.05151649938095E-20"
+        iyy="2.77733120234834E-05"
+        iyz="-5.42618233764044E-11"
+        izz="1.74824329090152E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_shoulder_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_shoulder_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_shoulder_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.108 0.0159999999999952 0.1093"
+      rpy="1.5707963267949 0 3.14159265358979" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_shoulder_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="shoulder_shoulder_right_link">
+    <inertial>
+      <origin
+        xyz="-0.00698877966187601 -0.00900763892247449 -0.0222510209212036"
+        rpy="0 0 0" />
+      <mass
+        value="0.0772422226634494" />
+      <inertia
+        ixx="2.27816658550064E-05"
+        ixy="1.05146837621427E-10"
+        ixz="-9.6741775006894E-09"
+        iyy="1.92566185038471E-05"
+        iyz="3.11685369053403E-10"
+        izz="2.18215807571957E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_shoulder_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_shoulder_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_shoulder_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0105000000000001 -0.0205000000000001 -0.0274"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="hip_shoulder_right_link" />
+    <child
+      link="shoulder_shoulder_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="shoulder_elbow_right_link">
+    <inertial>
+      <origin
+        xyz="9.54016013930692E-08 -0.0099873312533922 -0.0253258506936435"
+        rpy="0 0 0" />
+      <mass
+        value="0.054051364576062" />
+      <inertia
+        ixx="1.38876292348193E-05"
+        ixy="-1.04977224243409E-10"
+        ixz="-5.07154008534669E-11"
+        iyy="8.31443086285314E-06"
+        iyz="-9.67413631361933E-09"
+        izz="9.16994849231721E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_elbow_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/shoulder_elbow_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_elbow_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0599999999999999 0.00350000000000003"
+      rpy="0 0 0" />
+    <parent
+      link="shoulder_shoulder_right_link" />
+    <child
+      link="shoulder_elbow_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="hip_head_link">
+    <inertial>
+      <origin
+        xyz="-0.00204365613944344 0.00683882656271267 -0.159094337424535"
+        rpy="0 0 0" />
+      <mass
+        value="1.9465439707667" />
+      <inertia
+        ixx="0.0352962677332101"
+        ixy="2.73256743764567E-05"
+        ixz="-4.64538124096645E-05"
+        iyy="0.0424248746320819"
+        iyz="-0.00234016629087969"
+        izz="0.00925967987804868" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_head_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://robot_humanoid/meshes/hip_head_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_head_joint"
+    type="fixed">
+    <origin
+      xyz="0.00102807858096265 -0.00174999999999934 0.144615997868974"
+      rpy="0 0 0" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_head_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

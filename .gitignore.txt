@@ -5,3 +5,5 @@
 # Backup / temp
 *.bak
 *.tmp
+# Log files
+*.log

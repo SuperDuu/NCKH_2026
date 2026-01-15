@@ -1,0 +1,7 @@
+# SolidWorks temp files
+~$*.SLDPRT
+~$*.SLDASM
+~$*.SLDDRW
+# Backup / temp
+*.bak
+*.tmp

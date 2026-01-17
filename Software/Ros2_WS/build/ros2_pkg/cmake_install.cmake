@@ -43,6 +43,17 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE DIRECTORY FILES
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf"
+    )
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/urdf" TYPE DIRECTORY FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf/meshes")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg")
 endif()
 

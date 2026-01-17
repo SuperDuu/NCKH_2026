@@ -1,9 +1,0 @@
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/uninstall.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/Robot_uninstall.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/test.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/edit_cache.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/rebuild_cache.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/list_install_components.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/install.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/install/local.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/Robot/CMakeFiles/install/strip.dir

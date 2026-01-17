@@ -4,12 +4,6 @@
   <xacro:include filename="$(find ros2_pkg)/urdf/urdf/Robot.urdf" />
   <xacro:include filename="$(find ros2_pkg)/urdf/humanoid_physics.xacro" />
 
-  <!-- <link name="base_footprint"/>
-  <joint name="base_footprint_joint" type="fixed">
-    <parent link="base_footprint"/>
-    <child link="base_link"/>
-    <origin xyz="0 0 0.29115" rpy="0 0 0"/> </joint> -->
-
   <xacro:setup_link link_name="base_link" />
   <xacro:setup_link link_name="base_hip_middle_link" />
   <xacro:setup_link link_name="hip_head_link" />

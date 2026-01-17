@@ -1,3 +1,4 @@
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/imu_sub_node
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/launch/sim.launch.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/humanoid_physics.xacro
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/main.xacro
@@ -59,6 +60,7 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/local_setup.dsv
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/package.dsv
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ament_index/resource_index/packages/ros2_pkg
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/cmake/ament_cmake_export_dependencies-extras.cmake
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/cmake/ros2_pkgConfig.cmake
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/cmake/ros2_pkgConfig-version.cmake
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/package.xml

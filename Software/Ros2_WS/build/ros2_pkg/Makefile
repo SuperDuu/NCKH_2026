@@ -197,6 +197,43 @@ ros2_pkg_uninstall/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_pkg_uninstall.dir/build.make CMakeFiles/ros2_pkg_uninstall.dir/build
 .PHONY : ros2_pkg_uninstall/fast
 
+#=============================================================================
+# Target rules for targets named imu_sub_node
+
+# Build rule for target.
+imu_sub_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 imu_sub_node
+.PHONY : imu_sub_node
+
+# fast build rule for target.
+imu_sub_node/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/build
+.PHONY : imu_sub_node/fast
+
+src/imu_sub_node.o: src/imu_sub_node.cpp.o
+.PHONY : src/imu_sub_node.o
+
+# target to build an object file
+src/imu_sub_node.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/src/imu_sub_node.cpp.o
+.PHONY : src/imu_sub_node.cpp.o
+
+src/imu_sub_node.i: src/imu_sub_node.cpp.i
+.PHONY : src/imu_sub_node.i
+
+# target to preprocess a source file
+src/imu_sub_node.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/src/imu_sub_node.cpp.i
+.PHONY : src/imu_sub_node.cpp.i
+
+src/imu_sub_node.s: src/imu_sub_node.cpp.s
+.PHONY : src/imu_sub_node.s
+
+# target to generate assembly for a file
+src/imu_sub_node.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/src/imu_sub_node.cpp.s
+.PHONY : src/imu_sub_node.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -212,6 +249,10 @@ help:
 	@echo "... test"
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
+	@echo "... imu_sub_node"
+	@echo "... src/imu_sub_node.o"
+	@echo "... src/imu_sub_node.i"
+	@echo "... src/imu_sub_node.s"
 .PHONY : help
 
 

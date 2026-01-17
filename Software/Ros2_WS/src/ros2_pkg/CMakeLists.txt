@@ -9,10 +9,19 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(urdf REQUIRED)
+find_package(sensor_msgs REQUIRED)
 find_package(xacro REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
+
+add_executable(imu_sub_node src/imu_sub_node.cpp)
+ament_target_dependencies(imu_sub_node rclcpp sensor_msgs)
+
+install(TARGETS
+  imu_sub_node
+  DESTINATION lib/${PROJECT_NAME}
+)
 install(DIRECTORY
   launch
   urdf
@@ -22,6 +31,9 @@ install(DIRECTORY
   urdf/meshes
   DESTINATION share/${PROJECT_NAME}/urdf
 )
+
+ament_export_dependencies(rclcpp sensor_msgs)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights

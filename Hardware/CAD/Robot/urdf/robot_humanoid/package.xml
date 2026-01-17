@@ -1,31 +1,21 @@
-<?xml version="1.0"?>
-<package format="3">
+<package format="2">
   <name>robot_humanoid</name>
   <version>1.0.0</version>
-
   <description>
-    URDF description package for robot_humanoid.
-    This package contains configuration data, 3D models and launch files
-    for the robot_humanoid robot.
+    <p>URDF Description package for robot_humanoid</p>
+    <p>This package contains configuration data, 3D models and launch files
+for robot_humanoid robot</p>
   </description>
-
-  <maintainer email="todo@email.com">TODO</maintainer>
+  <author>TODO</author>
+  <maintainer email="TODO@email.com" />
   <license>BSD</license>
-
-  <!-- Build system -->
-  <buildtool_depend>ament_cmake</buildtool_depend>
-
-  <!-- Runtime dependencies -->
-  <exec_depend>robot_state_publisher</exec_depend>
-  <exec_depend>joint_state_publisher_gui</exec_depend>
-  <exec_depend>rviz2</exec_depend>
-  <exec_depend>xacro</exec_depend>
-
-  <!-- Gazebo (Jazzy uses Gazebo Harmonic / gz-sim) -->
-  <exec_depend>gz_sim</exec_depend>
-  <exec_depend>ros_gz_sim</exec_depend>
-
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>roslaunch</depend>
+  <depend>robot_state_publisher</depend>
+  <depend>rviz</depend>
+  <depend>joint_state_publisher_gui</depend>
+  <depend>gazebo</depend>
   <export>
-    <build_type>ament_cmake</build_type>
+    <architecture_independent />
   </export>
 </package>

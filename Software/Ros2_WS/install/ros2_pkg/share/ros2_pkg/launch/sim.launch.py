@@ -14,10 +14,10 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')
     robot_description_raw = xacro.process_file(xacro_file).toxml()
 
-    # 2. Thiết lập đường dẫn tài nguyên cho Gazebo (Để nhận diện package://)
+    # 2. Thiết lập đường dẫn tài nguyên
     resource_path = os.path.join(pkg_share, '..')
 
-    # 3. Node Robot State Publisher: Công bố cấu trúc TF
+    # 3. Node Robot State Publisher
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -28,29 +28,40 @@ def generate_launch_description():
         }]
     )
 
-    # 4. Khởi động Gazebo Sim (Phiên bản Harmonic/Jazzy)
-    # '-r' giúp simulation chạy ngay lập tức
+    # 4. Khởi động Gazebo Sim
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
-        launch_arguments={'gz_args': ' empty.sdf'}.items(), 
+        launch_arguments={'gz_args': ' empty.sdf'}.items(), # -r để tự động Play
     )
 
-    # 5. Node Spawn Robot: Đưa robot vào thế giới ảo
-    # -z 0.2 là độ cao vừa đủ để robot PETG tiếp đất nhẹ nhàng
+    # 5. Node Spawn Robot (ĐÃ SỬA ĐỂ KHÔNG BỊ NGÃ)
+    # Chúng ta cài đặt sẵn các góc khớp để robot sinh ra ở tư thế "Ngồi Xổm" (Squat)
+    # khớp với độ cao HEIGHT_STD = 135.0 trong code C++
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=[
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
-            '-z', '0.29115' 
-            # '-z', '0.35'
+            '-z', '0.29115', # Hạ thấp độ cao spawn vì chân đã co lại
+            
+            # Gập gối -1.0 rad (Ngồi xuống)
+            '-J', 'hip_knee_left_joint', '-1.0',
+            '-J', 'hip_knee_right_joint', '-1.0',
+            
+            # Gập hông 0.5 rad (Để lưng thẳng)
+            '-J', 'hip_hip_left_joint', '0.5',
+            '-J', 'hip_hip_right_joint', '0.5',
+            
+            # Gập cổ chân -0.5 rad (Để bàn chân phẳng)
+            '-J', 'knee_ankle_left_joint', '-0.5',
+            '-J', 'knee_ankle_right_joint', '-0.5'
         ],
         output='screen',
     )
 
-    # 6. Node Bridge: Cầu nối dữ liệu ROS 2 <-> Gazebo
+    # 6. Node Bridge
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
@@ -62,7 +73,17 @@ def generate_launch_description():
         output='screen'
     )
 
-    # 7. Node điều khiển UVC + IK (Bộ não thăng bằng)
+    # 7. Node Xử lý IMU (MỚI THÊM VÀO)
+    # Nhiệm vụ: Tính toán góc Roll/Pitch/Yaw
+    imu_process_node = Node(
+        package='ros2_pkg',
+        executable='imu_process_node',
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+
+    # 8. Node Điều khiển UVC (MỚI)
+    # Nhiệm vụ: Nhận góc -> Tính toán cân bằng -> Gửi lệnh Motor
     uvc_controller_node = Node(
         package='ros2_pkg',
         executable='uvc_node',
@@ -71,12 +92,11 @@ def generate_launch_description():
     )
 
     return LaunchDescription([
-        # Thiết lập biến môi trường để Gazebo tìm thấy file STL
         SetEnvironmentVariable(name='GZ_SIM_RESOURCE_PATH', value=resource_path),
-        
         node_robot_state_publisher,
         gazebo,
         spawn_robot,
         bridge,
-        uvc_controller_node
+        imu_process_node,    # Đừng quên dòng này
+        uvc_controller_node  # Đừng quên dòng này
     ])

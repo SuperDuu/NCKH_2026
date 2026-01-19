@@ -17,17 +17,14 @@ find_package(trajectory_msgs REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(imu_sub_node src/imu_sub_node.cpp)
-ament_target_dependencies(imu_sub_node rclcpp sensor_msgs)
+add_executable(imu_process_node src/imu_process_node.cpp)
+ament_target_dependencies(imu_process_node rclcpp sensor_msgs)
 add_executable(uvc_node src/uvc_node.cpp)
 ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs)
-add_executable(uvc_ik_node src/uvc_ik_node.cpp)
-ament_target_dependencies(uvc_ik_node rclcpp sensor_msgs trajectory_msgs)
 
 install(TARGETS
-  imu_sub_node
+  imu_process_node
   uvc_node
-  uvc_ik_node
   DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY

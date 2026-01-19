@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 # The main recursive "all" target.
 all: CMakeFiles/imu_sub_node.dir/all
 all: CMakeFiles/uvc_node.dir/all
+all: CMakeFiles/uvc_ik_node.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -76,6 +77,7 @@ clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/ros2_pkg_uninstall.dir/clean
 clean: CMakeFiles/imu_sub_node.dir/clean
 clean: CMakeFiles/uvc_node.dir/clean
+clean: CMakeFiles/uvc_ik_node.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -163,7 +165,7 @@ CMakeFiles/imu_sub_node.dir/clean:
 CMakeFiles/uvc_node.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=3,4 "Built target uvc_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=5,6 "Built target uvc_node"
 .PHONY : CMakeFiles/uvc_node.dir/all
 
 # Build rule for subdir invocation for target.
@@ -181,6 +183,32 @@ uvc_node: CMakeFiles/uvc_node.dir/rule
 CMakeFiles/uvc_node.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/clean
 .PHONY : CMakeFiles/uvc_node.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/uvc_ik_node.dir
+
+# All Build rule for target.
+CMakeFiles/uvc_ik_node.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=3,4 "Built target uvc_ik_node"
+.PHONY : CMakeFiles/uvc_ik_node.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/uvc_ik_node.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/uvc_ik_node.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+.PHONY : CMakeFiles/uvc_ik_node.dir/rule
+
+# Convenience name for target.
+uvc_ik_node: CMakeFiles/uvc_ik_node.dir/rule
+.PHONY : uvc_ik_node
+
+# clean rule for target.
+CMakeFiles/uvc_ik_node.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/clean
+.PHONY : CMakeFiles/uvc_ik_node.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

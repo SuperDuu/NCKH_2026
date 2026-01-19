@@ -20,17 +20,20 @@ find_package(trajectory_msgs REQUIRED)
 add_executable(imu_sub_node src/imu_sub_node.cpp)
 ament_target_dependencies(imu_sub_node rclcpp sensor_msgs)
 add_executable(uvc_node src/uvc_node.cpp)
-ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs)
-
+ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs)
+add_executable(uvc_ik_node src/uvc_ik_node.cpp)
+ament_target_dependencies(uvc_ik_node rclcpp sensor_msgs trajectory_msgs)
 
 install(TARGETS
   imu_sub_node
   uvc_node
+  uvc_ik_node
   DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY
   launch
   urdf
+  rviz
   DESTINATION share/${PROJECT_NAME}
 )
 install(DIRECTORY

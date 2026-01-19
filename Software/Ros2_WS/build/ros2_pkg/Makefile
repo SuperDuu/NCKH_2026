@@ -223,6 +223,19 @@ uvc_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/build
 .PHONY : uvc_node/fast
 
+#=============================================================================
+# Target rules for targets named uvc_ik_node
+
+# Build rule for target.
+uvc_ik_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uvc_ik_node
+.PHONY : uvc_ik_node
+
+# fast build rule for target.
+uvc_ik_node/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/build
+.PHONY : uvc_ik_node/fast
+
 src/imu_sub_node.o: src/imu_sub_node.cpp.o
 .PHONY : src/imu_sub_node.o
 
@@ -246,6 +259,30 @@ src/imu_sub_node.s: src/imu_sub_node.cpp.s
 src/imu_sub_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/src/imu_sub_node.cpp.s
 .PHONY : src/imu_sub_node.cpp.s
+
+src/uvc_ik_node.o: src/uvc_ik_node.cpp.o
+.PHONY : src/uvc_ik_node.o
+
+# target to build an object file
+src/uvc_ik_node.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/src/uvc_ik_node.cpp.o
+.PHONY : src/uvc_ik_node.cpp.o
+
+src/uvc_ik_node.i: src/uvc_ik_node.cpp.i
+.PHONY : src/uvc_ik_node.i
+
+# target to preprocess a source file
+src/uvc_ik_node.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/src/uvc_ik_node.cpp.i
+.PHONY : src/uvc_ik_node.cpp.i
+
+src/uvc_ik_node.s: src/uvc_ik_node.cpp.s
+.PHONY : src/uvc_ik_node.s
+
+# target to generate assembly for a file
+src/uvc_ik_node.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_ik_node.dir/build.make CMakeFiles/uvc_ik_node.dir/src/uvc_ik_node.cpp.s
+.PHONY : src/uvc_ik_node.cpp.s
 
 src/uvc_node.o: src/uvc_node.cpp.o
 .PHONY : src/uvc_node.o
@@ -287,10 +324,14 @@ help:
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... imu_sub_node"
+	@echo "... uvc_ik_node"
 	@echo "... uvc_node"
 	@echo "... src/imu_sub_node.o"
 	@echo "... src/imu_sub_node.i"
 	@echo "... src/imu_sub_node.s"
+	@echo "... src/uvc_ik_node.o"
+	@echo "... src/uvc_ik_node.i"
+	@echo "... src/uvc_ik_node.s"
 	@echo "... src/uvc_node.o"
 	@echo "... src/uvc_node.i"
 	@echo "... src/uvc_node.s"

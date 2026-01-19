@@ -91,9 +91,34 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node")
+    file(RPATH_CHECK
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node"
+         RPATH "")
+  endif()
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/uvc_ik_node")
+  if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node")
+    file(RPATH_CHANGE
+         FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node"
+         OLD_RPATH "/opt/ros/jazzy/lib:"
+         NEW_RPATH "")
+    if(CMAKE_INSTALL_DO_STRIP)
+      execute_process(COMMAND "/usr/bin/strip" "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_ik_node")
+    endif()
+  endif()
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/uvc_ik_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE DIRECTORY FILES
     "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch"
     "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/rviz"
     )
 endif()
 

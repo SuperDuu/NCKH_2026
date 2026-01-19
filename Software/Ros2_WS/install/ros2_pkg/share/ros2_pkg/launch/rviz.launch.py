@@ -9,7 +9,6 @@ def generate_launch_description():
     pkg_name = 'ros2_pkg'
     pkg_share = get_package_share_directory(pkg_name)
     
-    # SỬA TẠI ĐÂY: Chỉ dùng một lần 'urdf' theo kết quả lệnh find của bạn
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')
     
     robot_description = ParameterValue(

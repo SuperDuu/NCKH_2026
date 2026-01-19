@@ -1,5 +1,6 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/imu_sub_node
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/uvc_node
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/uvc_ik_node
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/launch/rviz.launch.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/launch/sim.launch.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/humanoid_physics.xacro
@@ -31,6 +32,8 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/config/joint_names_Robot.yaml
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/CMakeLists.txt
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/package.xml
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/rviz/Rviz_robot_config/Robot.rviz
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/rviz/rviz.rviz
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_shoulder_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_head_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_hip_left_link.STL

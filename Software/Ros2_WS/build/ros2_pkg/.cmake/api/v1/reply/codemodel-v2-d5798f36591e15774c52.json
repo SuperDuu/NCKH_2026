@@ -1,0 +1,97 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-6d569858a84fd8a1d738.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ros2_pkg",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "imu_sub_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imu_sub_node-eb2a5eaa0be86a98d7c3.json",
+					"name" : "imu_sub_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ros2_pkg_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ros2_pkg_uninstall-4fa6c5ce4bf74719ab88.json",
+					"name" : "ros2_pkg_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-5e158843a91074c6e64f.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uvc_ik_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uvc_ik_node-20d7c7432769eb55a1ae.json",
+					"name" : "uvc_ik_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uvc_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uvc_node-62cac5903bff9d325906.json",
+					"name" : "uvc_node",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg",
+		"source" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

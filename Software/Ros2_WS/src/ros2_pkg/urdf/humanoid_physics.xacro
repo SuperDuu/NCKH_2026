@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
-
+  
   <xacro:property name="petg_mu1" value="1.5" />
   <xacro:property name="petg_mu2" value="1.0" />
   <xacro:property name="petg_kp" value="1000000.0" />
   <xacro:property name="petg_kd" value="100.0" />
-
+  <!-- gan ma sat-->
   <xacro:macro name="setup_link" params="link_name">
     <gazebo reference="${link_name}">
       <mu1>${petg_mu1}</mu1>
@@ -14,7 +14,7 @@
       <kd>${petg_kd}</kd>
     </gazebo>
   </xacro:macro>
-
+  <!--them plugin-->
   <xacro:macro name="robot_brain">
     <gazebo>
       <plugin

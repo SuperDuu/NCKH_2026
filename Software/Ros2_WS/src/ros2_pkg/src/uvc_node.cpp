@@ -76,9 +76,15 @@ private:
         
         // Gán góc cho 6 khớp chân (UVC tính toán) và 3 khớp hông (để 0.0 để đứng thẳng)
         // Thứ tự phải khớp với mảng joint_names ở trên
+        // point.positions = {
+        //     hp, -kp, -ap,    // Left Leg
+        //     hp, -kp, -ap,    // Right Leg
+        //     0.0, 0.0, 0.0    // Hip yaw/roll joints
+        // };
+
         point.positions = {
-            hp, -kp, -ap,    // Left Leg
-            hp, -kp, -ap,    // Right Leg
+            1.57, 1.57, 1.57,    // Left Leg
+            1.57, 1.57, 1.57,    // Right Leg
             0.0, 0.0, 0.0    // Hip yaw/roll joints
         };
 

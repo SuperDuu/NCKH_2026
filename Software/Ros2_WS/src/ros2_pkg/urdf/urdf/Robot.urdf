@@ -8,16 +8,16 @@
     name="base_link">
     <inertial>
       <origin
-        xyz="-4.96073883700386E-08 0.000462672288009197 -0.013211586070026"
+        xyz="-4.96073883704406E-08 0.000462672288009211 -0.013211586070026"
         rpy="0 0 0" />
       <mass
         value="0.0505669356625173" />
       <inertia
         ixx="1.58512882562337E-05"
-        ixy="-6.32129708984015E-12"
-        ixz="3.06079220712055E-11"
-        iyy="3.95314057556552E-05"
-        iyz="-3.07371418289218E-06"
+        ixy="-6.32129709336244E-12"
+        ixz="3.06079220714818E-11"
+        iyy="3.95314057556553E-05"
+        iyz="-3.07371418289219E-06"
         izz="3.98877370276516E-05" />
     </inertial>
     <visual>
@@ -26,12 +26,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_link.STL" />
+          filename="package://Robot/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
       </material>
     </visual>
     <collision>
@@ -40,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_link.STL" />
+          filename="package://Robot/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -48,16 +48,16 @@
     name="base_hip_left_link">
     <inertial>
       <origin
-        xyz="0.00998733125339211 -9.54015963033905E-08 0.0218258506936429"
+        xyz="0.00998733125339211 -9.54015962895127E-08 0.0218258506936429"
         rpy="0 0 0" />
       <mass
         value="0.0540513645760621" />
       <inertia
         ixx="8.31443086285314E-06"
-        ixy="-1.04977224197044E-10"
-        ixz="-9.67413631360397E-09"
+        ixy="-1.04977224197013E-10"
+        ixz="-9.6741363136038E-09"
         iyy="1.38876292348193E-05"
-        iyz="-5.07154008424265E-11"
+        iyz="-5.07154008424479E-11"
         izz="9.16994849231721E-06" />
     </inertial>
     <visual>
@@ -66,12 +66,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_left_link.STL" />
+          filename="package://Robot/meshes/base_hip_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_left_link.STL" />
+          filename="package://Robot/meshes/base_hip_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -99,23 +99,23 @@
     <limit
       lower="-0.17453"
       upper="0.69813"
-      effort="2.5" 
-      velocity="6.16" /> 
+      effort="1.08"
+      velocity="6.16" />
   </joint>
   <link
     name="hip_hip_left_link">
     <inertial>
       <origin
-        xyz="-0.00704458564509276 -0.00972823155065361 -0.0176386810408363"
+        xyz="-0.00704458564509276 -0.00972823155065358 -0.0176386810408363"
         rpy="0 0 0" />
       <mass
         value="0.0782857304964654" />
       <inertia
         ixx="2.15867392602823E-05"
         ixy="3.64452827439173E-07"
-        ixz="-9.67409417191232E-09"
+        ixz="-9.6740941719115E-09"
         iyy="1.91652280044429E-05"
-        iyz="-2.10257376527506E-10"
+        iyz="-2.10257376527475E-10"
         izz="2.0531955653516E-05" />
     </inertial>
     <visual>
@@ -124,12 +124,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_hip_left_link.STL" />
+          filename="package://Robot/meshes/hip_hip_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -138,7 +138,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_hip_left_link.STL" />
+          filename="package://Robot/meshes/hip_hip_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -157,23 +157,23 @@
     <limit
       lower="-0.5236"
       upper="0.69813"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="hip_knee_left_link">
     <inertial>
       <origin
-        xyz="3.40005801291454E-16 -0.052131243528057 -0.0183200192860185"
+        xyz="3.29597460435593E-16 -0.052131243528057 -0.0183200192860185"
         rpy="0 0 0" />
       <mass
         value="0.130204487078614" />
       <inertia
         ixx="4.59198297178949E-05"
-        ixy="-2.0995444845691E-10"
-        ixz="-4.28374950198435E-20"
+        ixy="-2.09954448456902E-10"
+        ixz="-4.28602229226364E-20"
         iyy="2.02899102584213E-05"
-        iyz="-7.67086303819158E-21"
+        iyz="-7.53189730635329E-21"
         izz="3.2855864207069E-05" />
     </inertial>
     <visual>
@@ -182,12 +182,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_knee_left_link.STL" />
+          filename="package://Robot/meshes/hip_knee_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -196,7 +196,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_knee_left_link.STL" />
+          filename="package://Robot/meshes/hip_knee_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -204,7 +204,7 @@
     name="hip_knee_left_joint"
     type="revolute">
     <origin
-      xyz="0 -0.06 0"
+      xyz="0 -0.0599999999999997 0"
       rpy="0 0 0" />
     <parent
       link="hip_hip_left_link" />
@@ -215,14 +215,14 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="knee_ankle_left_link">
     <inertial>
       <origin
-        xyz="3.93736869536455E-05 -0.027515550876819 -0.0176910938148466"
+        xyz="3.93736869536421E-05 -0.027515550876819 -0.0176910938148466"
         rpy="0 0 0" />
       <mass
         value="0.0298519989099933" />
@@ -240,12 +240,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_ankle_left_link.STL" />
+          filename="package://Robot/meshes/knee_ankle_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -254,7 +254,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_ankle_left_link.STL" />
+          filename="package://Robot/meshes/knee_ankle_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -273,23 +273,23 @@
     <limit
       lower="-0.34907"
       upper="0.69813"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
-    name="knee_knee_left_link">
+    name="ankle_ankle_left_link">
     <inertial>
       <origin
-        xyz="-0.00809509712887918 -0.0072746191922175 -0.0218892657222814"
+        xyz="-0.00809509712887917 -0.00727461919221756 -0.0218892657222814"
         rpy="0 0 0" />
       <mass
         value="0.0850053645760622" />
       <inertia
         ixx="2.80542144992169E-05"
         ixy="5.98719522678762E-07"
-        ixz="-9.67413631360618E-09"
+        ixz="-9.67413631360677E-09"
         iyy="4.73017474166376E-05"
-        iyz="5.07154009092707E-11"
+        iyz="5.07154009091344E-11"
         izz="2.35375503104991E-05" />
     </inertial>
     <visual>
@@ -298,12 +298,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_knee_left_link.STL" />
+          filename="package://Robot/meshes/ankle_ankle_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -312,26 +312,26 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_knee_left_link.STL" />
+          filename="package://Robot/meshes/ankle_ankle_left_link.STL" />
       </geometry>
     </collision>
   </link>
   <joint
-    name="knee_knee_left_joint"
+    name="ankle_ankle_left_joint"
     type="revolute">
     <origin
-      xyz="0.0215 -0.057 -0.018"
-      rpy="0 1.5708 0" />
+      xyz="0.0215 -0.0570000000000001 -0.0180000000000003"
+      rpy="0 1.5707963267949 0" />
     <parent
       link="knee_ankle_left_link" />
     <child
-      link="knee_knee_left_link" />
+      link="ankle_ankle_left_link" />
     <axis
       xyz="0 0 -1" />
     <limit
       lower="-1.2217"
       upper="1.2217"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
@@ -343,12 +343,12 @@
       <mass
         value="0.054051364576062" />
       <inertia
-        ixx="8.31443086285314E-06"
-        ixy="1.04977224222908E-10"
-        ixz="9.67413631360667E-09"
+        ixx="8.31443086285313E-06"
+        ixy="1.0497722422289E-10"
+        ixz="9.67413631360684E-09"
         iyy="1.38876292348193E-05"
-        iyz="-5.07154008419926E-11"
-        izz="9.16994849231721E-06" />
+        iyz="-5.07154008419528E-11"
+        izz="9.16994849231722E-06" />
     </inertial>
     <visual>
       <origin
@@ -356,12 +356,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_right_link.STL" />
+          filename="package://Robot/meshes/base_hip_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -370,7 +370,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_right_link.STL" />
+          filename="package://Robot/meshes/base_hip_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -378,8 +378,8 @@
     name="base_hip_right_joint"
     type="revolute">
     <origin
-      xyz="0.035 -0.0205 -0.027"
-      rpy="1.5708 0 0" />
+      xyz="0.0350000000000045 -0.0204999999999993 -0.027"
+      rpy="1.5707963267949 0 0" />
     <parent
       link="base_link" />
     <child
@@ -389,23 +389,23 @@
     <limit
       lower="-0.69813"
       upper="0.17453"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="hip_hip_right_link">
     <inertial>
       <origin
-        xyz="0.00704458564509446 -0.0097291000493431 -0.02113868104453"
+        xyz="0.00704458564509446 -0.00972910004934305 -0.02113868104453"
         rpy="0 0 0" />
       <mass
         value="0.0782857304964656" />
       <inertia
         ixx="2.15867392602823E-05"
         ixy="-3.6424253376394E-07"
-        ixz="9.6740960811374E-09"
+        ixz="9.67409608113729E-09"
         iyy="1.91652280044429E-05"
-        iyz="2.10257376525852E-10"
+        iyz="2.1025737652596E-10"
         izz="2.0531955653516E-05" />
     </inertial>
     <visual>
@@ -414,12 +414,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_hip_right_link.STL" />
+          filename="package://Robot/meshes/hip_hip_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -428,7 +428,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_hip_right_link.STL" />
+          filename="package://Robot/meshes/hip_hip_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -447,23 +447,23 @@
     <limit
       lower="-0.69813"
       upper="0.5236"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="hip_knee_right_link">
     <inertial>
       <origin
-        xyz="2.09554595897998E-15 -0.0521312435280563 -0.0218200192860273"
+        xyz="2.09554595897998E-15 -0.0521312435280562 -0.0218200192860273"
         rpy="0 0 0" />
       <mass
         value="0.130204487078614" />
       <inertia
         ixx="4.59198297178948E-05"
-        ixy="-2.0995444844281E-10"
-        ixz="-4.56713728623826E-20"
+        ixy="-2.09954448442892E-10"
+        ixz="-4.56461179262143E-20"
         iyy="2.02899102584213E-05"
-        iyz="-1.04763098167714E-20"
+        iyz="-1.12687493430799E-20"
         izz="3.28558642070689E-05" />
     </inertial>
     <visual>
@@ -472,12 +472,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_knee_right_link.STL" />
+          filename="package://Robot/meshes/hip_knee_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -486,7 +486,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_knee_right_link.STL" />
+          filename="package://Robot/meshes/hip_knee_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -494,7 +494,7 @@
     name="hip_knee_right_joint"
     type="revolute">
     <origin
-      xyz="0 -0.06 0"
+      xyz="0 -0.0600000000000001 0"
       rpy="0 0 0" />
     <parent
       link="hip_hip_right_link" />
@@ -505,21 +505,21 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="knee_ankle_right_link">
     <inertial>
       <origin
-        xyz="3.93736869559458E-05 -0.0275155508768182 -0.0211910938148556"
+        xyz="3.93736869559388E-05 -0.0275155508768182 -0.0211910938148556"
         rpy="0 0 0" />
       <mass
         value="0.0298519989099933" />
       <inertia
         ixx="9.5669713871131E-06"
         ixy="1.6471871683677E-06"
-        ixz="4.48957279114111E-07"
+        ixz="4.4895727911411E-07"
         iyy="1.00406929638069E-05"
         iyz="-1.44787293328077E-06"
         izz="9.63973144953534E-06" />
@@ -530,12 +530,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_ankle_right_link.STL" />
+          filename="package://Robot/meshes/knee_ankle_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -544,7 +544,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/knee_ankle_right_link.STL" />
+          filename="package://Robot/meshes/knee_ankle_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -563,23 +563,23 @@
     <limit
       lower="-0.69813"
       upper="0.34907"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="ankle_ankle_right_link">
     <inertial>
       <origin
-        xyz="-0.00800882305491046 -0.0071970894202753 -0.0220325514980323"
+        xyz="-0.00800882305491046 -0.00719708942027525 -0.0220325514980323"
         rpy="0 0 0" />
       <mass
         value="0.0859210745449871" />
       <inertia
         ixx="2.80785040143856E-05"
         ixy="5.98719522678801E-07"
-        ixz="-9.67413631360283E-09"
+        ixz="-9.67413631360054E-09"
         iyy="4.73260369318063E-05"
-        iyz="5.07154009072763E-11"
+        iyz="5.07154009085352E-11"
         izz="2.35857406698626E-05" />
     </inertial>
     <visual>
@@ -588,12 +588,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL" />
+          filename="package://Robot/meshes/ankle_ankle_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
       </material>
     </visual>
     <collision>
@@ -602,7 +602,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL" />
+          filename="package://Robot/meshes/ankle_ankle_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -610,8 +610,8 @@
     name="ankle_ankle_right_joint"
     type="revolute">
     <origin
-      xyz="0.0215 -0.057 -0.0215"
-      rpy="0 1.5708 0" />
+      xyz="0.0214999999999963 -0.0570000000000002 -0.0215000000000039"
+      rpy="0 1.5707963267949 0" />
     <parent
       link="knee_ankle_right_link" />
     <child
@@ -621,23 +621,23 @@
     <limit
       lower="-1.2217"
       upper="1.2217"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="base_hip_middle_link">
     <inertial>
       <origin
-        xyz="-0.000142721276460897 0.0147894005996427 0.0799735363940215"
+        xyz="-0.00014272127646092 0.0147894005996427 0.0799735363940215"
         rpy="0 0 0" />
       <mass
         value="0.322024415361419" />
       <inertia
-        ixx="0.000482647232629695"
-        ixy="-2.14638462617594E-07"
-        ixz="-2.40807211313291E-08"
+        ixx="0.000482647232629694"
+        ixy="-2.14638462617517E-07"
+        ixz="-2.40807211313119E-08"
         iyy="0.000836282388701369"
-        iyz="4.64558426111231E-07"
+        iyz="4.64558426111013E-07"
         izz="0.000520018730323674" />
     </inertial>
     <visual>
@@ -646,12 +646,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_middle_link.STL" />
+          filename="package://Robot/meshes/base_hip_middle_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
       </material>
     </visual>
     <collision>
@@ -660,7 +660,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/base_hip_middle_link.STL" />
+          filename="package://Robot/meshes/base_hip_middle_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -668,7 +668,7 @@
     name="base_hip_middle_joint"
     type="revolute">
     <origin
-      xyz="0 0 0.00479999999999899"
+      xyz="0 0 0.0048"
       rpy="0 0 0" />
     <parent
       link="base_link" />
@@ -679,23 +679,23 @@
     <limit
       lower="-0.5236"
       upper="0.5236"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="hip_shoulder_left_link">
     <inertial>
       <origin
-        xyz="-0.00998733125339242 9.54015965393129E-08 0.021825850693644"
+        xyz="-0.00998733125339238 9.5401596532374E-08 0.021825850693644"
         rpy="0 0 0" />
       <mass
-        value="0.0540513645760621" />
+        value="0.054051364576062" />
       <inertia
         ixx="8.31443086285314E-06"
-        ixy="-1.04977224241048E-10"
-        ixz="9.67413631360974E-09"
+        ixy="-1.04977224241056E-10"
+        ixz="9.67413631360957E-09"
         iyy="1.38876292348193E-05"
-        iyz="5.07154008425287E-11"
+        iyz="5.07154008425548E-11"
         izz="9.1699484923172E-06" />
     </inertial>
     <visual>
@@ -704,12 +704,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_left_link.STL" />
+          filename="package://Robot/meshes/hip_shoulder_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -718,7 +718,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_left_link.STL" />
+          filename="package://Robot/meshes/hip_shoulder_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -737,7 +737,7 @@
     <limit
       lower="-1.2217"
       upper="0.17453"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
@@ -749,11 +749,11 @@
       <mass
         value="0.0794907034391992" />
       <inertia
-        ixx="2.28341377776543E-05"
-        ixy="1.05146837614504E-10"
-        ixz="9.67409512653508E-09"
+        ixx="2.28341377776542E-05"
+        ixy="1.05146837614608E-10"
+        ixz="9.67409512653486E-09"
         iyy="1.93090904264949E-05"
-        iyz="2.10254567355506E-10"
+        iyz="2.10254567355568E-10"
         izz="2.19200033271726E-05" />
     </inertial>
     <visual>
@@ -762,12 +762,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL" />
+          filename="package://Robot/meshes/shoulder_shoulder_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -776,7 +776,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL" />
+          filename="package://Robot/meshes/shoulder_shoulder_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -795,14 +795,14 @@
     <limit
       lower="-1.0472"
       upper="1.0472"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="shoulder_elbow_left_link">
     <inertial>
       <origin
-        xyz="0.0012604629750603 -0.0335482693517731 -0.0230672553422172"
+        xyz="0.00126046297506029 -0.0335482693517731 -0.0230672553422172"
         rpy="0 0 0" />
       <mass
         value="0.0922123668839718" />
@@ -811,7 +811,7 @@
         ixy="-1.35524902368697E-07"
         ixz="2.5227698385325E-07"
         iyy="1.15346026523125E-05"
-        iyz="-8.00240572311054E-08"
+        iyz="-8.00240572311053E-08"
         izz="1.89716616063928E-05" />
     </inertial>
     <visual>
@@ -820,12 +820,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL" />
+          filename="package://Robot/meshes/shoulder_elbow_left_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -834,7 +834,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL" />
+          filename="package://Robot/meshes/shoulder_elbow_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -842,7 +842,7 @@
     name="shoulder_elbow_left_joint"
     type="revolute">
     <origin
-      xyz="0 -0.0636218145435769 0.0261724872211921"
+      xyz="0 -0.063622 0.026172"
       rpy="0 0 0" />
     <parent
       link="shoulder_shoulder_left_link" />
@@ -853,23 +853,23 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="hip_shoulder_right_link">
     <inertial>
       <origin
-        xyz="-0.00998733125339187 -9.54015958454235E-08 -0.0183258506936388"
+        xyz="-0.00998733125339185 -9.54015958523624E-08 -0.0183258506936388"
         rpy="0 0 0" />
       <mass
         value="0.054051364576062" />
       <inertia
         ixx="8.31443086285314E-06"
-        ixy="1.04977224221806E-10"
-        ixz="-9.67413631360733E-09"
+        ixy="1.04977224221799E-10"
+        ixz="-9.67413631360803E-09"
         iyy="1.38876292348193E-05"
-        iyz="5.07154008391557E-11"
+        iyz="5.07154008391455E-11"
         izz="9.16994849231721E-06" />
     </inertial>
     <visual>
@@ -878,12 +878,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL" />
+          filename="package://Robot/meshes/hip_shoulder_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -892,7 +892,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL" />
+          filename="package://Robot/meshes/hip_shoulder_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -900,8 +900,8 @@
     name="hip_shoulder_right_joint"
     type="revolute">
     <origin
-      xyz="0.108 0.0159999999999952 0.1093"
-      rpy="1.5707963267949 0 3.14159265358979" />
+      xyz="0.108 0.016 0.1093"
+      rpy="1.5708 0 3.1416" />
     <parent
       link="base_hip_middle_link" />
     <child
@@ -911,23 +911,23 @@
     <limit
       lower="-0.17453"
       upper="1.2217"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="shoulder_shoulder_right_link">
     <inertial>
       <origin
-        xyz="-0.00679109444793512 -0.0132232451709656 0.00466452110588339"
+        xyz="-0.00679109444793513 -0.0132232451709656 0.00466452110588338"
         rpy="0 0 0" />
       <mass
         value="0.0794907034391992" />
       <inertia
         ixx="2.28341377776542E-05"
-        ixy="1.05146837620254E-10"
-        ixz="-9.67417750069486E-09"
+        ixy="1.05146837620115E-10"
+        ixz="-9.67417750069501E-09"
         iyy="1.93090904264949E-05"
-        iyz="3.11685369058234E-10"
+        iyz="3.11685369057988E-10"
         izz="2.19200033271726E-05" />
     </inertial>
     <visual>
@@ -936,12 +936,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_right_link.STL" />
+          filename="package://Robot/meshes/shoulder_shoulder_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -950,7 +950,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_right_link.STL" />
+          filename="package://Robot/meshes/shoulder_shoulder_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -958,8 +958,8 @@
     name="shoulder_shoulder_right_joint"
     type="revolute">
     <origin
-      xyz="-0.0156724872211916 -0.0168781854564282 -0.0273999999999952"
-      rpy="0 1.5707963267949 0" />
+      xyz="-0.015672 -0.016878 -0.0274"
+      rpy="0 1.5708 0" />
     <parent
       link="hip_shoulder_right_link" />
     <child
@@ -969,23 +969,23 @@
     <limit
       lower="-1.0472"
       upper="1.0472"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
     name="shoulder_elbow_right_link">
     <inertial>
       <origin
-        xyz="0.000126644439907554 -0.033555308629724 -0.0230646392550644"
+        xyz="0.000126644439907557 -0.033555308629724 -0.0230646392550644"
         rpy="0 0 0" />
       <mass
         value="0.0921635034792499" />
       <inertia
         ixx="2.29848519100087E-05"
-        ixy="-9.31043220329645E-08"
+        ixy="-9.31043220329644E-08"
         ixz="-2.2718104245074E-07"
         iyy="1.15344501568406E-05"
-        iyz="-8.05828663856896E-08"
+        iyz="-8.05828663856901E-08"
         izz="1.89450966184291E-05" />
     </inertial>
     <visual>
@@ -994,12 +994,12 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL" />
+          filename="package://Robot/meshes/shoulder_elbow_right_link.STL" />
       </geometry>
       <material
         name="">
         <color
-          rgba="1 1 1 1" />
+          rgba="0.949019607843137 0.76078431372549 0.180392156862745 1" />
       </material>
     </visual>
     <collision>
@@ -1008,7 +1008,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL" />
+          filename="package://Robot/meshes/shoulder_elbow_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1016,7 +1016,7 @@
     name="shoulder_elbow_right_joint"
     type="revolute">
     <origin
-      xyz="0 -0.0636218145435714 0.0261724872211919"
+      xyz="0 -0.063622 0.026172"
       rpy="0 0 0" />
     <parent
       link="shoulder_shoulder_right_link" />
@@ -1027,7 +1027,7 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="2.5"
+      effort="1.08"
       velocity="6.16" />
   </joint>
   <link
@@ -1040,10 +1040,10 @@
         value="0.114347135302489" />
       <inertia
         ixx="2.40002189328777E-05"
-        ixy="1.04977224220759E-10"
-        ixz="-9.67413631361115E-09"
+        ixy="1.04977224221626E-10"
+        ixz="-9.67413631361122E-09"
         iyy="2.95952418691319E-05"
-        iyz="8.14892265253209E-08"
+        iyz="8.14892265253188E-08"
         izz="2.51608824852151E-05" />
     </inertial>
     <visual>
@@ -1052,7 +1052,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_head_link.STL" />
+          filename="package://Robot/meshes/hip_head_link.STL" />
       </geometry>
       <material
         name="">
@@ -1066,7 +1066,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://ros2_pkg/urdf/meshes/hip_head_link.STL" />
+          filename="package://Robot/meshes/hip_head_link.STL" />
       </geometry>
     </collision>
   </link>

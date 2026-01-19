@@ -11,15 +11,21 @@ find_package(rclcpp REQUIRED)
 find_package(urdf REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(xacro REQUIRED)
+find_package(trajectory_msgs REQUIRED)
+
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
 add_executable(imu_sub_node src/imu_sub_node.cpp)
 ament_target_dependencies(imu_sub_node rclcpp sensor_msgs)
+add_executable(uvc_node src/uvc_node.cpp)
+ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs)
+
 
 install(TARGETS
   imu_sub_node
+  uvc_node
   DESTINATION lib/${PROJECT_NAME}
 )
 install(DIRECTORY

@@ -2,7 +2,7 @@
 # ament_cmake_core/cmake/uninstall_target/ament_cmake_uninstall_target.cmake.in
 
 function(ament_cmake_uninstall_target_remove_empty_directories path)
-  set(install_space "/home/dat/Robot/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
+  set(install_space "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
   if(install_space STREQUAL "")
     message(FATAL_ERROR "The CMAKE_INSTALL_PREFIX variable must not be empty")
   endif()
@@ -29,7 +29,7 @@ function(ament_cmake_uninstall_target_remove_empty_directories path)
 endfunction()
 
 # uninstall files installed using the standard install() function
-set(install_manifest "/home/dat/Robot/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/install_manifest.txt")
+set(install_manifest "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/install_manifest.txt")
 if(NOT EXISTS "${install_manifest}")
   message(FATAL_ERROR "Cannot find install manifest: ${install_manifest}")
 endif()

@@ -1,6 +1,12 @@
 <?xml version="1.0"?>
 <robot name="robot_humanoid" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
+  <link name="world_root"/>
+  <joint name="world_root_joint" type="fixed">
+    <parent link="world_root"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
   <xacro:include filename="$(find ros2_pkg)/urdf/urdf/Robot.urdf" />
   <xacro:include filename="$(find ros2_pkg)/urdf/humanoid_physics.xacro" />
 
@@ -20,14 +26,6 @@
   <xacro:setup_link link_name="knee_ankle_right_link" />
   <xacro:setup_link link_name="ankle_ankle_right_link" />
 
-  <xacro:setup_link link_name="hip_shoulder_left_link" />
-  <xacro:setup_link link_name="shoulder_shoulder_left_link" />
-  <xacro:setup_link link_name="shoulder_elbow_left_link" />
-
-  <xacro:setup_link link_name="hip_shoulder_right_link" />
-  <xacro:setup_link link_name="shoulder_shoulder_right_link" />
-  <xacro:setup_link link_name="shoulder_elbow_right_link" />
-
   <gazebo reference="base_link">
     <sensor name="imu_sensor" type="imu">
       <always_on>1</always_on>
@@ -39,15 +37,12 @@
 
   <xacro:robot_brain />
 
-  <xacro:macro name="joint_dynamics" params="joint_name">
-    <gazebo reference="${joint_name}">
-      <implicitSpringDamper>true</implicitSpringDamper>
-    </gazebo>
-  </xacro:macro>
+  <xacro:setup_joint joint_name="hip_hip_left_joint" />
+  <xacro:setup_joint joint_name="hip_knee_left_joint" />
+  <xacro:setup_joint joint_name="knee_ankle_left_joint" />
 
-  <xacro:joint_dynamics joint_name="hip_knee_left_joint" />
-  <xacro:joint_dynamics joint_name="hip_knee_right_joint" />
-  <xacro:joint_dynamics joint_name="knee_ankle_left_joint" />
-  <xacro:joint_dynamics joint_name="knee_ankle_right_joint" />
+  <xacro:setup_joint joint_name="hip_hip_right_joint" />
+  <xacro:setup_joint joint_name="hip_knee_right_joint" />
+  <xacro:setup_joint joint_name="knee_ankle_right_joint" />
 
 </robot>

@@ -33,7 +33,7 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items(), 
+        launch_arguments={'gz_args': ' empty.sdf'}.items(), 
     )
 
     # 5. Node Spawn Robot: Đưa robot vào thế giới ảo
@@ -44,8 +44,8 @@ def generate_launch_description():
         arguments=[
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
-            # '-z', '0.29115' 
-            '-z', '0.4'
+            '-z', '0.29115' 
+            # '-z', '0.35'
         ],
         output='screen',
     )

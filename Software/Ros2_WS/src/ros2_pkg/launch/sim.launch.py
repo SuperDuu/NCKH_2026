@@ -14,7 +14,7 @@ def generate_launch_description():
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')
     robot_description_raw = xacro.process_file(xacro_file).toxml()
 
-    # 2. Thiết lập đường dẫn tài nguyên
+    # 2. Thiết lập đường dẫn tài nguyên (Mesh)
     resource_path = os.path.join(pkg_share, '..')
 
     # 3. Node Robot State Publisher
@@ -32,49 +32,71 @@ def generate_launch_description():
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
-        launch_arguments={'gz_args': ' empty.sdf'}.items(), # -r để tự động Play
+        # Thêm -r để chạy ngay lập tức, -v 4 để xem log lỗi nếu có
+        launch_arguments={'gz_args': ' empty.sdf'}.items(), 
     )
 
-    # 5. Node Spawn Robot (ĐÃ SỬA ĐỂ KHÔNG BỊ NGÃ)
-    # Chúng ta cài đặt sẵn các góc khớp để robot sinh ra ở tư thế "Ngồi Xổm" (Squat)
-    # khớp với độ cao HEIGHT_STD = 135.0 trong code C++
+    # 5. Node Spawn Robot (Z-SHAPE CONFIGURATION)
+    # Cấu hình này khớp với code UVC mới: Hông âm, Gối dương, Cổ chân âm
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
         arguments=[
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
-            '-z', '0.29115', # Hạ thấp độ cao spawn vì chân đã co lại
+            '-z', '0.29115', # Nâng cao chút để rơi xuống nhẹ nhàng (Tránh kẹt sàn)
             
-            # Gập gối -1.0 rad (Ngồi xuống)
-            '-J', 'hip_knee_left_joint', '-1.0',
-            '-J', 'hip_knee_right_joint', '-1.0',
+            # # --- TƯ THẾ ZIG-ZAG (Để đứng vững ngay) ---
+            # # Gối gập RA SAU (Dương)
+            # '-J', 'hip_knee_left_joint', '0.7',
+            # '-J', 'hip_knee_right_joint', '0.7',
             
-            # Gập hông 0.5 rad (Để lưng thẳng)
-            '-J', 'hip_hip_left_joint', '0.5',
-            '-J', 'hip_hip_right_joint', '0.5',
+            # # Hông gập TỚI (Âm)
+            # '-J', 'hip_hip_left_joint', '-0.35',
+            # '-J', 'hip_hip_right_joint', '-0.35',
             
-            # Gập cổ chân -0.5 rad (Để bàn chân phẳng)
-            '-J', 'knee_ankle_left_joint', '-0.5',
-            '-J', 'knee_ankle_right_joint', '-0.5'
+            # # Cổ chân bù lại (Âm)
+            # '-J', 'knee_ankle_left_joint', '-0.35',
+            # '-J', 'knee_ankle_right_joint', '-0.35'
         ],
         output='screen',
     )
 
-    # 6. Node Bridge
+    # 6. Node Bridge (CẬP NHẬT CHO JOINT POSITION CONTROLLER)
+    # Tạo danh sách các cầu nối cần thiết
+    bridge_arguments = [
+        # --- Cảm biến ---
+        '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
+        '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
+        '/world/empty/model/humanoid_robot/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
+        
+        # --- Điều khiển 11 Khớp (Float64 -> Double) ---
+        # Chân Trái
+        '/model/humanoid_robot/joint/base_hip_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/hip_hip_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/hip_knee_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/knee_ankle_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/ankle_ankle_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        
+        # Chân Phải
+        '/model/humanoid_robot/joint/base_hip_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/hip_hip_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/hip_knee_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/knee_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/ankle_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+
+        # Hông Giữa
+        '/model/humanoid_robot/joint/base_hip_middle_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+    ]
+
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
-        arguments=[
-            '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
-            '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
-            '/model/humanoid_robot/joint_trajectory@trajectory_msgs/msg/JointTrajectory]gz.msgs.JointTrajectory'
-        ],
+        arguments=bridge_arguments,
         output='screen'
     )
 
-    # 7. Node Xử lý IMU (MỚI THÊM VÀO)
-    # Nhiệm vụ: Tính toán góc Roll/Pitch/Yaw
+    # 7. Node Xử lý IMU
     imu_process_node = Node(
         package='ros2_pkg',
         executable='imu_process_node',
@@ -82,8 +104,7 @@ def generate_launch_description():
         parameters=[{'use_sim_time': True}]
     )
 
-    # 8. Node Điều khiển UVC (MỚI)
-    # Nhiệm vụ: Nhận góc -> Tính toán cân bằng -> Gửi lệnh Motor
+    # 8. Node Điều khiển UVC
     uvc_controller_node = Node(
         package='ros2_pkg',
         executable='uvc_node',
@@ -97,6 +118,6 @@ def generate_launch_description():
         gazebo,
         spawn_robot,
         bridge,
-        imu_process_node,    # Đừng quên dòng này
-        uvc_controller_node  # Đừng quên dòng này
+        imu_process_node, 
+        uvc_controller_node 
     ])

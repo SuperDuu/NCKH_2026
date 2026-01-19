@@ -26,7 +26,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +40,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -66,7 +66,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +80,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -99,7 +99,7 @@
     <limit
       lower="-0.17453"
       upper="0.69813"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -124,7 +124,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_hip_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_hip_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -138,7 +138,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_hip_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_hip_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -157,7 +157,7 @@
     <limit
       lower="-0.5236"
       upper="0.69813"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -182,7 +182,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_knee_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_knee_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -196,7 +196,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_knee_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_knee_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -215,7 +215,7 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -240,7 +240,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/knee_ankle_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/knee_ankle_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -254,7 +254,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/knee_ankle_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/knee_ankle_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -273,7 +273,7 @@
     <limit
       lower="-0.34907"
       upper="0.69813"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -298,7 +298,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/ankle_ankle_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -312,7 +312,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/ankle_ankle_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -331,7 +331,7 @@
     <limit
       lower="-1.2217"
       upper="1.2217"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -356,7 +356,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -370,7 +370,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -389,7 +389,7 @@
     <limit
       lower="-0.69813"
       upper="0.17453"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -414,7 +414,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_hip_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_hip_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -428,7 +428,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_hip_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_hip_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -447,7 +447,7 @@
     <limit
       lower="-0.69813"
       upper="0.5236"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -472,7 +472,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_knee_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_knee_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -486,7 +486,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_knee_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_knee_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -505,7 +505,7 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -530,7 +530,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/knee_ankle_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/knee_ankle_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -544,7 +544,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/knee_ankle_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/knee_ankle_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -563,7 +563,7 @@
     <limit
       lower="-0.69813"
       upper="0.34907"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -588,7 +588,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/ankle_ankle_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -602,7 +602,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/ankle_ankle_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -621,7 +621,7 @@
     <limit
       lower="-1.2217"
       upper="1.2217"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -646,7 +646,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_middle_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_middle_link.STL" />
       </geometry>
       <material
         name="">
@@ -660,7 +660,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/base_hip_middle_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/base_hip_middle_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -679,7 +679,7 @@
     <limit
       lower="-0.5236"
       upper="0.5236"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -704,7 +704,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_shoulder_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -718,7 +718,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_shoulder_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -737,7 +737,7 @@
     <limit
       lower="-1.2217"
       upper="0.17453"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -762,7 +762,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_shoulder_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -776,7 +776,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_shoulder_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -795,7 +795,7 @@
     <limit
       lower="-1.0472"
       upper="1.0472"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -820,7 +820,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_elbow_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL" />
       </geometry>
       <material
         name="">
@@ -834,7 +834,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_elbow_left_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -853,7 +853,7 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -878,7 +878,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_shoulder_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -892,7 +892,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_shoulder_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -911,7 +911,7 @@
     <limit
       lower="-0.17453"
       upper="1.2217"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -936,7 +936,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_shoulder_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -950,7 +950,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_shoulder_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_shoulder_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -969,7 +969,7 @@
     <limit
       lower="-1.0472"
       upper="1.0472"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -994,7 +994,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_elbow_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL" />
       </geometry>
       <material
         name="">
@@ -1008,7 +1008,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/shoulder_elbow_right_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1027,7 +1027,7 @@
     <limit
       lower="-1.3963"
       upper="1.3963"
-      effort="1.08"
+      effort="0.8"
       velocity="6.16" />
   </joint>
   <link
@@ -1052,7 +1052,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_head_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_head_link.STL" />
       </geometry>
       <material
         name="">
@@ -1066,7 +1066,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://Robot/meshes/hip_head_link.STL" />
+          filename="package://ros2_pkg/urdf/meshes/hip_head_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -1083,4 +1083,5 @@
     <axis
       xyz="0 0 0" />
   </joint>
-</robot>
+</robot> 
+

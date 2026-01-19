@@ -13,6 +13,7 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_hip_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/base_link.STL
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/base_hip_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_knee_left_link.STL
@@ -39,6 +40,7 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_hip_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/base_link.STL
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/base_hip_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_knee_left_link.STL

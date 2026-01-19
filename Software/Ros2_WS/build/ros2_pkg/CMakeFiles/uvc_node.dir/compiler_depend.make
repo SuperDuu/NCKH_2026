@@ -396,20 +396,16 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/detail/statistic_data_point__traits.hpp \
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/metrics_message.hpp \
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
-  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/header__struct.hpp \
-  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/header__traits.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__builder.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__struct.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__traits.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__type_support.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/float64.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
   /opt/ros/jazzy/include/tracetools/tracetools/config.h \
   /opt/ros/jazzy/include/tracetools/tracetools/tracetools.h \
   /opt/ros/jazzy/include/tracetools/tracetools/utils.hpp \
   /opt/ros/jazzy/include/tracetools/tracetools/visibility_control.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__builder.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__struct.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__traits.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__type_support.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory_point__struct.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory_point__traits.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/joint_trajectory.hpp \
-  /opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
   /opt/ros/jazzy/include/type_description_interfaces/type_description_interfaces/msg/detail/field__struct.h \
   /opt/ros/jazzy/include/type_description_interfaces/type_description_interfaces/msg/detail/field_type__struct.h \
   /opt/ros/jazzy/include/type_description_interfaces/type_description_interfaces/msg/detail/individual_type_description__struct.h \
@@ -1057,12 +1053,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/condition_variable:
 
-/usr/include/c++/13/compare:
-
-/usr/include/c++/13/stdexcept:
-
-/usr/include/c++/13/clocale:
-
 /usr/include/endian.h:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/subscription_options.hpp:
@@ -1143,8 +1133,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/node_interfaces/node_base.hpp:
 
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__type_support.hpp:
-
 /opt/ros/jazzy/include/rclcpp/rclcpp/node_interfaces/get_node_topics_interface.hpp:
 
 /opt/ros/jazzy/include/rcl/rcl/time.h:
@@ -1158,10 +1146,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rmw/rmw/security_options.h:
 
 /usr/include/c++/13/bits/stl_deque.h:
-
-/usr/include/c++/13/codecvt:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/parameter_client.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/describe_parameters__type_support.hpp:
 
@@ -1186,8 +1170,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rclcpp/rclcpp/allocator/allocator_common.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/macros.hpp:
-
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__traits.hpp:
 
 /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__struct.hpp:
 
@@ -1295,10 +1277,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/bits/stl_construct.h:
 
-/opt/ros/jazzy/include/rclcpp/rclcpp/detail/resolve_use_intra_process.hpp:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/create_generic_subscription.hpp:
-
 /opt/ros/jazzy/include/rclcpp/rclcpp/create_generic_publisher.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/create_client.hpp:
@@ -1376,6 +1354,12 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/libstatistics_collector/libstatistics_collector/collector/metric_details_interface.hpp:
 
 /opt/ros/jazzy/include/rmw/rmw/events_statuses/offered_deadline_missed.h:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/detail/resolve_use_intra_process.hpp:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/create_generic_subscription.hpp:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__traits.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/list_parameters__struct.hpp:
 
@@ -1459,8 +1443,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/time__traits.hpp:
 
-/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/set_parameters_result__builder.hpp:
-
 /opt/ros/jazzy/include/rclcpp/rclcpp/subscription_base.hpp:
 
 /usr/include/c++/13/bits/unordered_set.h:
@@ -1499,8 +1481,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/duration__builder.hpp:
 
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory_point__traits.hpp:
-
 /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/time__builder.hpp:
 
 /opt/ros/jazzy/include/rcl/rcl/types.h:
@@ -1526,6 +1506,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rclcpp/rclcpp/subscription.hpp:
 
 /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/duration__struct.hpp:
+
+/usr/include/c++/13/bits/stl_bvector.h:
 
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
@@ -1567,17 +1549,11 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rmw/rmw/domain_id.h:
 
-/usr/include/c++/13/bits/exception_defines.h:
-
 /usr/include/c++/13/pstl/execution_defs.h:
 
 /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/duration__type_support.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/set_parameters_result__type_support.hpp:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/is_ros_compatible_type.hpp:
-
-/opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/time__type_support.hpp:
 
 /opt/ros/jazzy/include/libstatistics_collector/libstatistics_collector/topic_statistics_collector/received_message_age.hpp:
 
@@ -1592,8 +1568,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/parameter_descriptor.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/parameter_event_handler.hpp:
-
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__builder.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/list_parameters__builder.hpp:
 
@@ -1681,9 +1655,11 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/set_parameters__type_support.hpp:
 
-/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/parameter__builder.hpp:
+/usr/include/c++/13/stdexcept:
 
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory_point__struct.hpp:
+/usr/include/c++/13/clocale:
+
+/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/parameter__builder.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/parameter_value__traits.hpp:
 
@@ -1704,6 +1680,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameter_types__struct.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/generic_subscription.hpp:
+
+/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameter_types__type_support.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/node_interfaces/node_timers_interface.hpp:
 
@@ -1778,6 +1756,12 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rclcpp/rclcpp/time.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/timer.hpp:
+
+/usr/include/c++/13/cstdlib:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/copy_all_parameter_values.hpp:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/topic_statistics_state.hpp:
 
 /usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
 
@@ -1949,6 +1933,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rmw/rmw/init.h:
 
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__builder.hpp:
+
 /opt/ros/jazzy/include/rmw/rmw/localhost.h:
 
 /opt/ros/jazzy/include/rmw/rmw/macros.h:
@@ -1966,6 +1952,10 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /usr/include/c++/13/bits/basic_ios.h:
 
 /opt/ros/jazzy/include/rmw/rmw/qos_string_conversions.h:
+
+/usr/include/c++/13/bits/exception_defines.h:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__type_support.hpp:
 
 /opt/ros/jazzy/include/rmw/rmw/ret_types.h:
 
@@ -2000,6 +1990,12 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /usr/include/c++/13/cstdio:
 
 /opt/ros/jazzy/include/rmw/rmw/topic_endpoint_info_array.h:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/is_ros_compatible_type.hpp:
+
+/opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/detail/time__type_support.hpp:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/rosidl_generator_cpp__visibility_control.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/subscription_traits.hpp:
 
@@ -2079,10 +2075,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/service_msgs/service_msgs/msg/detail/service_event_info__struct.hpp:
 
-/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameter_types__type_support.hpp:
-
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/joint_trajectory.hpp:
-
 /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/detail/metrics_message__builder.hpp:
 
 /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/detail/metrics_message__struct.hpp:
@@ -2109,17 +2101,11 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/alloca.h:
 
-/usr/include/c++/13/bits/stl_bvector.h:
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__struct.hpp:
 
-/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/header__struct.hpp:
+/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/msg/detail/set_parameters_result__builder.hpp:
 
-/usr/include/c++/13/cstdlib:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/copy_all_parameter_values.hpp:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/topic_statistics_state.hpp:
-
-/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/header__traits.hpp:
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/float64.hpp:
 
 /opt/ros/jazzy/include/tracetools/tracetools/config.h:
 
@@ -2128,10 +2114,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rclcpp/rclcpp/any_subscription_callback.hpp:
 
 /opt/ros/jazzy/include/tracetools/tracetools/utils.hpp:
-
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/detail/joint_trajectory__struct.hpp:
-
-/opt/ros/jazzy/include/trajectory_msgs/trajectory_msgs/msg/rosidl_generator_cpp__visibility_control.hpp:
 
 /opt/ros/jazzy/include/rosidl_runtime_c/rosidl_runtime_c/message_type_support_struct.h:
 
@@ -2312,3 +2294,9 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /usr/include/c++/13/bits/stringfwd.h:
 
 /usr/include/c++/13/cerrno:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/parameter_client.hpp:
+
+/usr/include/c++/13/codecvt:
+
+/usr/include/c++/13/compare:

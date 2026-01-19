@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/dat/Robot/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/dat/Robot/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dat/Robot/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/dat/Robot/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/dat/Robot/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -210,6 +210,19 @@ imu_sub_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/build
 .PHONY : imu_sub_node/fast
 
+#=============================================================================
+# Target rules for targets named uvc_node
+
+# Build rule for target.
+uvc_node: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 uvc_node
+.PHONY : uvc_node
+
+# fast build rule for target.
+uvc_node/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/build
+.PHONY : uvc_node/fast
+
 src/imu_sub_node.o: src/imu_sub_node.cpp.o
 .PHONY : src/imu_sub_node.o
 
@@ -234,6 +247,30 @@ src/imu_sub_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_sub_node.dir/build.make CMakeFiles/imu_sub_node.dir/src/imu_sub_node.cpp.s
 .PHONY : src/imu_sub_node.cpp.s
 
+src/uvc_node.o: src/uvc_node.cpp.o
+.PHONY : src/uvc_node.o
+
+# target to build an object file
+src/uvc_node.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o
+.PHONY : src/uvc_node.cpp.o
+
+src/uvc_node.i: src/uvc_node.cpp.i
+.PHONY : src/uvc_node.i
+
+# target to preprocess a source file
+src/uvc_node.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/src/uvc_node.cpp.i
+.PHONY : src/uvc_node.cpp.i
+
+src/uvc_node.s: src/uvc_node.cpp.s
+.PHONY : src/uvc_node.s
+
+# target to generate assembly for a file
+src/uvc_node.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/src/uvc_node.cpp.s
+.PHONY : src/uvc_node.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -250,9 +287,13 @@ help:
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... imu_sub_node"
+	@echo "... uvc_node"
 	@echo "... src/imu_sub_node.o"
 	@echo "... src/imu_sub_node.i"
 	@echo "... src/imu_sub_node.s"
+	@echo "... src/uvc_node.o"
+	@echo "... src/uvc_node.i"
+	@echo "... src/uvc_node.s"
 .PHONY : help
 
 

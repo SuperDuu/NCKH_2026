@@ -44,8 +44,8 @@ def generate_launch_description():
         arguments=[
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
-            '-z', '0.29115', # Nâng cao chút để rơi xuống nhẹ nhàng (Tránh kẹt sàn)
-            
+            # '-z', '0.29115', # Nâng cao chút để rơi xuống nhẹ nhàng (Tránh kẹt sàn)
+            '-z', '0.295',
             # # --- TƯ THẾ ZIG-ZAG (Để đứng vững ngay) ---
             # # Gối gập RA SAU (Dương)
             # '-J', 'hip_knee_left_joint', '0.7',
@@ -84,7 +84,15 @@ def generate_launch_description():
         '/model/humanoid_robot/joint/hip_knee_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
         '/model/humanoid_robot/joint/knee_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
         '/model/humanoid_robot/joint/ankle_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-
+        # Tay Trái
+        '/model/humanoid_robot/joint/hip_shoulder_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/shoulder_shoulder_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/shoulder_elbow_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        
+        # Tay Phải
+        '/model/humanoid_robot/joint/hip_shoulder_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/shoulder_shoulder_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
+        '/model/humanoid_robot/joint/shoulder_elbow_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
         # Hông Giữa
         '/model/humanoid_robot/joint/base_hip_middle_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
     ]

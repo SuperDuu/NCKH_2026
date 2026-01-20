@@ -49,7 +49,6 @@ private:
         angle_msg.x = pitch_rad * (180.0 / M_PI);; // X đại diện cho PITCH
         angle_msg.y = roll_rad * (180.0 / M_PI);;  // Y đại diện cho ROLL
         angle_msg.z = yaw_rad * (180.0 / M_PI);;   // Z đại diện cho YAW
-        std::cout<<pitch_rad<<"   "<<roll_rad<<std::endl;
         angle_pub_->publish(angle_msg);
     }
 

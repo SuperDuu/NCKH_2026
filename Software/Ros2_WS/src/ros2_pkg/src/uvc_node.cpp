@@ -17,8 +17,8 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 2.5;   
-        gain_roll =  2.5;    
+        gain_pitch = 3.5;   
+        gain_roll =  3.5;    
         recovery = 0.1; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
@@ -88,9 +88,9 @@ private:
         dxi = Lxh * sin(theta_x + pitch_rad * gain_pitch);
         autoH = Lxh * cos(theta_x + pitch_rad * gain_pitch);
 
-        dyi = std::clamp(dyi, -60.0, 60.0);
-        dxi = std::clamp(dxi, -60.0, 60.0); 
-        autoH = std::clamp(autoH, 130.0, 155.0); 
+        // dyi = std::clamp(dyi, -60.0, 60.0);
+        // dxi = std::clamp(dxi, -60.0, 60.0); 
+        // autoH = std::clamp(autoH, 130.0, 155.0); 
 
         if(tm < 0.1) {
              dxi -= dxi * recovery;
@@ -103,7 +103,7 @@ private:
 
         double hn, ht, dg, mct, mcn;
         solve_ik(dxi, dyi, autoH, hn, ht, dg, mct, mcn);
-
+        std::cout<<hn<<"   "<<ht<<"   "<<dg<<"   "<<mct<<"   "<<mcn<<std::endl;
         if(!std::isnan(ht) && !std::isnan(dg)) {
             publish_command(hn, ht, dg, mct, mcn);
         }
@@ -133,15 +133,15 @@ private:
 
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
-        send_cmd("base_hip_left",   ht);
-        send_cmd("hip_hip_left",    -hn);
+        send_cmd("base_hip_left",   -hn);
+        send_cmd("hip_hip_left",    ht);
         send_cmd("hip_knee_left",    -dg); 
         send_cmd("knee_ankle_left",  mct);
         send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
-        send_cmd("base_hip_right",    -ht);
-        send_cmd("hip_hip_right",    hn);
+        send_cmd("base_hip_right",    hn);
+        send_cmd("hip_hip_right",    -ht);
         send_cmd("hip_knee_right",    dg); 
         send_cmd("knee_ankle_right",  -mct);
         send_cmd("ankle_ankle_right", mcn);

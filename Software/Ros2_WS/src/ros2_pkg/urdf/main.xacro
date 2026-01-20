@@ -30,7 +30,7 @@
 
   <gazebo reference="base_hip_middle_link">
     <sensor name="imu_sensor" type="imu">
-      <always_on>1</always_on>
+      <always_on>0</always_on>
       <update_rate>500</update_rate> 
       <visualize>true</visualize>
       <topic>imu</topic>

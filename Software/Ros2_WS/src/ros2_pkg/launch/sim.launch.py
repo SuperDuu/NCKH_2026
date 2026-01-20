@@ -45,7 +45,7 @@ def generate_launch_description():
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
             # '-z', '0.29115', # Nâng cao chút để rơi xuống nhẹ nhàng (Tránh kẹt sàn)
-            '-z', '0.295',
+            '-z', '0.3',
             # # --- TƯ THẾ ZIG-ZAG (Để đứng vững ngay) ---
             # # Gối gập RA SAU (Dương)
             # '-J', 'hip_knee_left_joint', '0.7',

@@ -8,7 +8,7 @@
 
 const double L1 = 60.0;     
 const double L2 = 103.4;    
-const double HEIGHT_STD = 148.0; 
+const double HEIGHT_STD = 160.0; 
 
 class UvcControllerNode : public rclcpp::Node {
 public:
@@ -17,9 +17,9 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 3.5;   
-        gain_roll =  3.5;    
-        recovery = 0.1; 
+        gain_pitch = 0.05;   
+        gain_roll =  0.05;    
+        recovery = 0.01; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
         pubs_["base_hip_left"]   = create_joint_pub("base_hip_left_joint");
@@ -88,16 +88,18 @@ private:
         dxi = Lxh * sin(theta_x + pitch_rad * gain_pitch);
         autoH = Lxh * cos(theta_x + pitch_rad * gain_pitch);
 
-        // dyi = std::clamp(dyi, -60.0, 60.0);
-        // dxi = std::clamp(dxi, -60.0, 60.0); 
-        // autoH = std::clamp(autoH, 130.0, 155.0); 
+        // dyi = std::clamp(dyi, -30.0, 30.0);
+        // dxi = std::clamp(dxi, -30.0, 30.0); 
+        // autoH = std::clamp(autoH, 130.0, 165.0); 
 
-        if(tm < 0.1) {
-             dxi -= dxi * recovery;
-             dyi -= dyi * recovery;
-        }
-        if(autoH < HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
-        
+        // if(tm < 0.1) {
+        //      dxi -= dxi * recovery;
+        //      dyi -= dyi * recovery;
+        // }
+
+        if(dxi != 0) dxi -= dxi * recovery;
+        if(dyi != 0) dyi -= dyi * recovery;
+        if(autoH != HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
         if(std::fabs(dxi) < 0.1) dxi = 0;
         if(std::fabs(dyi) < 0.1) dyi = 0;
 
@@ -127,23 +129,23 @@ private:
         double cos_ht = (L1*L1 + L_sq - L2*L2) / (2*L1*L);
         ht = phi + acos(std::clamp(cos_ht, -1.0, 1.0));
 
-        mct = ht - dg; 
+        mct = 180-(ht + dg); 
         mcn = -hn;    
     }
 
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
-        send_cmd("base_hip_left",   -hn);
-        send_cmd("hip_hip_left",    ht);
-        send_cmd("hip_knee_left",    -dg); 
-        send_cmd("knee_ankle_left",  mct);
-        send_cmd("ankle_ankle_left",-mcn);
+        send_cmd("base_hip_left",   hn);
+        send_cmd("hip_hip_left",    -ht);
+        send_cmd("hip_knee_left",    dg); 
+        send_cmd("knee_ankle_left",  -mct);
+        send_cmd("ankle_ankle_left",mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
-        send_cmd("base_hip_right",    hn);
-        send_cmd("hip_hip_right",    -ht);
-        send_cmd("hip_knee_right",    dg); 
-        send_cmd("knee_ankle_right",  -mct);
+        send_cmd("base_hip_right",    -hn);
+        send_cmd("hip_hip_right",    ht);
+        send_cmd("hip_knee_right",    -dg); 
+        send_cmd("knee_ankle_right",  mct);
         send_cmd("ankle_ankle_right", mcn);
         
         // Giữ hông giữa thẳng

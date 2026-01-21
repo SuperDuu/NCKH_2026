@@ -6,8 +6,12 @@
 #include <map>
 #include <string>
 
-const double L1 = 80.0;     
-const double L2 = 180.0;    
+const double L1 = 20.0;     
+const double L2 = 0.1;  
+const double L3 = 60.0;     
+const double L4 = 100.0;
+const double L5 = 80.0;   //65  
+ 
 const double HEIGHT_STD = 259.0; 
 
 class UvcControllerNode : public rclcpp::Node {
@@ -17,9 +21,9 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 0.1;   
-        gain_roll =  0.1;    
-        recovery = 0.1; 
+        gain_pitch = 0.01;   
+        gain_roll =  0.01;    
+        recovery = 0.001; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
         pubs_["base_hip_left"]   = create_joint_pub("base_hip_left_joint");
@@ -70,40 +74,28 @@ private:
     }
 
     void control_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
-        // ... (Giữ nguyên logic tính toán của bạn) ...
         double pitch_rad = msg->x * M_PI / 180.0;
         double roll_rad  = msg->y * M_PI / 180.0;
         
-        tm = sqrt(pitch_rad*pitch_rad + roll_rad*roll_rad);
-        
-        theta_y = atan2(dyi, autoH);
-        Lyh = autoH / cos(theta_y);
-        
-        dyi = Lyh * sin(theta_y + roll_rad * gain_roll);
-        H_tmp = Lyh * cos(theta_y + roll_rad * gain_roll);
+        // tm = sqrt(pitch_rad*pitch_rad + roll_rad*roll_rad);
 
-        theta_x = atan2(dxi, H_tmp);
-        Lxh = H_tmp / cos(theta_x);
-        
-        dxi = Lxh * sin(theta_x + pitch_rad * gain_pitch);
-        autoH = Lxh * cos(theta_x + pitch_rad * gain_pitch);
+        dyi = autoH * tan(theta_2a + roll_rad * gain_roll);
+        autoH = tan(theta_2a + roll_rad * gain_roll)/dyi;
+        dxi = autoH * sin(hn + pitch_rad * gain_pitch);
+        autoH = sin(hn + pitch_rad * gain_pitch)/dxi;
 
-        // dyi = std::clamp(dyi, -30.0, 30.0);
-        // dxi = std::clamp(dxi, -30.0, 30.0); 
-        // autoH = std::clamp(autoH, 130.0, 165.0); 
-
-        // if(tm < 0.1) {
-        //      dxi -= dxi * recovery;
-        //      dyi -= dyi * recovery;
-        // }
-        if(std::fabs(dxi) < 0.1) dxi = 0;
-        if(std::fabs(dyi) < 0.1) dyi = 0;
-        if(dxi != 0) dxi -= dxi * recovery;
-        if(dyi != 0) dyi -= dyi * recovery;
+        if(std::fabs(dxi) < 0.01) dxi = 0;
+        if(std::fabs(dyi) < 0.01) dyi = 0;
+        if(dxi >=  0.01) dxi -= dxi * recovery;
+        if(dyi >=  0.01) dyi -= dyi * recovery;
+        if(dxi <= -0.01) dxi += dxi * recovery;
+        if(dyi <= -0.01) dyi += dyi * recovery;
         if(autoH != HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
+        dxi=std::clamp(dxi, -70.0, 70.0);
+        dyi=std::clamp(dyi, -70.0, 70.0);
+        autoH=std::clamp(autoH, 240.0, 260.0);
 
 
-        double hn, ht, dg, mct, mcn;
         solve_ik(dxi, dyi, autoH, hn, ht, dg, mct, mcn);
         std::cout<<dxi<<"   "<<dyi<<"   "<<autoH<<"   "<<hn<<"   "<<ht<<"   "<<dg<<"   "<<mct<<"   "<<mcn<<std::endl;
         if(!std::isnan(ht) && !std::isnan(dg)) {
@@ -113,39 +105,51 @@ private:
 
     void solve_ik(double dx, double dy, double h, 
                   double &hn, double &ht, double &dg, double &mct, double &mcn) {
-        // ... (Giữ nguyên logic IK của bạn) ...
-        double L_sq = dx*dx + dy*dy + h*h;
-        double L = std::sqrt(L_sq);
+        // double L_sq = dx*dx + dy*dy + h*h;
+        // double L = std::sqrt(L_sq);
 
-        if (L > (L1 + L2 - 0.1)) { L = L1 + L2 - 0.1; L_sq = L*L; }
-        if (L < abs(L1 - L2) + 0.1) { L = abs(L1 - L2) + 0.1; L_sq = L*L; }
+        // if (L > (L1 + L2 - 0.1)) { L = L1 + L2 - 0.1; L_sq = L*L; }
+        // if (L < abs(L1 - L2) + 0.1) { L = abs(L1 - L2) + 0.1; L_sq = L*L; }
 
-        hn = atan2(dy, h);
+        // hn = atan2(dy, h);
 
-        double cos_dg = (L1*L1 + L2*L2 - L_sq) / (2*L1*L2);
-        dg = acos(std::clamp(cos_dg, -1.0, 1.0)); 
+        // double cos_dg = (L1*L1 + L2*L2 - L_sq) / (2*L1*L2);
+        // dg = acos(std::clamp(cos_dg, -1.0, 1.0)); 
 
-        double phi = atan2(dx, sqrt(dy*dy + h*h)); 
-        double cos_ht = (L1*L1 + L_sq - L2*L2) / (2*L1*L);
-        ht = phi + acos(std::clamp(cos_ht, -1.0, 1.0));
+        // double phi = atan2(dx, sqrt(dy*dy + h*h)); 
+        // double cos_ht = (L1*L1 + L_sq - L2*L2) / (2*L1*L);
+        // ht = phi + acos(std::clamp(cos_ht, -1.0, 1.0));
 
-        mct = (-ht + dg); 
-        mcn = -hn;    
+        // mct = (-ht + dg); 
+        // mcn = -hn;    
+        a = sqrt((dy-L2)*(dy-L2)+(h-L5)*(h-L5));
+        b = sqrt((dy-L2)*(dy-L2)+h*h);
+        hn = asin(std::clamp(dx/h, -1.0, 1.0));
+        dg = M_PI - acos(std::clamp((L3*L3+L4*L4-a*a)/(2*L3*L4), -1.0, 1.0));
+        theta_2a = atan2(dy-L2, h);
+        
+        theta_2b = acos(std::clamp((a*a+b*b-L5*L5)/(2*a*b), -1.0, 1.0));
+        theta_2c = acos(std::clamp((L3*L3+a*a-L4*L4)/(2*a*L3), -1.0, 1.0));
+        ht=M_PI/2-theta_2a-theta_2b-theta_2c;
+        theta_tmp = acos(std::clamp((a*a+L5*L5-b*b)/(2*a*L5), -1.0, 1.0));
+        mct = M_PI - (dg - ht - theta_tmp);
+        mcn = - hn;
+
     }
 
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
         send_cmd("base_hip_left",   -hn);
-        send_cmd("hip_hip_left",    -ht);
+        send_cmd("hip_hip_left",    ht);
         send_cmd("hip_knee_left",    dg); 
-        send_cmd("knee_ankle_left",  -mct);
+        send_cmd("knee_ankle_left", mct);
         send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
         send_cmd("base_hip_right",    hn);
-        send_cmd("hip_hip_right",    ht);
+        send_cmd("hip_hip_right",    -ht);
         send_cmd("hip_knee_right",    -dg); 
-        send_cmd("knee_ankle_right",  mct);
+        send_cmd("knee_ankle_right",  -mct);
         send_cmd("ankle_ankle_right", -mcn);
         
         // Giữ hông giữa thẳng
@@ -166,6 +170,12 @@ private:
         send_cmd("shoulder_elbow_right",    0.0);
     }
 
+    double a,b;
+    double theta_2a;
+    double theta_2b;
+    double theta_2c;
+    double theta_tmp;
+    double hn, ht, dg, mct, mcn;
     double dxi, dyi, autoH, tm, theta_x, theta_y, Lyh, Lxh, H_tmp;
     double gain_pitch, gain_roll, recovery;
     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;

@@ -6,9 +6,9 @@
 #include <map>
 #include <string>
 
-const double L1 = 60.0;     
-const double L2 = 103.4;    
-const double HEIGHT_STD = 160.0; 
+const double L1 = 80.0;     
+const double L2 = 180.0;    
+const double HEIGHT_STD = 259.0; 
 
 class UvcControllerNode : public rclcpp::Node {
 public:
@@ -17,9 +17,9 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 0.05;   
-        gain_roll =  0.05;    
-        recovery = 0.01; 
+        gain_pitch = 0.1;   
+        gain_roll =  0.1;    
+        recovery = 0.1; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
         pubs_["base_hip_left"]   = create_joint_pub("base_hip_left_joint");
@@ -96,16 +96,16 @@ private:
         //      dxi -= dxi * recovery;
         //      dyi -= dyi * recovery;
         // }
-
+        if(std::fabs(dxi) < 0.1) dxi = 0;
+        if(std::fabs(dyi) < 0.1) dyi = 0;
         if(dxi != 0) dxi -= dxi * recovery;
         if(dyi != 0) dyi -= dyi * recovery;
         if(autoH != HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
-        if(std::fabs(dxi) < 0.1) dxi = 0;
-        if(std::fabs(dyi) < 0.1) dyi = 0;
+
 
         double hn, ht, dg, mct, mcn;
         solve_ik(dxi, dyi, autoH, hn, ht, dg, mct, mcn);
-        std::cout<<hn<<"   "<<ht<<"   "<<dg<<"   "<<mct<<"   "<<mcn<<std::endl;
+        std::cout<<dxi<<"   "<<dyi<<"   "<<autoH<<"   "<<hn<<"   "<<ht<<"   "<<dg<<"   "<<mct<<"   "<<mcn<<std::endl;
         if(!std::isnan(ht) && !std::isnan(dg)) {
             publish_command(hn, ht, dg, mct, mcn);
         }
@@ -123,30 +123,30 @@ private:
         hn = atan2(dy, h);
 
         double cos_dg = (L1*L1 + L2*L2 - L_sq) / (2*L1*L2);
-        dg = M_PI - acos(std::clamp(cos_dg, -1.0, 1.0)); 
+        dg = acos(std::clamp(cos_dg, -1.0, 1.0)); 
 
         double phi = atan2(dx, sqrt(dy*dy + h*h)); 
         double cos_ht = (L1*L1 + L_sq - L2*L2) / (2*L1*L);
         ht = phi + acos(std::clamp(cos_ht, -1.0, 1.0));
 
-        mct = 180-(ht + dg); 
+        mct = (-ht + dg); 
         mcn = -hn;    
     }
 
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
-        send_cmd("base_hip_left",   hn);
+        send_cmd("base_hip_left",   -hn);
         send_cmd("hip_hip_left",    -ht);
         send_cmd("hip_knee_left",    dg); 
         send_cmd("knee_ankle_left",  -mct);
-        send_cmd("ankle_ankle_left",mcn);
+        send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
-        send_cmd("base_hip_right",    -hn);
+        send_cmd("base_hip_right",    hn);
         send_cmd("hip_hip_right",    ht);
         send_cmd("hip_knee_right",    -dg); 
         send_cmd("knee_ankle_right",  mct);
-        send_cmd("ankle_ankle_right", mcn);
+        send_cmd("ankle_ankle_right", -mcn);
         
         // Giữ hông giữa thẳng
         send_cmd("base_hip_middle", 0.0);

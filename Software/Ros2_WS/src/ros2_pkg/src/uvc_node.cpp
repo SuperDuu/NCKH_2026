@@ -12,7 +12,7 @@ const double L3 = 60.0;
 const double L4 = 100.0;
 const double L5 = 80.0;   //65  
  
-const double HEIGHT_STD = 259.0; 
+const double HEIGHT_STD = 258.0; 
 
 class UvcControllerNode : public rclcpp::Node {
 public:
@@ -21,9 +21,9 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 0.01;   
-        gain_roll =  0.01;    
-        recovery = 0.001; 
+        gain_pitch = 1;   
+        gain_roll =  1;    
+        recovery = 1; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
         pubs_["base_hip_left"]   = create_joint_pub("base_hip_left_joint");
@@ -78,21 +78,31 @@ private:
         double roll_rad  = msg->y * M_PI / 180.0;
         
         // tm = sqrt(pitch_rad*pitch_rad + roll_rad*roll_rad);
+        double theta_x = atan2(dxi,autoH);
 
-        dyi = autoH * tan(theta_2a + roll_rad * gain_roll);
-        autoH = tan(theta_2a + roll_rad * gain_roll)/dyi;
-        dxi = autoH * sin(hn + pitch_rad * gain_pitch);
-        autoH = sin(hn + pitch_rad * gain_pitch)/dxi;
+        Lxh = autoH / acos(std::clamp(theta_x,-1.0,1.0));
+        
+        dxi = Lxh*sin(std::clamp(theta_x-pitch_rad*gain_pitch,-1.0,1.0));
+        
+        autoH = Lxh*cos(std::clamp(theta_x-pitch_rad*gain_pitch,-1.0,1.0));
+        
+
+        double theta_y = atan2(dyi-L2,autoH);
+        
+        Lyh = autoH / acos(std::clamp(theta_y,-1.0,1.0));
+        
+        dyi = Lyh*sin(std::clamp(theta_y-roll_rad*gain_roll,-1.0,1.0));
+        autoH = Lyh*cos(std::clamp(theta_y-roll_rad*gain_roll,-1.0,1.0));
+        
 
         if(std::fabs(dxi) < 0.01) dxi = 0;
+        else dxi -= dxi * recovery;
         if(std::fabs(dyi) < 0.01) dyi = 0;
-        if(dxi >=  0.01) dxi -= dxi * recovery;
-        if(dyi >=  0.01) dyi -= dyi * recovery;
-        if(dxi <= -0.01) dxi += dxi * recovery;
-        if(dyi <= -0.01) dyi += dyi * recovery;
+        else dyi -= dyi * recovery;
+       
         if(autoH != HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
-        dxi=std::clamp(dxi, -70.0, 70.0);
-        dyi=std::clamp(dyi, -70.0, 70.0);
+        dxi=std::clamp(dxi, -50.0, 50.0);
+        dyi=std::clamp(dyi, -50.0, 50.0);
         autoH=std::clamp(autoH, 240.0, 260.0);
 
 
@@ -122,34 +132,38 @@ private:
 
         // mct = (-ht + dg); 
         // mcn = -hn;    
-        a = sqrt((dy-L2)*(dy-L2)+(h-L5)*(h-L5));
-        b = sqrt((dy-L2)*(dy-L2)+h*h);
-        hn = asin(std::clamp(dx/h, -1.0, 1.0));
-        dg = M_PI - acos(std::clamp((L3*L3+L4*L4-a*a)/(2*L3*L4), -1.0, 1.0));
-        theta_2a = atan2(dy-L2, h);
+
+        a = sqrt((dy-L2)*(dy-L2)+(Lxh-L5)*(Lxh-L5));
+       
+        hn = asin(std::clamp(dx/Lxh, -1.0, 1.0));
+        theta_2a = atan2(dy-L2, Lxh-L5);
         
-        theta_2b = acos(std::clamp((a*a+b*b-L5*L5)/(2*a*b), -1.0, 1.0));
-        theta_2c = acos(std::clamp((L3*L3+a*a-L4*L4)/(2*a*L3), -1.0, 1.0));
-        ht=M_PI/2-theta_2a-theta_2b-theta_2c;
-        theta_tmp = acos(std::clamp((a*a+L5*L5-b*b)/(2*a*L5), -1.0, 1.0));
-        mct = M_PI - (dg - ht - theta_tmp);
+        theta_2b = acos(std::clamp((L3*L3+a*a-L4*L4)/(2*a*L3), -1.0, 1.0));
+        ht=theta_2a+theta_2b;
+        dg = M_PI - acos(std::clamp((L3*L3+L4*L4-a*a)/(2*L3*L4), -1.0, 1.0));
+                    
+        mct = M_PI - ht+dg;
         mcn = - hn;
+
+
+
+        
 
     }
 
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
         send_cmd("base_hip_left",   -hn);
-        send_cmd("hip_hip_left",    ht);
+        send_cmd("hip_hip_left",    -ht);
         send_cmd("hip_knee_left",    dg); 
-        send_cmd("knee_ankle_left", mct);
+        send_cmd("knee_ankle_left", -mct);
         send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
         send_cmd("base_hip_right",    hn);
-        send_cmd("hip_hip_right",    -ht);
+        send_cmd("hip_hip_right",    ht);
         send_cmd("hip_knee_right",    -dg); 
-        send_cmd("knee_ankle_right",  -mct);
+        send_cmd("knee_ankle_right",  mct);
         send_cmd("ankle_ankle_right", -mcn);
         
         // Giữ hông giữa thẳng
@@ -176,7 +190,7 @@ private:
     double theta_2c;
     double theta_tmp;
     double hn, ht, dg, mct, mcn;
-    double dxi, dyi, autoH, tm, theta_x, theta_y, Lyh, Lxh, H_tmp;
+    double dxi, dyi, autoH, tm, theta_x, theta_y, Lyh, Lxh,L, H_tmp;
     double gain_pitch, gain_roll, recovery;
     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr angle_sub_;

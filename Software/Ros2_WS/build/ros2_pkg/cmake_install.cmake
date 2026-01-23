@@ -1,8 +1,8 @@
-# Install script for directory: /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+# Install script for directory: /home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
+  set(CMAKE_INSTALL_PREFIX "/home/dat/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,7 +43,7 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
+  include("/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -54,5 +54,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

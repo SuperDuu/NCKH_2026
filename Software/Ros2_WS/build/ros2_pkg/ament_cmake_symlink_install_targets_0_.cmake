@@ -1,1 +1,1 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/imu_process_node" "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/uvc_node" "TARGETS" "imu_process_node" "uvc_node" "DESTINATION" "lib/ros2_pkg")
+ament_cmake_symlink_install_targets("TARGET_FILES" "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/imu_process_node" "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/uvc_node" "TARGETS" "imu_process_node" "uvc_node" "DESTINATION" "lib/ros2_pkg")

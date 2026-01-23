@@ -98,13 +98,13 @@
 		{
 			"backtrace" : 9,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ros2_pkg_uninstall",
+			"path" : "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ros2_pkg_uninstall",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 0,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ros2_pkg_uninstall.rule",
+			"path" : "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ros2_pkg_uninstall.rule",
 			"sourceGroupIndex" : 1
 		}
 	],

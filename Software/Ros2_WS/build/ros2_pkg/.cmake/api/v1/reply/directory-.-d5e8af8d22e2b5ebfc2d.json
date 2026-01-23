@@ -81,7 +81,7 @@
 		{
 			"backtrace" : 10,
 			"component" : "Unspecified",
-			"scriptFile" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake",
+			"scriptFile" : "/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake",
 			"type" : "script"
 		}
 	],

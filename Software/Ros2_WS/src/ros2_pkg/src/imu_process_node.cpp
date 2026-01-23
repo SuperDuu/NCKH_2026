@@ -50,6 +50,7 @@ private:
         angle_msg.y = roll_rad * (180.0 / M_PI);;  // Y đại diện cho ROLL
         angle_msg.z = yaw_rad * (180.0 / M_PI);;   // Z đại diện cho YAW
         angle_pub_->publish(angle_msg);
+        std::cout<<angle_msg.x<<" "<<angle_msg.y<<" "<<angle_msg.z<<" "<<std::endl;
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;

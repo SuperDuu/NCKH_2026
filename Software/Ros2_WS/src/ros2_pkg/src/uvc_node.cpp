@@ -10,9 +10,9 @@ const double L1 = 20.0;
 const double L2 = 0.1;  
 const double L3 = 60.0;     
 const double L4 = 100.0;
-const double L5 = 80.0;   //65  
+const double L5 = 65.0;   //65  
  
-const double HEIGHT_STD = 258.0; 
+const double HEIGHT_STD = 244.0; 
 
 class UvcControllerNode : public rclcpp::Node {
 public:
@@ -21,9 +21,9 @@ public:
         autoH = HEIGHT_STD;
         
         // Gain cho MG996R (như đã tune)
-        gain_pitch = 1;   
-        gain_roll =  1;    
-        recovery = 1; 
+        gain_pitch = 0.2;   
+        gain_roll =  0.2;    
+        recovery = 0.01; 
 
         // --- 1. KHỞI TẠO PUBLISHER CHO CHÂN (Đã có) ---
         pubs_["base_hip_left"]   = create_joint_pub("base_hip_left_joint");
@@ -76,36 +76,35 @@ private:
     void control_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
         double pitch_rad = msg->x * M_PI / 180.0;
         double roll_rad  = msg->y * M_PI / 180.0;
-        
-        // tm = sqrt(pitch_rad*pitch_rad + roll_rad*roll_rad);
-        double theta_x = atan2(dxi,autoH);
+        double autoH_tmp;
+        double theta_x = atan2(dxi, autoH)-pitch_rad * gain_pitch;
+        double Lx = autoH / cos(theta_x);
 
-        Lxh = autoH / acos(std::clamp(theta_x,-1.0,1.0));
-        
-        dxi = Lxh*sin(std::clamp(theta_x-pitch_rad*gain_pitch,-1.0,1.0));
-        
-        autoH = Lxh*cos(std::clamp(theta_x-pitch_rad*gain_pitch,-1.0,1.0));
-        
+        // theta_x -= pitch_rad * gain_pitch;
 
-        double theta_y = atan2(dyi-L2,autoH);
-        
-        Lyh = autoH / acos(std::clamp(theta_y,-1.0,1.0));
-        
-        dyi = Lyh*sin(std::clamp(theta_y-roll_rad*gain_roll,-1.0,1.0));
-        autoH = Lyh*cos(std::clamp(theta_y-roll_rad*gain_roll,-1.0,1.0));
-        
+        dxi   = Lx * sin(theta_x);
+        autoH_tmp = Lx * cos(theta_x);
 
-        if(std::fabs(dxi) < 0.01) dxi = 0;
+        /* ---------- ROLL (Y) ----------- */
+        double theta_y = atan2(dyi - L2, autoH_tmp)-roll_rad * gain_roll;;
+        double Ly = autoH_tmp / cos(theta_y);
+
+        // theta_y -= roll_rad * gain_roll;
+
+        dyi   = Ly * sin(theta_y);
+        autoH = Ly * cos(theta_y);
+
+        /* ---------- DAMPING ---------- */
+        if (fabs(dxi) < 1) dxi = 0;
         else dxi -= dxi * recovery;
-        if(std::fabs(dyi) < 0.01) dyi = 0;
+
+        if (fabs(dyi) < 1) dyi = 0;
         else dyi -= dyi * recovery;
-       
-        if(autoH != HEIGHT_STD) autoH += (HEIGHT_STD - autoH) * recovery;
+
+        autoH += (HEIGHT_STD - autoH) * recovery;
         dxi=std::clamp(dxi, -50.0, 50.0);
         dyi=std::clamp(dyi, -50.0, 50.0);
-        autoH=std::clamp(autoH, 240.0, 260.0);
-
-
+        autoH=std::clamp(autoH, 220.0, 260.0);
         solve_ik(dxi, dyi, autoH, hn, ht, dg, mct, mcn);
         std::cout<<dxi<<"   "<<dyi<<"   "<<autoH<<"   "<<hn<<"   "<<ht<<"   "<<dg<<"   "<<mct<<"   "<<mcn<<std::endl;
         if(!std::isnan(ht) && !std::isnan(dg)) {
@@ -132,18 +131,20 @@ private:
 
         // mct = (-ht + dg); 
         // mcn = -hn;    
-
-        a = sqrt((dy-L2)*(dy-L2)+(Lxh-L5)*(Lxh-L5));
-       
+        L=sqrt(dx*dx+dy*dy+h*h);
+        a = sqrt((dy-L2)*(dy-L2)+(Lxh-L5)*(Lxh-L5))+ 1e-6;
+        // double a_max = L3 + L4 - 1e-6;
+        // double a_min = fabs(L3 - L4) + 1e-6;
+        // a = std::clamp(a, a_min, a_max);
         hn = asin(std::clamp(dx/Lxh, -1.0, 1.0));
         theta_2a = atan2(dy-L2, Lxh-L5);
         
         theta_2b = acos(std::clamp((L3*L3+a*a-L4*L4)/(2*a*L3), -1.0, 1.0));
         ht=theta_2a+theta_2b;
-        dg = M_PI - acos(std::clamp((L3*L3+L4*L4-a*a)/(2*L3*L4), -1.0, 1.0));
+        dg = acos(std::clamp((L3*L3+L4*L4-a*a)/(2*L3*L4), -1.0, 1.0));
                     
         mct = M_PI - ht+dg;
-        mcn = - hn;
+        mcn = M_PI/2- hn;
 
 
 
@@ -154,16 +155,16 @@ private:
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
         send_cmd("base_hip_left",   -hn);
-        send_cmd("hip_hip_left",    -ht);
-        send_cmd("hip_knee_left",    dg); 
-        send_cmd("knee_ankle_left", -mct);
+        send_cmd("hip_hip_left",    ht);
+        send_cmd("hip_knee_left",    -dg); 
+        send_cmd("knee_ankle_left", mct);
         send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
         send_cmd("base_hip_right",    hn);
-        send_cmd("hip_hip_right",    ht);
-        send_cmd("hip_knee_right",    -dg); 
-        send_cmd("knee_ankle_right",  mct);
+        send_cmd("hip_hip_right",    -ht);
+        send_cmd("hip_knee_right",    dg); 
+        send_cmd("knee_ankle_right",  -mct);
         send_cmd("ankle_ankle_right", -mcn);
         
         // Giữ hông giữa thẳng

@@ -17,7 +17,7 @@
   <xacro:macro name="setup_joint" params="joint_name">
     <gazebo reference="${joint_name}">
       <implicitSpringDamper>true</implicitSpringDamper>
-      <springStiffness>0.0</springStiffness> 
+      <springStiffness>1.0</springStiffness> 
       <springReference>0.0</springReference>
       <friction>1.5</friction> 
       <damping>1.0</damping>
@@ -32,7 +32,7 @@
         <topic>/model/humanoid_robot/joint/${joint_name}/cmd_pos</topic>
         
         <p_gain>${p}</p_gain>
-        <i_gain>0.1</i_gain>
+        <i_gain>0.5</i_gain>
         <d_gain>${d}</d_gain>
         <i_max>10</i_max>
         <i_min>-10</i_min>
@@ -46,7 +46,7 @@
     
     <gazebo>
       <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
-        <update_rate>500</update_rate>
+        <update_rate>100</update_rate>
       </plugin>
       <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"></plugin>
     </gazebo>
@@ -57,11 +57,11 @@
     <xacro:setup_joint joint_name="knee_ankle_left_joint"/>
     <xacro:setup_joint joint_name="ankle_ankle_left_joint"/>
 
-    <xacro:make_controller joint_name="base_hip_left_joint"    p="800" d="10"/>
-    <xacro:make_controller joint_name="hip_hip_left_joint"     p="800" d="10"/>
-    <xacro:make_controller joint_name="hip_knee_left_joint"    p="800" d="10"/>
-    <xacro:make_controller joint_name="knee_ankle_left_joint"  p="800" d="10"/>
-    <xacro:make_controller joint_name="ankle_ankle_left_joint" p="800" d="10"/>
+    <xacro:make_controller joint_name="base_hip_left_joint"    p="8000" d="100"/>
+    <xacro:make_controller joint_name="hip_hip_left_joint"     p="8000" d="100"/>
+    <xacro:make_controller joint_name="hip_knee_left_joint"    p="8000" d="100"/>
+    <xacro:make_controller joint_name="knee_ankle_left_joint"  p="8000" d="100"/>
+    <xacro:make_controller joint_name="ankle_ankle_left_joint" p="8000" d="100"/>
 
     <xacro:setup_joint joint_name="base_hip_right_joint"/>
     <xacro:setup_joint joint_name="hip_hip_right_joint"/>
@@ -69,30 +69,30 @@
     <xacro:setup_joint joint_name="knee_ankle_right_joint"/>
     <xacro:setup_joint joint_name="ankle_ankle_right_joint"/>
 
-    <xacro:make_controller joint_name="base_hip_right_joint"    p="800" d="10"/>
-    <xacro:make_controller joint_name="hip_hip_right_joint"     p="800" d="10"/>
-    <xacro:make_controller joint_name="hip_knee_right_joint"    p="800" d="10"/>
-    <xacro:make_controller joint_name="knee_ankle_right_joint"  p="800" d="10"/>
-    <xacro:make_controller joint_name="ankle_ankle_right_joint" p="800" d="10"/>
+    <xacro:make_controller joint_name="base_hip_right_joint"    p="8000" d="100"/>
+    <xacro:make_controller joint_name="hip_hip_right_joint"     p="8000" d="100"/>
+    <xacro:make_controller joint_name="hip_knee_right_joint"    p="8000" d="100"/>
+    <xacro:make_controller joint_name="knee_ankle_right_joint"  p="8000" d="100"/>
+    <xacro:make_controller joint_name="ankle_ankle_right_joint" p="8000" d="100"/>
     
     <xacro:setup_joint joint_name="base_hip_middle_joint"/>
-    <xacro:make_controller joint_name="base_hip_middle_joint"   p="800" d="10"/>
+    <xacro:make_controller joint_name="base_hip_middle_joint"   p="8000" d="100"/>
 
     <xacro:setup_joint joint_name="hip_shoulder_left_joint"/>
     <xacro:setup_joint joint_name="shoulder_shoulder_left_joint"/>
     <xacro:setup_joint joint_name="shoulder_elbow_left_joint"/>
 
-    <xacro:make_controller joint_name="hip_shoulder_left_joint"      p="800" d="10"/>
-    <xacro:make_controller joint_name="shoulder_shoulder_left_joint" p="800" d="10"/>
-    <xacro:make_controller joint_name="shoulder_elbow_left_joint"    p="800" d="10"/>
+    <xacro:make_controller joint_name="hip_shoulder_left_joint"      p="8000" d="100"/>
+    <xacro:make_controller joint_name="shoulder_shoulder_left_joint" p="8000" d="100"/>
+    <xacro:make_controller joint_name="shoulder_elbow_left_joint"    p="8000" d="100"/>
 
     <xacro:setup_joint joint_name="hip_shoulder_right_joint"/>
     <xacro:setup_joint joint_name="shoulder_shoulder_right_joint"/>
     <xacro:setup_joint joint_name="shoulder_elbow_right_joint"/>
 
-    <xacro:make_controller joint_name="hip_shoulder_right_joint"      p="800" d="10"/>
-    <xacro:make_controller joint_name="shoulder_shoulder_right_joint" p="800" d="10"/>
-    <xacro:make_controller joint_name="shoulder_elbow_right_joint"    p="800" d="10"/>
+    <xacro:make_controller joint_name="hip_shoulder_right_joint"      p="8000" d="100"/>
+    <xacro:make_controller joint_name="shoulder_shoulder_right_joint" p="8000" d="100"/>
+    <xacro:make_controller joint_name="shoulder_elbow_right_joint"    p="8000" d="100"/>
 
   </xacro:macro>
 

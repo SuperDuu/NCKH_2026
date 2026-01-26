@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 # The main recursive "all" target.
 all: CMakeFiles/imu_process_node.dir/all
 all: CMakeFiles/uvc_node.dir/all
+all: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
 .PHONY : all
 
 # The main recursive "preinstall" target.
@@ -76,6 +77,8 @@ clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/ros2_pkg_uninstall.dir/clean
 clean: CMakeFiles/imu_process_node.dir/clean
 clean: CMakeFiles/uvc_node.dir/clean
+clean: CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean
+clean: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean
 .PHONY : clean
 
 #=============================================================================
@@ -181,6 +184,58 @@ uvc_node: CMakeFiles/uvc_node.dir/rule
 CMakeFiles/uvc_node.dir/clean:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/clean
 .PHONY : CMakeFiles/uvc_node.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir
+
+# All Build rule for target.
+CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_symlink_ros2_pkg"
+.PHONY : CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+.PHONY : CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/rule
+
+# Convenience name for target.
+ament_cmake_python_symlink_ros2_pkg: CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/rule
+.PHONY : ament_cmake_python_symlink_ros2_pkg
+
+# clean rule for target.
+CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean
+.PHONY : CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir
+
+# All Build rule for target.
+CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all: CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_build_ros2_pkg_egg"
+.PHONY : CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+.PHONY : CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/rule
+
+# Convenience name for target.
+ament_cmake_python_build_ros2_pkg_egg: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/rule
+.PHONY : ament_cmake_python_build_ros2_pkg_egg
+
+# clean rule for target.
+CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean
+.PHONY : CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

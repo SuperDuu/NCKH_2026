@@ -1,1 +1,1 @@
-rclcpp;urdf;xacro;robot_state_publisher;ros_gz_sim;ros_gz_bridge;ros_gz_interfaces;ament_lint_auto;ament_lint_common
+rclcpp;rclpy;urdf;xacro;sensor_msgs;geometry_msgs;trajectory_msgs;robot_state_publisher;ros_gz_sim;ros_gz_bridge;ros_gz_interfaces;python3-numpy;python3-gym;ament_lint_auto;ament_lint_common

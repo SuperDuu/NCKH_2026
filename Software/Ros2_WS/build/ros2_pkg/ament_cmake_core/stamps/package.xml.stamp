@@ -3,18 +3,28 @@
 <package format="3">
   <name>ros2_pkg</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Dự án Hybrid C++ và Python cho Reinforcement Learning</description>
   <maintainer email="vuducdu2k5@gmail.com">du</maintainer>
-  <license>TODO: License declaration</license>
+  <license>Apache-2.0</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <buildtool_depend>ament_cmake_python</buildtool_depend>
+
   <depend>rclcpp</depend>
+  <depend>rclpy</depend>
   <depend>urdf</depend>
   <depend>xacro</depend>
+  <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>trajectory_msgs</depend>
+  
   <depend>robot_state_publisher</depend>
   <depend>ros_gz_sim</depend>
   <depend>ros_gz_bridge</depend>
   <depend>ros_gz_interfaces</depend>
+
+  <exec_depend>python3-numpy</exec_depend>
+  <exec_depend>python3-gym</exec_depend>
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 

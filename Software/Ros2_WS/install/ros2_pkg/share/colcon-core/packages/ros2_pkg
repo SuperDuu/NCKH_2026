@@ -1,1 +1,1 @@
-rclcpp:robot_state_publisher:ros_gz_bridge:ros_gz_interfaces:ros_gz_sim:urdf:xacro
+geometry_msgs:python3-gym:python3-numpy:rclcpp:rclpy:robot_state_publisher:ros_gz_bridge:ros_gz_interfaces:ros_gz_sim:sensor_msgs:trajectory_msgs:urdf:xacro

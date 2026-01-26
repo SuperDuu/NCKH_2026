@@ -25,7 +25,7 @@ AMENT_CMAKE_ENVIRONMENT_PARENT_PREFIX_PATH_GENERATION:BOOL=ON
 
 //Replace the CMake install command with a custom implementation
 // using symlinks instead of copying resources
-AMENT_CMAKE_SYMLINK_INSTALL:BOOL=OFF
+AMENT_CMAKE_SYMLINK_INSTALL:BOOL=1
 
 //Generate an uninstall target to revert the effects of the install
 // step
@@ -328,20 +328,8 @@ ament_cmake_version_DIR:PATH=/opt/ros/jazzy/share/ament_cmake_version/cmake
 //The directory containing a CMake configuration file for ament_index_cpp.
 ament_index_cpp_DIR:PATH=/opt/ros/jazzy/share/ament_index_cpp/cmake
 
-//The directory containing a CMake configuration file for ament_lint_auto.
-ament_lint_auto_DIR:PATH=/opt/ros/jazzy/share/ament_lint_auto/cmake
-
-//The directory containing a CMake configuration file for ament_lint_common.
-ament_lint_common_DIR:PATH=ament_lint_common_DIR-NOTFOUND
-
 //The directory containing a CMake configuration file for builtin_interfaces.
 builtin_interfaces_DIR:PATH=/opt/ros/jazzy/share/builtin_interfaces/cmake
-
-//The directory containing a CMake configuration file for class_loader.
-class_loader_DIR:PATH=/opt/ros/jazzy/share/class_loader/cmake
-
-//The directory containing a CMake configuration file for console_bridge.
-console_bridge_DIR:PATH=/usr/lib/x86_64-linux-gnu/console_bridge/cmake
 
 //The directory containing a CMake configuration file for fastcdr.
 fastcdr_DIR:PATH=/opt/ros/jazzy/lib/cmake/fastcdr
@@ -362,19 +350,10 @@ geometry_msgs_DIR:PATH=/opt/ros/jazzy/share/geometry_msgs/cmake
 libstatistics_collector_DIR:PATH=/opt/ros/jazzy/share/libstatistics_collector/cmake
 
 //Path to a library.
-onelib:FILEPATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/liburdfdom_world.so
-
-//Path to a library.
-onelibd:FILEPATH=onelibd-NOTFOUND
-
-//Path to a library.
 pkgcfg_lib__OPENSSL_crypto:FILEPATH=/usr/lib/x86_64-linux-gnu/libcrypto.so
 
 //Path to a library.
 pkgcfg_lib__OPENSSL_ssl:FILEPATH=/usr/lib/x86_64-linux-gnu/libssl.so
-
-//The directory containing a CMake configuration file for pluginlib.
-pluginlib_DIR:PATH=/opt/ros/jazzy/share/pluginlib/cmake
 
 //The directory containing a CMake configuration file for rcl.
 rcl_DIR:PATH=/opt/ros/jazzy/share/rcl/cmake
@@ -390,6 +369,9 @@ rcl_yaml_param_parser_DIR:PATH=/opt/ros/jazzy/share/rcl_yaml_param_parser/cmake
 
 //The directory containing a CMake configuration file for rclcpp.
 rclcpp_DIR:PATH=/opt/ros/jazzy/share/rclcpp/cmake
+
+//The directory containing a CMake configuration file for rclpy.
+rclpy_DIR:PATH=/opt/ros/jazzy/share/rclpy/cmake
 
 //The directory containing a CMake configuration file for rcpputils.
 rcpputils_DIR:PATH=/opt/ros/jazzy/share/rcpputils/cmake
@@ -484,9 +466,6 @@ statistics_msgs_DIR:PATH=/opt/ros/jazzy/share/statistics_msgs/cmake
 //The directory containing a CMake configuration file for std_msgs.
 std_msgs_DIR:PATH=/opt/ros/jazzy/share/std_msgs/cmake
 
-//The directory containing a CMake configuration file for tinyxml2_vendor.
-tinyxml2_vendor_DIR:PATH=/opt/ros/jazzy/share/tinyxml2_vendor/cmake
-
 //The directory containing a CMake configuration file for tracetools.
 tracetools_DIR:PATH=/opt/ros/jazzy/share/tracetools/cmake
 
@@ -495,21 +474,6 @@ trajectory_msgs_DIR:PATH=/opt/ros/jazzy/share/trajectory_msgs/cmake
 
 //The directory containing a CMake configuration file for type_description_interfaces.
 type_description_interfaces_DIR:PATH=/opt/ros/jazzy/share/type_description_interfaces/cmake
-
-//The directory containing a CMake configuration file for urdf.
-urdf_DIR:PATH=/opt/ros/jazzy/share/urdf/cmake
-
-//The directory containing a CMake configuration file for urdf_parser_plugin.
-urdf_parser_plugin_DIR:PATH=/opt/ros/jazzy/share/urdf_parser_plugin/cmake
-
-//The directory containing a CMake configuration file for urdfdom.
-urdfdom_DIR:PATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/urdfdom/cmake
-
-//The directory containing a CMake configuration file for urdfdom_headers.
-urdfdom_headers_DIR:PATH=/opt/ros/jazzy/lib/x86_64-linux-gnu/urdfdom_headers/cmake
-
-//The directory containing a CMake configuration file for xacro.
-xacro_DIR:PATH=/opt/ros/jazzy/share/xacro/cmake
 
 
 ########################
@@ -677,6 +641,9 @@ OPENSSL_SSL_LIBRARY-ADVANCED:INTERNAL=1
 PKG_CONFIG_ARGN-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: PKG_CONFIG_EXECUTABLE
 PKG_CONFIG_EXECUTABLE-ADVANCED:INTERNAL=1
+//The directory for Python library installation. This needs to
+// be in PYTHONPATH when 'setup.py install' is called.
+PYTHON_INSTALL_DIR:INTERNAL=lib/python3.12/site-packages
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
 _OPENSSL_CFLAGS:INTERNAL=-I/usr/include
@@ -725,6 +692,8 @@ _Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;32;;cpython-312-x86_64
 _Python3_INTERPRETER_SIGNATURE:INTERNAL=4c8bfa8951e99fa32e4000a94f8c04a2
 //NumPy reason failure
 _Python3_NumPy_REASON_FAILURE:INTERNAL=
+//Index for unique symlink install targets
+__AMENT_CMAKE_SYMLINK_INSTALL_TARGETS_INDEX:INTERNAL=1
 __pkg_config_arguments__OPENSSL:INTERNAL=QUIET;openssl
 __pkg_config_checked__OPENSSL:INTERNAL=1
 //ADVANCED property for variable: pkgcfg_lib__OPENSSL_crypto

@@ -223,6 +223,32 @@ uvc_node/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/build
 .PHONY : uvc_node/fast
 
+#=============================================================================
+# Target rules for targets named ament_cmake_python_symlink_ros2_pkg
+
+# Build rule for target.
+ament_cmake_python_symlink_ros2_pkg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_symlink_ros2_pkg
+.PHONY : ament_cmake_python_symlink_ros2_pkg
+
+# fast build rule for target.
+ament_cmake_python_symlink_ros2_pkg/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
+.PHONY : ament_cmake_python_symlink_ros2_pkg/fast
+
+#=============================================================================
+# Target rules for targets named ament_cmake_python_build_ros2_pkg_egg
+
+# Build rule for target.
+ament_cmake_python_build_ros2_pkg_egg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_build_ros2_pkg_egg
+.PHONY : ament_cmake_python_build_ros2_pkg_egg
+
+# fast build rule for target.
+ament_cmake_python_build_ros2_pkg_egg/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build
+.PHONY : ament_cmake_python_build_ros2_pkg_egg/fast
+
 src/imu_process_node.o: src/imu_process_node.cpp.o
 .PHONY : src/imu_process_node.o
 
@@ -284,6 +310,8 @@ help:
 	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... test"
+	@echo "... ament_cmake_python_build_ros2_pkg_egg"
+	@echo "... ament_cmake_python_symlink_ros2_pkg"
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... imu_process_node"

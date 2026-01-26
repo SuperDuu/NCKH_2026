@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:property name="petg_mu" value="0.85" /> 
-  <xacro:property name="petg_kp" value="100000.0" /> 
-  <xacro:property name="petg_kd" value="1.0" />
+  <xacro:property name="petg_mu" value="1.0" /> 
+  <xacro:property name="petg_kp" value="1000000.0" /> 
+  <xacro:property name="petg_kd" value="100.0" />
 
   <xacro:macro name="setup_link" params="link_name">
     <gazebo reference="${link_name}">
@@ -17,7 +17,7 @@
   <xacro:macro name="setup_joint" params="joint_name">
     <gazebo reference="${joint_name}">
       <implicitSpringDamper>true</implicitSpringDamper>
-      <springStiffness>5.0</springStiffness> 
+      <springStiffness>0.0</springStiffness> 
       <springReference>0.0</springReference>
       <friction>1.5</friction> 
       <damping>1.0</damping>

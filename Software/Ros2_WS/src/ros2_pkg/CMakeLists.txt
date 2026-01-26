@@ -12,6 +12,7 @@ find_package(urdf REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(xacro REQUIRED)
 find_package(trajectory_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.

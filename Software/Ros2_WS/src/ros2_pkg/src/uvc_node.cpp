@@ -155,16 +155,16 @@ private:
     void publish_command(double hn, double ht, double dg, double mct, double mcn) {
         // --- CHÂN TRÁI ---
         send_cmd("base_hip_left",   -hn);
-        send_cmd("hip_hip_left",    ht);
+        send_cmd("hip_hip_left",    -ht);
         send_cmd("hip_knee_left",    -dg); 
-        send_cmd("knee_ankle_left", mct);
+        send_cmd("knee_ankle_left", -mct);
         send_cmd("ankle_ankle_left",-mcn);
 
         // --- CHÂN PHẢI (Mirror) ---
         send_cmd("base_hip_right",    hn);
-        send_cmd("hip_hip_right",    -ht);
+        send_cmd("hip_hip_right",    ht);
         send_cmd("hip_knee_right",    dg); 
-        send_cmd("knee_ankle_right",  -mct);
+        send_cmd("knee_ankle_right",  mct);
         send_cmd("ankle_ankle_right", -mcn);
         
         // Giữ hông giữa thẳng

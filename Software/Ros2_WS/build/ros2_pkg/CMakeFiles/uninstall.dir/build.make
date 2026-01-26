@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 # Utility rule file for uninstall.
 
@@ -78,6 +78,6 @@ CMakeFiles/uninstall.dir/clean:
 .PHONY : CMakeFiles/uninstall.dir/clean
 
 CMakeFiles/uninstall.dir/depend:
-	cd /home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/uninstall.dir/depend
 

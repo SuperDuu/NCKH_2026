@@ -1,1 +1,1 @@
-/home/dat/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg
+rclcpp;urdf;xacro;robot_state_publisher;ros_gz_sim;ros_gz_bridge;ros_gz_interfaces;ament_lint_auto;ament_lint_common

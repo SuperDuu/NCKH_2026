@@ -17,7 +17,7 @@
   <xacro:macro name="setup_joint" params="joint_name">
     <gazebo reference="${joint_name}">
       <implicitSpringDamper>true</implicitSpringDamper>
-      <springStiffness>1.0</springStiffness> 
+      <springStiffness>5.0</springStiffness> 
       <springReference>0.0</springReference>
       <friction>1.5</friction> 
       <damping>1.0</damping>

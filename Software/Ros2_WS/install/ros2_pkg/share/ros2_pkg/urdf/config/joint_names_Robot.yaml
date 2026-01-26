@@ -1,1 +1,1 @@
-/home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf/config/joint_names_Robot.yaml
+controller_joint_names: ['', 'base_hip_left_joint', 'hip_hip_left_joint', 'hip_knee_left_joint', 'knee_ankle_left_joint', 'ankle_ankle_left_joint', 'base_hip_right_joint', 'hip_hip_right_joint', 'hip_knee_right_joint', 'knee_ankle_right_joint', 'ankle_ankle_right_joint', 'base_hip_middle_joint', 'hip_shoulder_left_joint', 'shoulder_shoulder_left_joint', 'shoulder_elbow_left_joint', 'hip_shoulder_right_joint', 'shoulder_shoulder_right_joint', 'shoulder_elbow_right_joint', ]

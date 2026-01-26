@@ -1,1 +1,17 @@
-/home/dat/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf/CMakeLists.txt
+cmake_minimum_required(VERSION 3.8)
+
+project(Robot)
+
+find_package(ament_cmake REQUIRED)
+
+# Install resource directories
+install(
+  DIRECTORY
+    config
+    launch
+    meshes
+    urdf
+  DESTINATION share/${PROJECT_NAME}
+)
+
+ament_package()

@@ -396,6 +396,11 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/detail/statistic_data_point__traits.hpp \
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/metrics_message.hpp \
   /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/bool.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__builder.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__struct.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__traits.hpp \
+  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__type_support.hpp \
   /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__builder.hpp \
   /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__struct.hpp \
   /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__traits.hpp \
@@ -948,10 +953,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/tr1/riemann_zeta.tcc:
 
-/usr/include/c++/13/tr1/special_function_util.h:
-
-/usr/include/c++/13/tr1/poly_laguerre.tcc:
-
 /usr/include/x86_64-linux-gnu/bits/types/timer_t.h:
 
 /usr/include/c++/13/tr1/poly_hermite.tcc:
@@ -1070,6 +1071,14 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/bits/vector.tcc:
 
+/usr/include/c++/13/bits/utility.h:
+
+/usr/include/c++/13/bits/uses_allocator_args.h:
+
+/usr/include/c++/13/bits/uses_allocator.h:
+
+/usr/include/c++/13/bits/unordered_set.h:
+
 /usr/include/endian.h:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/subscription_options.hpp:
@@ -1176,8 +1185,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/visibility_control.hpp:
 
-/usr/include/c++/13/bits/utility.h:
-
 /usr/include/c++/13/cmath:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/message_memory_strategy.hpp:
@@ -1191,6 +1198,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rclcpp/rclcpp/macros.hpp:
 
 /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__struct.hpp:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__builder.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/intra_process_setting.hpp:
 
@@ -1472,8 +1481,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64_multi_array__type_support.hpp:
 
-/usr/include/c++/13/bits/unordered_set.h:
-
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/experimental/executors/events_executor/events_executor_event_types.hpp:
@@ -1562,8 +1569,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/vector3.hpp:
 
-/usr/include/c++/13/bits/uses_allocator_args.h:
-
 /opt/ros/jazzy/include/rcpputils/rcpputils/thread_safety_annotations.hpp:
 
 /opt/ros/jazzy/include/rclcpp/rclcpp/experimental/subscription_intra_process_base.hpp:
@@ -1636,8 +1641,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /opt/ros/jazzy/include/rosidl_dynamic_typesupport/rosidl_dynamic_typesupport/visibility_control.h:
 
-/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/set_parameters_atomically__traits.hpp:
-
 /opt/ros/jazzy/include/rcpputils/rcpputils/shared_library.hpp:
 
 /usr/include/c++/13/bits/basic_string.h:
@@ -1696,6 +1699,12 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/bits/allocator.h:
 
+/usr/include/c++/13/bits/unordered_map.h:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/experimental/buffers/buffer_implementation_base.hpp:
+
+/opt/ros/jazzy/include/rclcpp/rclcpp/any_service_callback.hpp:
+
 /opt/ros/jazzy/include/rcl_yaml_param_parser/rcl_yaml_param_parser/visibility_control.h:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameter_types__struct.hpp:
@@ -1739,6 +1748,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /usr/include/c++/13/tr1/gamma.tcc:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/get_parameters__type_support.hpp:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/bool.hpp:
 
 /opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/set_parameters__builder.hpp:
 
@@ -1867,6 +1878,8 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/rcutils/rcutils/snprintf.h:
 
 /usr/include/c++/13/initializer_list:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__type_support.hpp:
 
 /opt/ros/jazzy/include/rcutils/rcutils/testing/fault_injection.h:
 
@@ -1998,8 +2011,6 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 
 /usr/include/c++/13/bits/stl_pair.h:
 
-/usr/include/c++/13/bits/uses_allocator.h:
-
 /usr/include/c++/13/ext/atomicity.h:
 
 /opt/ros/jazzy/include/rmw/rmw/time.h:
@@ -2125,6 +2136,16 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /opt/ros/jazzy/include/statistics_msgs/statistics_msgs/msg/rosidl_generator_cpp__visibility_control.hpp:
 
 /usr/include/alloca.h:
+
+/opt/ros/jazzy/include/rcl_interfaces/rcl_interfaces/srv/detail/set_parameters_atomically__traits.hpp:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__struct.hpp:
+
+/usr/include/c++/13/tr1/special_function_util.h:
+
+/usr/include/c++/13/tr1/poly_laguerre.tcc:
+
+/opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__traits.hpp:
 
 /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__struct.hpp:
 
@@ -2321,9 +2342,3 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: /home/du/Desktop/NCKH_2026/Software/
 /usr/include/c++/13/bits/unique_lock.h:
 
 /usr/include/c++/13/bits/unique_ptr.h:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/experimental/buffers/buffer_implementation_base.hpp:
-
-/opt/ros/jazzy/include/rclcpp/rclcpp/any_service_callback.hpp:
-
-/usr/include/c++/13/bits/unordered_map.h:

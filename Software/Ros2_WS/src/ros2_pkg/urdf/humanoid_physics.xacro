@@ -4,6 +4,12 @@
   <xacro:property name="petg_mu" value="1.0" /> 
   <xacro:property name="petg_kp" value="1000000.0" /> 
   <xacro:property name="petg_kd" value="100.0" />
+  <!-- Silicone pad properties (for ankle soles) -->
+  <!-- Increased defaults to reduce slipping; tune if needed -->
+  <xacro:property name="silicone_mu" value="6.0" />
+  <xacro:property name="silicone_kp" value="5000000.0" />
+  <xacro:property name="silicone_kd" value="500.0" />
+  <xacro:property name="silicone_thickness" value="0.002" /> <!-- meters (2 mm) -->
 
   <xacro:macro name="setup_link" params="link_name">
     <gazebo reference="${link_name}">
@@ -63,6 +69,18 @@
     <xacro:make_controller joint_name="knee_ankle_left_joint"  p="8000" d="100"/>
     <xacro:make_controller joint_name="ankle_ankle_left_joint" p="8000" d="100"/>
 
+    <!-- Add silicone high-friction pad to left ankle link (simulated via higher mu/kp/kd) -->
+    <gazebo reference="ankle_ankle_left_link">
+      <!-- friction coefficients (mu1, mu2) increased to simulate sticky silicone -->
+      <mu1>${silicone_mu}</mu1>
+      <mu2>${silicone_mu}</mu2>
+      <!-- contact stiffness/damping tuned for soft pad -->
+      <kp>${silicone_kp}</kp>
+      <kd>${silicone_kd}</kd>
+      <!-- note: thickness is for documentation; to add geometry, modify URDF collision separately -->
+      <silicone_thickness>${silicone_thickness}</silicone_thickness>
+    </gazebo>
+
     <xacro:setup_joint joint_name="base_hip_right_joint"/>
     <xacro:setup_joint joint_name="hip_hip_right_joint"/>
     <xacro:setup_joint joint_name="hip_knee_right_joint"/>
@@ -74,6 +92,15 @@
     <xacro:make_controller joint_name="hip_knee_right_joint"    p="8000" d="100"/>
     <xacro:make_controller joint_name="knee_ankle_right_joint"  p="8000" d="100"/>
     <xacro:make_controller joint_name="ankle_ankle_right_joint" p="8000" d="100"/>
+
+    <!-- Add silicone high-friction pad to right ankle link -->
+    <gazebo reference="ankle_ankle_right_link">
+      <mu1>${silicone_mu}</mu1>
+      <mu2>${silicone_mu}</mu2>
+      <kp>${silicone_kp}</kp>
+      <kd>${silicone_kd}</kd>
+      <silicone_thickness>${silicone_thickness}</silicone_thickness>
+    </gazebo>
     
     <xacro:setup_joint joint_name="base_hip_middle_joint"/>
     <xacro:make_controller joint_name="base_hip_middle_joint"   p="8000" d="100"/>

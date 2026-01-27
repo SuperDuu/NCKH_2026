@@ -1,1 +1,0 @@
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_training_node.py

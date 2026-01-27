@@ -8,7 +8,6 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/python3.12/site-packages/ros2_pkg/rl_training_node.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/imu_process_node
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/uvc_node
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/rl_training_node.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/launch/rviz.launch.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/launch/sim.launch.py
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/CMakeLists.txt
@@ -32,7 +31,6 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_ankle_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_ankle_right_link.STL
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_knee_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL
@@ -58,7 +56,6 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/hip_shoulder_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_ankle_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_ankle_right_link.STL
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/knee_knee_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_elbow_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_elbow_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/shoulder_shoulder_left_link.STL

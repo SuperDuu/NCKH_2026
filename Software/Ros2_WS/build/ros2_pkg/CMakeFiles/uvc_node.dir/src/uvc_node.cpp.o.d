@@ -701,6 +701,11 @@ CMakeFiles/uvc_node.dir/src/uvc_node.cpp.o: \
  /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__traits.hpp \
  /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__type_support.hpp \
  /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/rosidl_generator_cpp__visibility_control.hpp \
+ /opt/ros/jazzy/include/std_msgs/std_msgs/msg/bool.hpp \
+ /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__struct.hpp \
+ /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__builder.hpp \
+ /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__traits.hpp \
+ /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/bool__type_support.hpp \
  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/float64.hpp \
  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__struct.hpp \
  /opt/ros/jazzy/include/std_msgs/std_msgs/msg/detail/float64__builder.hpp \

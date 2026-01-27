@@ -123,13 +123,15 @@ def generate_launch_description():
         output='screen',
         parameters=[{'use_sim_time': True}]
     )
-    # # 9. Node RL Training (Bộ não học tập)
-    # rl_training_node = Node(
-    #     package='ros2_pkg',
-    #     executable='rl_training_node.py', # Phải trùng với tên file trong thư mục của bạn
-    #     output='screen',
-    #     parameters=[{'use_sim_time': True}]
-    # )
+    
+    # 9. Node RL Training (Bộ não học tập) - Tối ưu hóa tham số UVC
+    rl_training_node = Node(
+        package='ros2_pkg',
+        executable='rl_training_node',
+        output='screen',
+        parameters=[{'use_sim_time': True}]
+    )
+    
     return LaunchDescription([
         SetEnvironmentVariable(name='GZ_SIM_RESOURCE_PATH', value=resource_path),
         node_robot_state_publisher,
@@ -137,6 +139,6 @@ def generate_launch_description():
         spawn_robot,
         bridge,
         imu_process_node, 
-        uvc_controller_node
-        # rl_training_node
+        uvc_controller_node,
+        rl_training_node  # ✅ Thêm RL training node
     ])

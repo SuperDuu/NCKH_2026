@@ -33,7 +33,8 @@ install(TARGETS imu_process_node uvc_node
 
 install(PROGRAMS
   ros2_pkg/rl_training_node.py
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/${PROJECT_NAME}
+  RENAME rl_training_node)
 
 install(DIRECTORY launch urdf rviz
   DESTINATION share/${PROJECT_NAME})

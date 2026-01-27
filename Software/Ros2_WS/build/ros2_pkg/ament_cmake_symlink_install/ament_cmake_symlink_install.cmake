@@ -325,9 +325,6 @@ ament_cmake_symlink_install_directory("/home/du/Desktop/NCKH_2026/Software/Ros2_
 # install("TARGETS" "imu_process_node" "uvc_node" "DESTINATION" "lib/ros2_pkg")
 include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install_targets_0_${CMAKE_INSTALL_CONFIG_NAME}.cmake")
 
-# install(PROGRAMS "ros2_pkg/rl_training_node.py" "DESTINATION" "lib/ros2_pkg")
-ament_cmake_symlink_install_programs("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg" PROGRAMS "ros2_pkg/rl_training_node.py" "DESTINATION" "lib/ros2_pkg")
-
 # install(DIRECTORY "launch" "urdf" "rviz" "DESTINATION" "share/ros2_pkg")
 ament_cmake_symlink_install_directory("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg" DIRECTORY "launch" "urdf" "rviz" "DESTINATION" "share/ros2_pkg")
 

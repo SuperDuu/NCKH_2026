@@ -670,11 +670,11 @@ private:
     
     void apply_joint_limits(double &hn, double &ht, double &dg, double &mct, double &mcn, bool is_right) {
         // Áp dụng giới hạn từ URDF của bạn
-        hn = std::clamp(hn, -0.15, 0.65);     // base_hip
-        ht = std::clamp(ht, -0.7, 0.65);      // hip_hip
-        dg = std::clamp(dg, -1.3, 1.3);       // hip_knee
-        mct = std::clamp(mct, -0.75, 0.75);   // knee_ankle
-        mcn = std::clamp(mcn, -1.2, 1.2);     // ankle_ankle
+        // hn = std::clamp(hn, -0.15, 0.65);     // base_hip
+        // ht = std::clamp(ht, -0.7, 0.65);      // hip_hip
+        // dg = std::clamp(dg, -1.3, 1.3);       // hip_knee
+        // mct = std::clamp(mct, -0.75, 0.75);   // knee_ankle
+        // mcn = std::clamp(mcn, -1.2, 1.2);     // ankle_ankle
         
         // Đảo dấu cho chân phải
         if (is_right) {
@@ -688,14 +688,14 @@ private:
     void publish_legs(double l_hn, double l_ht, double l_dg, double l_mct, double l_mcn,
                       double r_hn, double r_ht, double r_dg, double r_mct, double r_mcn) {
         // Left Leg
-        send_cmd("base_hip_left", l_hn);
+        send_cmd("base_hip_left", -l_hn);
         send_cmd("hip_hip_left", -l_ht);
         send_cmd("hip_knee_left", l_dg);
         send_cmd("knee_ankle_left", l_mct);
-        send_cmd("ankle_ankle_left", l_mcn);
+        send_cmd("ankle_ankle_left", -l_mcn);
         
         // Right Leg
-        send_cmd("base_hip_right", -r_hn);
+        send_cmd("base_hip_right", r_hn);
         send_cmd("hip_hip_right", r_ht);
         send_cmd("hip_knee_right", -r_dg);
         send_cmd("knee_ankle_right", -r_mct);

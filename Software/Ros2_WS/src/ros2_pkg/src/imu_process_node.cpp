@@ -46,8 +46,8 @@ private:
 
         // 4. Đổi sang ĐỘ và Gửi đi
         auto angle_msg = geometry_msgs::msg::Vector3();
-        angle_msg.x = pitch_rad * (180.0 / M_PI);; // X đại diện cho PITCH
-        angle_msg.y = roll_rad * (180.0 / M_PI);;  // Y đại diện cho ROLL
+        angle_msg.y = pitch_rad * (180.0 / M_PI);; // X đại diện cho PITCH
+        angle_msg.x = roll_rad * (180.0 / M_PI);;  // Y đại diện cho ROLL
         angle_msg.z = yaw_rad * (180.0 / M_PI);;   // Z đại diện cho YAW
         angle_pub_->publish(angle_msg);
         // std::cout<<angle_msg.x<<" "<<angle_msg.y<<" "<<angle_msg.z<<" "<<std::endl;

@@ -1,225 +1,4 @@
 #include "std_msgs/msg/float64_multi_array.hpp"  // THÊM DÒNG NÀY
-// #include "rclcpp/rclcpp.hpp"
-// #include "geometry_msgs/msg/vector3.hpp"
-// #include "std_msgs/msg/float64.hpp"
-// #include <cmath>
-// #include <algorithm>
-// #include <map>
-// #include <string>
-
-// const double L3 = 60.0;     
-// const double L4 = 100.0;
-// const double L5 = 65.0;   
-// const double HEIGHT_STD = 224.0; 
-
-// class UvcControllerNode : public rclcpp::Node {
-// public:
-//     UvcControllerNode() : Node("uvc_node") {
-//         gain_pitch_p = 0.8; gain_pitch_d = 0.025;  
-//         gain_roll_p  = 0.8; gain_roll_d  = 0.015;
-//         last_pitch = 0.0; last_roll = 0.0;
-
-//         std::vector<std::string> joints = {
-//             "base_hip_left", "hip_hip_left", "hip_knee_left", "knee_ankle_left", "ankle_ankle_left",
-//             "base_hip_right", "hip_hip_right", "hip_knee_right", "knee_ankle_right", "ankle_ankle_right"
-//         };
-//         for (const auto& j : joints) pubs_[j] = create_joint_pub(j + "_joint");
-
-//         angle_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
-//             "/robot_orientation", 10, std::bind(&UvcControllerNode::control_callback, this, std::placeholders::_1));
-
-//         RCLCPP_INFO(this->get_logger(), "--> UVC GEOMETRY-CORRECTED CONTROL: Ready");
-//     }
-
-// private:
-//     // ... (Giữ nguyên các hàm phụ trợ send_cmd, create_joint_pub) ...
-
-//     void control_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
-//         double pitch = -msg->x;
-//         double roll  = -msg->y;
-
-
-
-//         double l_hn, l_ht, l_dg, l_mct, l_mcn;
-//         double r_hn, r_ht, r_dg, r_mct, r_mcn;
-
-//         solve_ik(x, y, z, l_hn, l_ht, l_dg, l_mct, l_mcn);
-//         solve_ik(x, y, z, r_hn, r_ht, r_dg, r_mct, r_mcn);
-
-//         publish_full_body(l_hn, l_ht, l_dg, l_mct, l_mcn, r_hn, r_ht, r_dg, r_mct, r_mcn);
-//     }
-
-//     void solve_ik(double dx, double dy, double dz, double &hn, double &ht, double &dg, double &mct, double &mcn) {
-//         hn = atan2(dy, dz);
-//         double d_yz = sqrt(dz*dz + dy*dy);
-//         double cos3 = (pow(d_yz - L5, 2) + dx*dx - L3*L3 - L4*L4) / (2*L3*L4);
-//         cos3 = std::clamp(cos3, -1.0, 1.0);
-//         double sin3 = sqrt(1.0 - cos3*cos3);
-//         dg = atan2(sin3, cos3);
-//         ht = atan2(sin3*L4, L3 + cos3*L4) + atan2(dx, d_yz - L5);
-//         mct = -dg + ht;
-//         mcn = -hn;
-//     }
-
-//     void publish_full_body(double l_hn, double l_ht, double l_dg, double l_mct, double l_mcn,
-//                            double r_hn, double r_ht, double r_dg, double r_mct, double r_mcn) {
-//         // Chân Trái
-//         send_cmd("base_hip_left", l_hn);
-//         send_cmd("hip_hip_left", -l_ht);
-//         send_cmd("hip_knee_left", l_dg);
-//         send_cmd("knee_ankle_left", l_mct);
-//         send_cmd("ankle_ankle_left", l_mcn);
-
-//         // Chân Phải
-//         send_cmd("base_hip_right", -r_hn);
-//         send_cmd("hip_hip_right", r_ht);
-//         send_cmd("hip_knee_right", -r_dg);
-//         send_cmd("knee_ankle_right", -r_mct);
-//         send_cmd("ankle_ankle_right", r_mcn);
-//     }
-    
-//     // Các khớp tay, háng giữa... (tương tự như trước)
-//     void send_cmd(std::string key, double value) {
-//         if (pubs_.count(key)) {
-//             std_msgs::msg::Float64 msg; msg.data = value; pubs_[key]->publish(msg);
-//         }
-//     }
-//     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr create_joint_pub(std::string joint_name) {
-//         return this->create_publisher<std_msgs::msg::Float64>("/model/humanoid_robot/joint/" + joint_name + "/cmd_pos", 10);
-//     }
-
-//     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
-//     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr angle_sub_;
-//     double last_pitch, last_roll, gain_pitch_p, gain_pitch_d, gain_roll_p, gain_roll_d;
-//     double x=0.0, y=0.0, z=HEIGHT_STD-20;
-// };
-
-// int main(int argc, char** argv) {
-//     rclcpp::init(argc, argv);
-//     rclcpp::spin(std::make_shared<UvcControllerNode>());
-//     rclcpp::shutdown();
-//     return 0;
-// }
-
-
-
-
-// #include "rclcpp/rclcpp.hpp"
-// #include "geometry_msgs/msg/vector3.hpp"
-// #include "std_msgs/msg/float64.hpp"
-// #include <cmath>
-// #include <algorithm>
-// #include <map>
-// #include <string>
-
-// const double L3 = 60.0;     
-// const double L4 = 100.0;
-// const double L5 = 65.0;   
-// const double HEIGHT_STD = 224.0; 
-
-// class UvcControllerNode : public rclcpp::Node {
-// public:
-//     UvcControllerNode() : Node("uvc_node") {
-//         gain=1;  
-//         rr=0.5;
-
-//         std::vector<std::string> joints = {
-//             "base_hip_left", "hip_hip_left", "hip_knee_left", "knee_ankle_left", "ankle_ankle_left",
-//             "base_hip_right", "hip_hip_right", "hip_knee_right", "knee_ankle_right", "ankle_ankle_right"
-//         };
-//         for (const auto& j : joints) pubs_[j] = create_joint_pub(j + "_joint");
-
-//         angle_sub_ = this->create_subscription<geometry_msgs::msg::Vector3>(
-//             "/robot_orientation", 10, std::bind(&UvcControllerNode::control_callback, this, std::placeholders::_1));
-
-//         RCLCPP_INFO(this->get_logger(), "--> UVC GEOMETRY-CORRECTED CONTROL: Ready");
-//     }
-
-// private:
-//     // ... (Giữ nguyên các hàm phụ trợ send_cmd, create_joint_pub) ...
-
-//     void control_callback(const geometry_msgs::msg::Vector3::SharedPtr msg) {
-//         double pitch = -msg->x *M_PI/180;
-//         double roll  = -msg->y *M_PI/180;
-
-//         double tm = sqrt(roll*roll+pitch*pitch);
-//         double thetay=atan2(y,z);
-
-//         double lyh=z/cos(thetay);
-//         y=lyh*sin(thetay+roll*gain);
-//         double h_tmp = lyh*cos(thetay+roll*gain);
-//         double thetax=atan2(x,h_tmp);
-//         double lxh=h_tmp/cos(thetax);
-//         x=lxh*sin(thetax+pitch*gain);
-//         z=lxh*cos(thetax+pitch*gain);
-//         if(z<HEIGHT_STD-5) z+= (HEIGHT_STD-z)*rr;
-
-//         if(tm > 0.01){
-//             x-=x*rr;
-//             y-=y*rr;
-//         }
-//         // if(fabs(x)<=3)x=0;
-//         // if(fabs(y)<=3)y=0;
-//         double l_hn, l_ht, l_dg, l_mct, l_mcn;
-//         double r_hn, r_ht, r_dg, r_mct, r_mcn;
-//         std::cout<<"x: "<<x<<" y: "<<y<< " z: "<<z<<std::endl;
-//         solve_ik(x, y, z, l_hn, l_ht, l_dg, l_mct, l_mcn);
-//         solve_ik(x, y, z, r_hn, r_ht, r_dg, r_mct, r_mcn);
-
-//         publish_full_body(l_hn, l_ht, l_dg, l_mct, l_mcn, r_hn, r_ht, r_dg, r_mct, r_mcn);
-//     }
-
-//     void solve_ik(double dx, double dy, double dz, double &hn, double &ht, double &dg, double &mct, double &mcn) {
-//         hn = atan2(dy, dz);
-//         double d_yz = sqrt(dz*dz + dy*dy);
-//         double cos3 = (pow(d_yz - L5, 2) + dx*dx - L3*L3 - L4*L4) / (2*L3*L4);
-//         cos3 = std::clamp(cos3, -1.0, 1.0);
-//         double sin3 = sqrt(1.0 - cos3*cos3);
-//         dg = atan2(sin3, cos3);
-//         ht = atan2(sin3*L4, L3 + cos3*L4) + atan2(dx, d_yz - L5);
-//         mct = -dg + ht;
-//         mcn = -hn;
-//     }
-
-//     void publish_full_body(double l_hn, double l_ht, double l_dg, double l_mct, double l_mcn,
-//                            double r_hn, double r_ht, double r_dg, double r_mct, double r_mcn) {
-//         // Chân Trái
-//         send_cmd("base_hip_left", l_hn);
-//         send_cmd("hip_hip_left", -l_ht);
-//         send_cmd("hip_knee_left", l_dg);
-//         send_cmd("knee_ankle_left", l_mct);
-//         send_cmd("ankle_ankle_left", l_mcn);
-
-//         // Chân Phải
-//         send_cmd("base_hip_right", -r_hn);
-//         send_cmd("hip_hip_right", r_ht);
-//         send_cmd("hip_knee_right", -r_dg);
-//         send_cmd("knee_ankle_right", -r_mct);
-//         send_cmd("ankle_ankle_right", r_mcn);
-//     }
-    
-//     // Các khớp tay, háng giữa... (tương tự như trước)
-//     void send_cmd(std::string key, double value) {
-//         if (pubs_.count(key)) {
-//             std_msgs::msg::Float64 msg; msg.data = value; pubs_[key]->publish(msg);
-//         }
-//     }
-//     rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr create_joint_pub(std::string joint_name) {
-//         return this->create_publisher<std_msgs::msg::Float64>("/model/humanoid_robot/joint/" + joint_name + "/cmd_pos", 10);
-//     }
-
-//     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
-//     rclcpp::Subscription<geometry_msgs::msg::Vector3>::SharedPtr angle_sub_;
-//     double gain, rr;
-//     double x=10.0, y=10.0, z=HEIGHT_STD-5;
-// };
-
-// int main(int argc, char** argv) {
-//     rclcpp::init(argc, argv);
-//     rclcpp::spin(std::make_shared<UvcControllerNode>());
-//     rclcpp::shutdown();
-//     return 0;
-// }
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/vector3.hpp"
 #include "std_msgs/msg/bool.hpp"
@@ -229,7 +8,8 @@
 #include <map>
 #include <string>
 #include <memory>
-
+#include <chrono>  // Thêm dòng này nếu chưa có
+#include <thread>  // Thêm dòng này nếu chưa có
 const double L3 = 60.0;
 const double L4 = 100.0;
 const double L5 = 65.0;
@@ -383,24 +163,69 @@ private:
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    //// RESET CALLBACK - Xử lý lệnh reset từ RL training ////
+    ///////////////////////////////////////////////////////////////////////////////////
     void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
         if (msg->data) {
-            // Immediate safe reset: go to standing pose
-            RCLCPP_INFO(this->get_logger(), "[RL RESET] Received reset request, forcing stand.");
-            // Reset integrators and heights to default standing
-            dxi = 0.0;
-            dyi = stance_width;
-            dxis = 0.0;
-            dyis = -stance_width;
-            autoH = HEIGHT_STD;
-            fh = 0.0;
+            RCLCPP_INFO(this->get_logger(), "========================================");
+            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST from RL Training");
+            RCLCPP_INFO(this->get_logger(), "========================================");
+            
+            // 1. Switch to STANDING mode
+            mode = 0;
+            
+            // 2. Reset walking state variables
             fwct = 0.0;
-            support_leg = 0;
-            mode = 1; // standing mode
-            publish_parallel_stance();
+            fh = 0.0;
+            support_leg = 0;  // Right leg support
+            
+            // 3. Reset foot positions to neutral stance
+            dxi = 0.0;        // Right foot X (forward/back)
+            dyi = stance_width;   // Right foot Y (right side)
+            dxis = 0.0;       // Left foot X (forward/back)
+            dyis = -stance_width; // Left foot Y (left side)
+            dxib = 0.0;
+            dyib = 0.0;
+            
+            // 4. Reset IMU state
+            pitch = 0.0;
+            roll = 0.0;
+            pitch_filtered = 0.0;
+            roll_filtered = 0.0;
+            pitch_prev = 0.0;
+            roll_prev = 0.0;
+            pitch_derivative = 0.0;
+            roll_derivative = 0.0;
+            last_tilt_magnitude = 0.0;
+            
+            // 5. CRITICAL: Immediately publish neutral stance to reset all joint angles
+            // This will straighten the legs
+            double l_hn, l_ht, l_dg, l_mct, l_mcn;
+            double r_hn, r_ht, r_dg, r_mct, r_mcn;
+            
+            // Compute IK for parallel standing pose
+            solve_ik(0.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
+            solve_ik(0.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
+            
+            // Publish multiple times to ensure command is received
+            for(int i = 0; i < 10; i++) {
+                publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
+                            r_hn, r_ht, r_dg, r_mct, r_mcn);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            }
+            
+            // 6. Reset calibration counters
+            calibration_samples = 0;
+            stable_count = 0;
+            
+            RCLCPP_INFO(this->get_logger(), "✓ Reset complete:");
+            RCLCPP_INFO(this->get_logger(), "  - Mode: STANDING (0)");
+            RCLCPP_INFO(this->get_logger(), "  - Stance width: %.1f mm", stance_width);
+            RCLCPP_INFO(this->get_logger(), "  - All joints commanded to neutral");
+            RCLCPP_INFO(this->get_logger(), "========================================");
         }
     }
-    
     void control_loop() {
         // State machine chính
         switch(mode) {

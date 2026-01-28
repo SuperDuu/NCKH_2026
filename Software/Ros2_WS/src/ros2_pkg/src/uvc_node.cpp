@@ -166,69 +166,124 @@ private:
     ///////////////////////////////////////////////////////////////////////////////////
     //// RESET CALLBACK - Xử lý lệnh reset từ RL training ////
     ///////////////////////////////////////////////////////////////////////////////////
+    // void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
+    //     if (msg->data) {
+    //         RCLCPP_INFO(this->get_logger(), "========================================");
+    //         RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST from RL Training");
+    //         RCLCPP_INFO(this->get_logger(), "========================================");
+            
+    //         // 1. Switch to STANDING mode
+    //         mode = 0;
+            
+    //         // 2. Reset walking state variables
+    //         fwct = 0.0;
+    //         fh = 0.0;
+    //         support_leg = 0;  // Right leg support
+            
+    //         // 3. Reset foot positions to neutral stance
+    //         dxi = 0.0;        // Right foot X (forward/back)
+    //         dyi = stance_width;   // Right foot Y (right side)
+    //         dxis = 0.0;       // Left foot X (forward/back)
+    //         dyis = -stance_width; // Left foot Y (left side)
+    //         dxib = 0.0;
+    //         dyib = 0.0;
+            
+    //         // 4. Reset IMU state
+    //         pitch = 0.0;
+    //         roll = 0.0;
+    //         pitch_filtered = 0.0;
+    //         roll_filtered = 0.0;
+    //         pitch_prev = 0.0;
+    //         roll_prev = 0.0;
+    //         pitch_derivative = 0.0;
+    //         roll_derivative = 0.0;
+    //         last_tilt_magnitude = 0.0;
+            
+    //         // 5. CRITICAL: Immediately publish neutral stance to reset all joint angles
+    //         // This will straighten the legs
+    //         double l_hn, l_ht, l_dg, l_mct, l_mcn;
+    //         double r_hn, r_ht, r_dg, r_mct, r_mcn;
+            
+    //         // Compute IK for parallel standing pose
+    //         solve_ik(0.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
+    //         solve_ik(0.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
+            
+    //         // Publish multiple times to ensure command is received
+    //         for(int i = 0; i < 10; i++) {
+    //             publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
+    //                         r_hn, r_ht, r_dg, r_mct, r_mcn);
+    //             std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    //         }
+            
+    //         // 6. Reset calibration counters
+    //         calibration_samples = 0;
+    //         stable_count = 0;
+            
+    //         RCLCPP_INFO(this->get_logger(), "✓ Reset complete:");
+    //         RCLCPP_INFO(this->get_logger(), "  - Mode: STANDING (0)");
+    //         RCLCPP_INFO(this->get_logger(), "  - Stance width: %.1f mm", stance_width);
+    //         RCLCPP_INFO(this->get_logger(), "  - All joints commanded to neutral");
+    //         RCLCPP_INFO(this->get_logger(), "========================================");
+    //     }
+    // }
     void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
         if (msg->data) {
+            // ============ NHẬN LỆNH RESET (TRUE) ============
             RCLCPP_INFO(this->get_logger(), "========================================");
-            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST from RL Training");
-            RCLCPP_INFO(this->get_logger(), "========================================");
+            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST: Holding in NEUTRAL (Wait for Physics)");
             
-            // 1. Switch to STANDING mode
-            mode = 0;
+            // 1. Chuyển sang chế độ CHỜ (-1) thay vì Calibrate (0) ngay
+            mode = -1; 
             
-            // 2. Reset walking state variables
-            fwct = 0.0;
-            fh = 0.0;
-            support_leg = 0;  // Right leg support
+            // 2. Reset biến số (Giữ nguyên phần này)
+            fwct = 0.0; fh = 0.0; support_leg = 0;
+            dxi = 0.0; dyi = stance_width;
+            dxis = 0.0; dyis = -stance_width;
+            dxib = 0.0; dyib = 0.0;
             
-            // 3. Reset foot positions to neutral stance
-            dxi = 0.0;        // Right foot X (forward/back)
-            dyi = stance_width;   // Right foot Y (right side)
-            dxis = 0.0;       // Left foot X (forward/back)
-            dyis = -stance_width; // Left foot Y (left side)
-            dxib = 0.0;
-            dyib = 0.0;
-            
-            // 4. Reset IMU state
-            pitch = 0.0;
-            roll = 0.0;
-            pitch_filtered = 0.0;
-            roll_filtered = 0.0;
-            pitch_prev = 0.0;
-            roll_prev = 0.0;
-            pitch_derivative = 0.0;
-            roll_derivative = 0.0;
+            pitch = 0.0; roll = 0.0;
+            pitch_filtered = 0.0; roll_filtered = 0.0;
+            pitch_prev = 0.0; roll_prev = 0.0;
             last_tilt_magnitude = 0.0;
             
-            // 5. CRITICAL: Immediately publish neutral stance to reset all joint angles
-            // This will straighten the legs
-            double l_hn, l_ht, l_dg, l_mct, l_mcn;
-            double r_hn, r_ht, r_dg, r_mct, r_mcn;
-            
-            // Compute IK for parallel standing pose
-            solve_ik(0.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
-            solve_ik(0.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
-            
-            // Publish multiple times to ensure command is received
-            for(int i = 0; i < 10; i++) {
-                publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
-                            r_hn, r_ht, r_dg, r_mct, r_mcn);
-                std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            }
-            
-            // 6. Reset calibration counters
+            // Reset luôn cả offset cũ để tránh cộng dồn sai
+            pitch_offset = 0.0;
+            roll_offset = 0.0;
             calibration_samples = 0;
             stable_count = 0;
-            
-            RCLCPP_INFO(this->get_logger(), "✓ Reset complete:");
-            RCLCPP_INFO(this->get_logger(), "  - Mode: STANDING (0)");
-            RCLCPP_INFO(this->get_logger(), "  - Stance width: %.1f mm", stance_width);
-            RCLCPP_INFO(this->get_logger(), "  - All joints commanded to neutral");
-            RCLCPP_INFO(this->get_logger(), "========================================");
+
+            // 3. Ép robot về dáng đứng thẳng (quan trọng!)
+            publish_parallel_stance(); 
+
+        } else {
+            // ============ NHẬN LỆNH KẾT THÚC RESET (FALSE) ============
+            // Chỉ bắt đầu Calibrate khi robot đã được unpause và ổn định
+            if (mode == -1) {
+                mode = 0; // Chuyển sang Calibration
+                RCLCPP_INFO(this->get_logger(), "▶ Physics settled. Starting CALIBRATION...");
+            }
         }
     }
+    // void control_loop() {
+    //     // State machine chính
+    //     switch(mode) {
+    //         case 0: // Hiệu chuẩn
+    //             calibration_mode();
+    //             break;
+    //         case 1: // Đứng chờ nghiêng
+    //             standing_mode();
+    //             break;
+    //         case 2: // UVC hoạt động
+    //             uvc_active_mode();
+    //             break;
+    //     }
+    // }
     void control_loop() {
-        // State machine chính
         switch(mode) {
+            case -1: // CHẾ ĐỘ CHỜ (Mới)
+                // Liên tục gửi lệnh đứng thẳng để giữ khớp cứng
+                publish_parallel_stance();
+                break;
             case 0: // Hiệu chuẩn
                 calibration_mode();
                 break;
@@ -239,8 +294,7 @@ private:
                 uvc_active_mode();
                 break;
         }
-    }
-    
+    }    
     ///////////////////////////////////////////////////////////////////////////////////
     //// CALIBRATION MODE - Đo offset IMU ban đầu ////
     ///////////////////////////////////////////////////////////////////////////////////

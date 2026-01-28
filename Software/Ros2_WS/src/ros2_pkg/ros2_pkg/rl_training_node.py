@@ -13,6 +13,7 @@ from torch.distributions import Normal
 import threading
 import time
 import subprocess
+import signal
 
 # --- MẠNG NEURAL ---
 class PolicyNetwork(nn.Module):
@@ -62,6 +63,7 @@ class RLTrainingNode(Node):
         self.current_obs = np.array([0.0, 0.0, 0.0]) 
         self.data_received = False
         self.is_falling = False
+        self.reset_count = 0  # Track reset attempts
 
         # 4. RL Hyperparameters
         self.state_dim = 3
@@ -90,115 +92,216 @@ class RLTrainingNode(Node):
         if abs(msg.x) > 30.0 or abs(msg.y) > 30.0:
             self.is_falling = True
 
+    def run_gz_command(self, service_name, req_type, rep_type, req_data, timeout=3.0, max_retries=3):
+        """
+        Chạy gz service command với retry logic
+        """
+        for attempt in range(max_retries):
+            try:
+                cmd = ['gz', 'service', '-s', service_name,
+                       '--reqtype', req_type,
+                       '--reptype', rep_type,
+                       '--timeout', '2000',
+                       '--req', req_data]
+                
+                # Sử dụng Popen để có thể kill process nếu timeout
+                process = subprocess.Popen(
+                    cmd,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    preexec_fn=lambda: signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+                )
+                
+                try:
+                    stdout, stderr = process.communicate(timeout=timeout)
+                    
+                    if process.returncode == 0:
+                        if attempt > 0:
+                            self.get_logger().info(f'✓ {service_name} succeeded on attempt {attempt + 1}')
+                        return True
+                    else:
+                        self.get_logger().warn(f'Attempt {attempt + 1}: {service_name} failed: {stderr.decode()}')
+                        
+                except subprocess.TimeoutExpired:
+                    self.get_logger().warn(f'Attempt {attempt + 1}: {service_name} timeout, killing process')
+                    process.kill()
+                    process.wait()
+                    
+                time.sleep(0.2)  # Wait before retry
+                
+            except Exception as e:
+                self.get_logger().warn(f'Attempt {attempt + 1}: Exception in {service_name}: {e}')
+                time.sleep(0.2)
+        
+        self.get_logger().error(f'❌ {service_name} failed after {max_retries} attempts')
+        return False
+
     def pause_simulation(self):
-        """Pause Gazebo simulation"""
-        try:
-            cmd = ['gz', 'service', '-s', '/world/empty/control', 
-                   '--reqtype', 'gz.msgs.WorldControl',
-                   '--reptype', 'gz.msgs.Boolean',
-                   '--timeout', '1000',
-                   '--req', 'pause: true']
-            subprocess.run(cmd, capture_output=True, timeout=2.0)
-            time.sleep(0.1)
-        except Exception as e:
-            self.get_logger().warn(f'Pause failed: {e}')
+        """Pause Gazebo with retry"""
+        return self.run_gz_command(
+            '/world/empty/control',
+            'gz.msgs.WorldControl',
+            'gz.msgs.Boolean',
+            'pause: true'
+        )
 
     def unpause_simulation(self):
-        """Unpause Gazebo simulation"""
-        try:
-            cmd = ['gz', 'service', '-s', '/world/empty/control',
-                   '--reqtype', 'gz.msgs.WorldControl',
-                   '--reptype', 'gz.msgs.Boolean',
-                   '--timeout', '1000',
-                   '--req', 'pause: false']
-            subprocess.run(cmd, capture_output=True, timeout=2.0)
-            time.sleep(0.1)
-        except Exception as e:
-            self.get_logger().warn(f'Unpause failed: {e}')
+        """Unpause Gazebo with retry"""
+        return self.run_gz_command(
+            '/world/empty/control',
+            'gz.msgs.WorldControl',
+            'gz.msgs.Boolean',
+            'pause: false'
+        )
 
     def reset_robot_pose(self):
-        """Reset robot pose using gz service"""
-        try:
-            pose_msg = '''
-            name: "humanoid_robot"
-            position {
-              x: 0.0
-              y: 0.0
-              z: 0.3
-            }
-            orientation {
-              x: 0.0
-              y: 0.0
-              z: 0.0
-              w: 1.0
-            }
-            '''
-            
-            cmd = ['gz', 'service', '-s', '/world/empty/set_pose',
-                   '--reqtype', 'gz.msgs.Pose',
-                   '--reptype', 'gz.msgs.Boolean',
-                   '--timeout', '2000',
-                   '--req', pose_msg]
-            
-            result = subprocess.run(cmd, capture_output=True, timeout=3.0)
-            
-            if result.returncode == 0:
-                self.get_logger().info('✓ Robot pose reset')
-            
-            time.sleep(0.2)
-            
-        except Exception as e:
-            self.get_logger().error(f'Reset pose failed: {e}')
+        """Reset robot pose with retry"""
+        pose_msg = '''
+        name: "humanoid_robot"
+        position {
+          x: 0.0
+          y: 0.0
+          z: 0.3
+        }
+        orientation {
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
+        }
+        '''
+        
+        success = self.run_gz_command(
+            '/world/empty/set_pose',
+            'gz.msgs.Pose',
+            'gz.msgs.Boolean',
+            pose_msg,
+            timeout=4.0
+        )
+        
+        if success:
+            self.get_logger().info('✓ Robot pose reset')
+        else:
+            self.get_logger().error('❌ Failed to reset pose')
+        
+        return success
 
     def reset_all_joints(self):
-        """Reset all joints to neutral position to wake up controllers"""
+        """Reset all joints to neutral position"""
         msg = Float64()
         msg.data = 0.0
         
-        # Publish 0.0 to all joints multiple times
-        for _ in range(5):
+        # Publish multiple times to ensure delivery
+        for _ in range(10):
             for pub in self.joint_pubs.values():
                 pub.publish(msg)
             time.sleep(0.01)
         
-        self.get_logger().info('✓ All joints reset to neutral')
+        self.get_logger().info('✓ All joints commanded to neutral')
         time.sleep(0.3)
-
     def reset_simulation(self):
-        """Reset simulation for new episode"""
-        self.get_logger().info('--- RESET: Episode Start ---')
+        self.reset_count += 1
+        self.get_logger().info(f'========================================')
+        self.get_logger().info(f'🔄 RESET #{self.reset_count}: Episode Start')
         
-        # 1. Pause
+        # 1. Gửi lệnh Reset=True: Bắt UVC vào chế độ chờ (mode -1) và duỗi chân
+        self.reset_pub.publish(Bool(data=True))
+        time.sleep(0.2) 
+        
+        # 2. Pause & Reset Pose như cũ
         self.pause_simulation()
-        
-        # 2. Reset pose
         self.reset_robot_pose()
+        self.reset_all_joints() # Đưa khớp về 0
         
-        # 3. Reset joints (wake up controllers)
-        self.reset_all_joints()
-        
-        # 4. Reset internal state
-        self.is_falling = False
-        self.data_received = False
-        self.current_obs = np.array([0.0, 0.0, 0.0])
-        
-        # 5. Publish safe params
-        safe_params = Float64MultiArray()
-        safe_params.data = list(self.current_params)
-        self.param_pub.publish(safe_params)
-        
-        # 6. Unpause
+        # 3. Unpause để robot rơi xuống sàn
         self.unpause_simulation()
         
-        # 7. Wait for stable
-        self.wait_for_stable()
+        # --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
+        
+        # 4. Đợi 1 giây để robot rơi chạm đất và hết rung lắc
+        self.get_logger().info('⏳ Waiting for physics to settle...')
+        time.sleep(1.0) 
+        
+        # 5. BÂY GIỜ mới báo UVC bắt đầu Calibrate (Reset=False)
+        self.get_logger().info('▶ Triggering Calibration...')
+        self.reset_pub.publish(Bool(data=False))
+        
+        # 6. Đợi Calibration hoàn tất (100 samples * 50ms = 5s -> đợi dư ra chút)
+        # Chúng ta đợi khoảng 5.5s
+        time.sleep(5.5)
+        
+        self.is_falling = False
+        self.data_received = False
+        
+        self.get_logger().info('✓ Reset sequence complete. Robot ready.')
+        self.get_logger().info(f'========================================\n')
+    # def reset_simulation(self):
+    #     """Reset simulation for new episode"""
+    #     self.reset_count += 1
+    #     self.get_logger().info(f'========================================')
+    #     self.get_logger().info(f'🔄 RESET #{self.reset_count}: Episode Start')
+    #     self.get_logger().info(f'========================================')
+        
+    #     # 1. Request UVC reset FIRST (before Gazebo reset)
+    #     try:
+    #         self.reset_pub.publish(Bool(data=True))
+    #         self.get_logger().info('→ UVC reset requested')
+    #         time.sleep(0.3)  # Give UVC time to process
+    #     except Exception as e:
+    #         self.get_logger().warn(f'UVC reset request failed: {e}')
+        
+    #     # 2. Pause simulation
+    #     if not self.pause_simulation():
+    #         self.get_logger().error('Failed to pause, attempting to continue...')
+    #     time.sleep(0.2)
+        
+    #     # 3. Reset robot pose
+    #     if not self.reset_robot_pose():
+    #         self.get_logger().error('Failed to reset pose, attempting to continue...')
+    #     time.sleep(0.2)
+        
+    #     # 4. Reset joints (wake up controllers)
+    #     self.reset_all_joints()
+        
+    #     # 5. Reset internal state
+    #     self.is_falling = False
+    #     self.data_received = False
+    #     self.current_obs = np.array([0.0, 0.0, 0.0])
+        
+    #     # 6. Publish safe params
+    #     safe_params = Float64MultiArray()
+    #     safe_params.data = list(self.current_params)
+    #     self.param_pub.publish(safe_params)
+    #     time.sleep(0.1)
+        
+    #     # 7. Unpause simulation
+    #     if not self.unpause_simulation():
+    #         self.get_logger().error('Failed to unpause, attempting to continue...')
+    #     time.sleep(0.2)
+        
+    #     # 8. Clear UVC reset flag
+    #     try:
+    #         self.reset_pub.publish(Bool(data=False))
+    #     except:
+    #         pass
+        
+    #     # 9. Wait for stable
+    #     self.get_logger().info('→ Waiting for robot to stabilize...')
+    #     stable = self.wait_for_stable()
+        
+    #     if stable:
+    #         self.get_logger().info('✓ Reset complete - Robot stable')
+    #     else:
+    #         self.get_logger().warn('⚠ Reset timeout - Continuing anyway')
+        
+    #     self.get_logger().info(f'========================================\n')
 
     def wait_for_stable(self):
         """Wait for robot to stabilize"""
-        stable_needed = 6
+        stable_needed = 8  # Increased from 6
         stable_cnt = 0
         wait_cycles = 0
-        max_cycles = 200
+        max_cycles = 300  # Increased from 200
         
         while wait_cycles < max_cycles:
             if not self.data_received:
@@ -209,18 +312,22 @@ class RLTrainingNode(Node):
             p, r, _ = self.current_obs
             tilt_now = float(np.sqrt(p**2 + r**2))
             
-            if tilt_now < 5.0:
+            if tilt_now < 8.0:  # More lenient threshold
                 stable_cnt += 1
                 if stable_cnt >= stable_needed:
-                    self.get_logger().info(f'✓ Robot stable (tilt={tilt_now:.1f}°)')
-                    return
+                    self.get_logger().info(f'✓ Stable after {wait_cycles * 0.05:.1f}s (tilt={tilt_now:.1f}°)')
+                    return True
             else:
                 stable_cnt = 0
                 
             time.sleep(0.05)
             wait_cycles += 1
-            
-        self.get_logger().warn(f'Robot did not stabilize in time')
+        
+        # Log final state even if not stable
+        p, r, _ = self.current_obs
+        tilt_final = float(np.sqrt(p**2 + r**2))
+        self.get_logger().warn(f'Timeout after {max_cycles * 0.05:.1f}s (final tilt={tilt_final:.1f}°)')
+        return False
 
     def scale_action(self, action):
         return self.param_mins + (action + 1.0) * 0.5 * (self.param_maxs - self.param_mins)
@@ -234,7 +341,7 @@ class RLTrainingNode(Node):
 
     def train_loop(self):
         time.sleep(3) 
-        self.get_logger().info("--- RL TRAINING STARTED ---")
+        self.get_logger().info("=== RL TRAINING STARTED ===")
         print("\n" + "="*100, flush=True)
         print("RL TRAINING - Learning UVC Parameters", flush=True)
         print("="*100 + "\n", flush=True)
@@ -244,7 +351,7 @@ class RLTrainingNode(Node):
             ep_reward = 0.0
             ep_step_count = 0
             tilt_samples = []
-            phys_act = self.current_params.copy()  # ✅ Initialize with defaults
+            phys_act = self.current_params.copy()
 
             if not self.running:
                 break
@@ -296,11 +403,7 @@ class RLTrainingNode(Node):
                     time.sleep(0.05)
 
                     if self.is_falling:
-                        self.get_logger().warn(f"Episode {episode} - Robot fell at step {step}")
-                        self.reset_pub.publish(Bool(data=True))
-                        time.sleep(0.5)
-                        self.reset_simulation()
-                        self.reset_pub.publish(Bool(data=False))
+                        self.get_logger().warn(f"⚠ Episode {episode} - Robot fell at step {step}")
                         phys_act = self.current_params.copy()
                         break
 
@@ -314,7 +417,9 @@ class RLTrainingNode(Node):
             if ep_reward > self.best_reward:
                 self.best_reward = ep_reward
                 self.best_params = phys_act.copy()
-                print(f"🎉 NEW BEST! Episode {episode} | Reward: {ep_reward:.2f}", flush=True)
+                print(f"🎉 NEW BEST! Ep {episode} | Reward: {ep_reward:.2f} | AvgTilt: {avg_tilt:.1f}°", flush=True)
+            else:
+                print(f"Ep {episode} | Reward: {ep_reward:.2f} | AvgTilt: {avg_tilt:.1f}° | Steps: {ep_step_count}", flush=True)
 
             if episode % 100 == 0 and episode > 0:
                 self.save_checkpoint(episode)

@@ -1,5 +1,8 @@
 setup.py
 ros2_pkg/__init__.py
+ros2_pkg/rl_inference.py
+ros2_pkg/rl_ppo_training.py
+ros2_pkg/rl_training_fast.py
 ros2_pkg/rl_training_node.py
 ros2_pkg.egg-info/PKG-INFO
 ros2_pkg.egg-info/SOURCES.txt

@@ -106,13 +106,13 @@ public:
             std::bind(&UvcControllerNode::reset_callback, this, std::placeholders::_1));
         
         timer_ = this->create_wall_timer(
-            std::chrono::milliseconds(50),
+            std::chrono::milliseconds(10),
             std::bind(&UvcControllerNode::control_loop, this));
         
         rl_feedback_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>(
             "/uvc_rl_feedback", 10);
         
-        RCLCPP_INFO(this->get_logger(), "🚀 UVC FAST RESET MODE - READY");
+        RCLCPP_INFO(this->get_logger(), "UVC FAST RESET MODE - READY");
     }
 
 private:
@@ -122,16 +122,19 @@ private:
         double roll_raw = -msg->y * M_PI / 180.0;
         
         // Lọc low-pass để giảm nhiễu
-        double alpha = 0.6;
+        double alpha = 0.4;
         pitch_filtered = alpha * pitch_raw + (1 - alpha) * pitch_filtered;
         roll_filtered = alpha * roll_raw + (1 - alpha) * roll_filtered;
         
         // Tính đạo hàm (tốc độ thay đổi) cho D controller
-        pitch_derivative = (pitch_filtered - pitch_prev) / 0.05;  // 0.05s = 50ms
-        roll_derivative = (roll_filtered - roll_prev) / 0.05;
+        pitch_derivative = (pitch_filtered - pitch_prev) / 0.01;  // 0.05s = 50ms
+        roll_derivative = (roll_filtered - roll_prev) / 0.01;
         
         pitch_prev = pitch_filtered;
         roll_prev = roll_filtered;
+        ppp=pitch_filtered;
+        rrr=roll_filtered;
+
     }
     
     ///////////////////////////////////////////////////////////////////////////////////
@@ -165,7 +168,7 @@ private:
         if (msg->data) {
             // [NHẬN TÍN HIỆU TRUE]: CHUẨN BỊ RESET
             RCLCPP_INFO(this->get_logger(), "========================================");
-            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST: Holding Joints Stiff (Wait for Physics)");
+            RCLCPP_INFO(this->get_logger(), "RESET REQUEST: Holding Joints Stiff (Wait for Physics)");
             
             // 1. Chuyển sang chế độ CHỜ (-1) thay vì Calibrate ngay
             mode = -1; 
@@ -179,7 +182,7 @@ private:
             dxi = 0.0; dyi = stance_width;
             dxis = 0.0; dyis = -stance_width;
             dxib = 0.0; dyib = 0.0;
-            
+            autoH = HEIGHT_STD; // <--- THÊM DÒNG NÀY (Khoảng dòng 130)
             // 4. Reset biến IMU
             pitch = 0.0; roll = 0.0;
             pitch_filtered = 0.0; roll_filtered = 0.0;
@@ -203,7 +206,7 @@ private:
                 
                 // Nhảy thẳng vào Mode 1 (Đứng chờ)
                 mode = 1; 
-                RCLCPP_INFO(this->get_logger(), "🚀 FAST START: Calibration skipped. Offsets=0.0 -> Ready!");
+                RCLCPP_INFO(this->get_logger(), "FAST START: Calibration skipped. Offsets=0.0 -> Ready!");
             }
         }
     }   
@@ -378,10 +381,10 @@ private:
         static int debug_counter = 0;
         if (debug_counter++ % 10 == 0) {
             RCLCPP_INFO(this->get_logger(), 
-                       "[CYCLE] phase=%.1f/%.1f, leg=%s, fh=%.1f",
+                       "[CYCLE] phase=%.1f/%.1f, leg=%s, fh=%.1f, pitch =%.2f rad, roll=%.2f rad",
                        fwct, fwctEnd,
                        support_leg == 0 ? "RIGHT" : "LEFT",
-                       fh);
+                       fh, ppp, rrr);
         }
         
         // Kiểm tra nếu đã đủ ổn định để quay lại đứng
@@ -715,7 +718,7 @@ private:
     int mode;
     int calibration_samples;
     int stable_count;
-    
+    double ppp,rrr;
     //// ROS interfaces ////
     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
     rclcpp::Publisher<geometry_msgs::msg::Vector3>::SharedPtr rl_feedback_pub_;

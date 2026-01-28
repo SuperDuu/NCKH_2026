@@ -31,10 +31,19 @@ ament_python_install_package(${PROJECT_NAME})
 install(TARGETS imu_process_node uvc_node
   DESTINATION lib/${PROJECT_NAME})
 
-install(PROGRAMS
-  ros2_pkg/rl_training_node.py
-  DESTINATION lib/${PROJECT_NAME}
-  RENAME rl_training_node)
+# install(PROGRAMS
+#   ros2_pkg/rl_training_node.py
+#   ros2_pkg/rl_training_fast
+#   DESTINATION lib/${PROJECT_NAME}
+#   RENAME rl_training_node
+#   RENAME rl_training_fast)
+
+install(PROGRAMS ros2_pkg/rl_training_node.py DESTINATION lib/${PROJECT_NAME} RENAME rl_training_node)
+install(PROGRAMS ros2_pkg/rl_training_fast.py DESTINATION lib/${PROJECT_NAME} RENAME rl_training_fast)
+install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
+install(PROGRAMS ros2_pkg/rl_inference.py DESTINATION lib/${PROJECT_NAME} RENAME rl_inference)
+
+
 
 install(DIRECTORY launch urdf rviz worlds
   DESTINATION share/${PROJECT_NAME})

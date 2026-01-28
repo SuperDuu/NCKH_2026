@@ -72,10 +72,14 @@ class RLTrainingNode(Node):
         self.policy = PolicyNetwork(self.state_dim, self.action_dim)
         self.optimizer = optim.Adam(self.policy.parameters(), lr=0.001)
 
-        self.param_mins = np.array([0.10, 0.10, 20.0, 5.0, 30.0, 8.0, 0.05])
-        self.param_maxs = np.array([0.30, 0.20, 35.0, 8.0, 45.0, 15.0, 0.20])
-        self.current_params = np.array([0.18, 0.12, 25.0, 6.0, 35.0, 12.0, 0.10])
-
+        # self.param_mins = np.array([0.10, 0.10, 20.0, 5.0, 30.0, 8.0, 0.05])
+        # self.param_maxs = np.array([0.30, 0.20, 35.0, 8.0, 45.0, 15.0, 0.20])
+        # self.current_params = np.array([0.18, 0.12, 25.0, 6.0, 35.0, 12.0, 0.10])
+        self.param_mins = np.array([0.05, 0.05, 15.0, 3.0, 20.0, 5.0, 0.01])
+        self.param_maxs = np.array([0.50, 0.40, 50.0, 15.0, 60.0, 25.0, 0.40])
+        
+        # Reset tham số khởi đầu về mức trung bình an toàn
+        self.current_params = np.array([0.20, 0.15, 30.0, 8.0, 35.0, 15.0, 0.10])
         # Tracking
         self.best_reward = -np.inf
         self.best_params = self.current_params.copy()
@@ -169,7 +173,7 @@ class RLTrainingNode(Node):
         position {
           x: 0.0
           y: 0.0
-          z: 0.3
+          z: 0.29515
         }
         orientation {
           x: 0.0
@@ -232,8 +236,8 @@ class RLTrainingNode(Node):
         
         # 4. [THAY ĐỔI QUAN TRỌNG] Đợi vật lý ổn định
         # Chỉ cần 1.5s là robot đã hết nảy và đứng yên (thay vì quy trình cũ)
-        self.get_logger().info('⏳ Settling physics (1.5s)...')
-        time.sleep(1.0)
+        self.get_logger().info('⏳ Settling physics (0.5s)...')
+        time.sleep(0.5)
         
         # 5. Kích hoạt Training (Reset=False)
         # UVC sẽ nhảy thẳng vào chế độ sẵn sàng
@@ -453,7 +457,7 @@ class RLTrainingNode(Node):
                 self.best_params = phys_act.copy()
                 torch.save(self.policy.state_dict(), "/tmp/best_policy.pt")
                 print(f"🔥 NEW BEST! Ep {episode} | R: {ep_reward:.1f} | Steps: {ep_step_count}", flush=True)
-            elif episode % 10 == 0:
+            elif episode > 0:
                 print(f"Ep {episode} | R: {ep_reward:.1f} | Steps: {ep_step_count}", flush=True)
 
 def main():

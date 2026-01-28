@@ -22,9 +22,12 @@ public:
         declare_parameter("gain", 0.18);
         declare_parameter("recovery_rate", 0.1);
         declare_parameter("step_duration", 25.0);
-        declare_parameter("stance_width", 35.0);
+        
+        // [THAY ĐỔI QUAN TRỌNG] Giảm từ 35.0 xuống 30.0 để tránh chân bị loe (nghiêng)
+        declare_parameter("stance_width", 30.0);
+        
         declare_parameter("max_foot_lift", 12.0);
-        declare_parameter("scale_base", 0.12);  // Thêm scale_base
+        declare_parameter("scale_base", 0.12);
         declare_parameter("tilt_threshold", 2.0);
         declare_parameter("landing_phase", 6.0);
         declare_parameter("min_clearance", 18.0);
@@ -35,7 +38,7 @@ public:
         fwctEnd = get_parameter("step_duration").as_double();
         stance_width = get_parameter("stance_width").as_double();
         fhMax = get_parameter("max_foot_lift").as_double();
-        scale_base = get_parameter("scale_base").as_double();  // Lấy scale_base
+        scale_base = get_parameter("scale_base").as_double();
         tilt_threshold_deg = get_parameter("tilt_threshold").as_double();
         landing_phase = get_parameter("landing_phase").as_double();
         min_clearance = get_parameter("min_clearance").as_double();
@@ -51,17 +54,16 @@ public:
         fh = 0.0;
         
         // Tích phân vị trí - khởi tạo ở tư thế đứng song song
-        // Hai chân song song, không chữ V
-        dxi = 0.0;      // Chân trụ X (trước-sau)
-        dyi = stance_width;  // Chân trụ Y (phải - dương khi nhìn từ trên)
-        dxis = 0.0;     // Chân di chuyển X
-        dyis = -stance_width; // Chân di chuyển Y (trái - âm khi nhìn từ trên)
+        dxi = 0.0;      
+        dyi = stance_width;  
+        dxis = 0.0;     
+        dyis = -stance_width; 
         
         dxib = 0.0;
         dyib = 0.0;
         
         // Chân trụ: 0 = phải, 1 = trái
-        support_leg = 0;  // Bắt đầu với chân phải làm trụ
+        support_leg = 0;  
         
         // Biến IMU và lọc
         pitch = 0.0;
@@ -76,8 +78,8 @@ public:
         pitch_offset = 0.0;
         roll_offset = 0.0;
         
-        // Trạng thái
-        mode = 0;  // 0 = hiệu chuẩn, 1 = đứng chờ, 2 = UVC hoạt động
+        // Trạng thái: Khởi tạo mode = 0
+        mode = 0;  
         calibration_samples = 0;
         stable_count = 0;
         
@@ -95,29 +97,22 @@ public:
             "/robot_orientation", 10, 
             std::bind(&UvcControllerNode::imu_callback, this, std::placeholders::_1));
         
-        // Subscribe vào RL parameters từ RL training node
-        // [gain, scale_base, step_duration, landing_phase, stance_width, max_foot_lift, recovery_rate]
         rl_param_sub_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
             "/uvc_parameters", 10,
             std::bind(&UvcControllerNode::rl_param_callback, this, std::placeholders::_1));
 
-        // Subscribe to reset requests from RL node
         reset_sub_ = this->create_subscription<std_msgs::msg::Bool>(
             "/uvc_reset", 10,
             std::bind(&UvcControllerNode::reset_callback, this, std::placeholders::_1));
         
-        // Timer 20Hz (50ms) - đủ nhanh cho điều khiển
         timer_ = this->create_wall_timer(
             std::chrono::milliseconds(50),
             std::bind(&UvcControllerNode::control_loop, this));
         
-        // Publisher cho RL feedback
         rl_feedback_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>(
             "/uvc_rl_feedback", 10);
         
-        RCLCPP_INFO(this->get_logger(), "UVC Controller for RL Training - Ready");
-        RCLCPP_INFO(this->get_logger(), "Parameters: gain=%.3f, stance_width=%.1fmm", gain, stance_width);
-        RCLCPP_INFO(this->get_logger(), "Tilt threshold: %.1f degrees", tilt_threshold_deg);
+        RCLCPP_INFO(this->get_logger(), "🚀 UVC FAST RESET MODE - READY");
     }
 
 private:
@@ -166,126 +161,60 @@ private:
     ///////////////////////////////////////////////////////////////////////////////////
     //// RESET CALLBACK - Xử lý lệnh reset từ RL training ////
     ///////////////////////////////////////////////////////////////////////////////////
-    // void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
-    //     if (msg->data) {
-    //         RCLCPP_INFO(this->get_logger(), "========================================");
-    //         RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST from RL Training");
-    //         RCLCPP_INFO(this->get_logger(), "========================================");
-            
-    //         // 1. Switch to STANDING mode
-    //         mode = 0;
-            
-    //         // 2. Reset walking state variables
-    //         fwct = 0.0;
-    //         fh = 0.0;
-    //         support_leg = 0;  // Right leg support
-            
-    //         // 3. Reset foot positions to neutral stance
-    //         dxi = 0.0;        // Right foot X (forward/back)
-    //         dyi = stance_width;   // Right foot Y (right side)
-    //         dxis = 0.0;       // Left foot X (forward/back)
-    //         dyis = -stance_width; // Left foot Y (left side)
-    //         dxib = 0.0;
-    //         dyib = 0.0;
-            
-    //         // 4. Reset IMU state
-    //         pitch = 0.0;
-    //         roll = 0.0;
-    //         pitch_filtered = 0.0;
-    //         roll_filtered = 0.0;
-    //         pitch_prev = 0.0;
-    //         roll_prev = 0.0;
-    //         pitch_derivative = 0.0;
-    //         roll_derivative = 0.0;
-    //         last_tilt_magnitude = 0.0;
-            
-    //         // 5. CRITICAL: Immediately publish neutral stance to reset all joint angles
-    //         // This will straighten the legs
-    //         double l_hn, l_ht, l_dg, l_mct, l_mcn;
-    //         double r_hn, r_ht, r_dg, r_mct, r_mcn;
-            
-    //         // Compute IK for parallel standing pose
-    //         solve_ik(0.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
-    //         solve_ik(0.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
-            
-    //         // Publish multiple times to ensure command is received
-    //         for(int i = 0; i < 10; i++) {
-    //             publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
-    //                         r_hn, r_ht, r_dg, r_mct, r_mcn);
-    //             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    //         }
-            
-    //         // 6. Reset calibration counters
-    //         calibration_samples = 0;
-    //         stable_count = 0;
-            
-    //         RCLCPP_INFO(this->get_logger(), "✓ Reset complete:");
-    //         RCLCPP_INFO(this->get_logger(), "  - Mode: STANDING (0)");
-    //         RCLCPP_INFO(this->get_logger(), "  - Stance width: %.1f mm", stance_width);
-    //         RCLCPP_INFO(this->get_logger(), "  - All joints commanded to neutral");
-    //         RCLCPP_INFO(this->get_logger(), "========================================");
-    //     }
-    // }
     void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
         if (msg->data) {
-            // ============ NHẬN LỆNH RESET (TRUE) ============
+            // [NHẬN TÍN HIỆU TRUE]: CHUẨN BỊ RESET
             RCLCPP_INFO(this->get_logger(), "========================================");
-            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST: Holding in NEUTRAL (Wait for Physics)");
+            RCLCPP_INFO(this->get_logger(), "🔄 RESET REQUEST: Holding Joints Stiff (Wait for Physics)");
             
-            // 1. Chuyển sang chế độ CHỜ (-1) thay vì Calibrate (0) ngay
+            // 1. Chuyển sang chế độ CHỜ (-1) thay vì Calibrate ngay
             mode = -1; 
             
-            // 2. Reset biến số (Giữ nguyên phần này)
-            fwct = 0.0; fh = 0.0; support_leg = 0;
+            // 2. Reset các biến bước đi
+            fwct = 0.0;
+            fh = 0.0;
+            support_leg = 0;
+            
+            // 3. Reset vị trí chân về thế đứng chuẩn
             dxi = 0.0; dyi = stance_width;
             dxis = 0.0; dyis = -stance_width;
             dxib = 0.0; dyib = 0.0;
             
+            // 4. Reset biến IMU
             pitch = 0.0; roll = 0.0;
             pitch_filtered = 0.0; roll_filtered = 0.0;
             pitch_prev = 0.0; roll_prev = 0.0;
             last_tilt_magnitude = 0.0;
             
-            // Reset luôn cả offset cũ để tránh cộng dồn sai
-            pitch_offset = 0.0;
-            roll_offset = 0.0;
+            // 5. Reset các bộ đếm
             calibration_samples = 0;
             stable_count = 0;
-
-            // 3. Ép robot về dáng đứng thẳng (quan trọng!)
-            publish_parallel_stance(); 
+            
+            // [QUAN TRỌNG] Ép robot duỗi thẳng chân ngay lập tức để giữ cứng khớp khi rơi
+            publish_parallel_stance();
 
         } else {
-            // ============ NHẬN LỆNH KẾT THÚC RESET (FALSE) ============
-            // Chỉ bắt đầu Calibrate khi robot đã được unpause và ổn định
+            // [NHẬN TÍN HIỆU FALSE]: BẮT ĐẦU TRAINING
             if (mode == -1) {
-                mode = 0; // Chuyển sang Calibration
-                RCLCPP_INFO(this->get_logger(), "▶ Physics settled. Starting CALIBRATION...");
+                // [THAY ĐỔI QUAN TRỌNG]: Bỏ qua Calibration (Fast Start)
+                // Vì Simulation Reset luôn đưa robot về thẳng đứng tuyệt đối
+                pitch_offset = 0.0;
+                roll_offset = 0.0;
+                
+                // Nhảy thẳng vào Mode 1 (Đứng chờ)
+                mode = 1; 
+                RCLCPP_INFO(this->get_logger(), "🚀 FAST START: Calibration skipped. Offsets=0.0 -> Ready!");
             }
         }
-    }
-    // void control_loop() {
-    //     // State machine chính
-    //     switch(mode) {
-    //         case 0: // Hiệu chuẩn
-    //             calibration_mode();
-    //             break;
-    //         case 1: // Đứng chờ nghiêng
-    //             standing_mode();
-    //             break;
-    //         case 2: // UVC hoạt động
-    //             uvc_active_mode();
-    //             break;
-    //     }
-    // }
+    }   
     void control_loop() {
         switch(mode) {
-            case -1: // CHẾ ĐỘ CHỜ (Mới)
-                // Liên tục gửi lệnh đứng thẳng để giữ khớp cứng
+            case -1: // [MỚI] CHẾ ĐỘ CHỜ VẬT LÝ ỔN ĐỊNH
+                // Liên tục gửi lệnh đứng thẳng để giữ khớp cứng, chống đổ khi vừa thả xuống
                 publish_parallel_stance();
                 break;
-            case 0: // Hiệu chuẩn
-                calibration_mode();
+            case 0: // Hiệu chuẩn (Không dùng trong Fast Reset, nhưng giữ để tránh lỗi logic)
+                // calibration_mode();
                 break;
             case 1: // Đứng chờ nghiêng
                 standing_mode();
@@ -294,7 +223,7 @@ private:
                 uvc_active_mode();
                 break;
         }
-    }    
+    }
     ///////////////////////////////////////////////////////////////////////////////////
     //// CALIBRATION MODE - Đo offset IMU ban đầu ////
     ///////////////////////////////////////////////////////////////////////////////////
@@ -368,9 +297,9 @@ private:
                 support_leg = 0; // Chân phải trụ
             }
             
-            RCLCPP_INFO(this->get_logger(), "UVC Activated! Tilt: %.1f deg, Support leg: %s",
-                       tilt_magnitude * 180.0 / M_PI,
-                       support_leg == 0 ? "RIGHT" : "LEFT");
+            // RCLCPP_INFO(this->get_logger(), "UVC Activated! Tilt: %.1f deg, Support leg: %s",
+            //            tilt_magnitude * 180.0 / M_PI,
+            //            support_leg == 0 ? "RIGHT" : "LEFT");
         }
         
         // Vẫn publish tư thế đứng trong khi chờ
@@ -388,10 +317,10 @@ private:
         // DEBUG: In ra giá trị IMU mỗi 100ms
         static int dbg_imu_cnt = 0;
         if (++dbg_imu_cnt % 2 == 0) {
-            RCLCPP_INFO(this->get_logger(), 
-                       "[IMU RAW] pitch=%.2f° roll=%.2f° | pitch_offset=%.2f° roll_offset=%.2f°",
-                       pitch * 180.0/M_PI, roll * 180.0/M_PI,
-                       pitch_offset * 180.0/M_PI, roll_offset * 180.0/M_PI);
+            // RCLCPP_INFO(this->get_logger(), 
+            //            "[IMU RAW] pitch=%.2f° roll=%.2f° | pitch_offset=%.2f° roll_offset=%.2f°",
+            //            pitch * 180.0/M_PI, roll * 180.0/M_PI,
+            //            pitch_offset * 180.0/M_PI, roll_offset * 180.0/M_PI);
         }
         
         // 2. Áp dụng offset ngưỡng (giống main.c) - nếu góc < 0.033 rad thì coi như 0
@@ -415,10 +344,10 @@ private:
         
         // DEBUG: In ra sau offset
         if (dbg_imu_cnt % 2 == 0) {
-            RCLCPP_INFO(this->get_logger(), 
-                       "[AFTER THRESHOLD] pitch=%.2f° roll=%.2f° | tilt_mag=%.2f°",
-                       pitch * 180.0/M_PI, roll * 180.0/M_PI,
-                       tilt_magnitude * 180.0/M_PI);
+            // RCLCPP_INFO(this->get_logger(), 
+                    //    "[AFTER THRESHOLD] pitch=%.2f° roll=%.2f° | tilt_mag=%.2f°",
+                    //    pitch * 180.0/M_PI, roll * 180.0/M_PI,
+                    //    tilt_magnitude * 180.0/M_PI);
         }
         
         // 4. Áp dụng UVC logic (giống main.c)
@@ -428,9 +357,9 @@ private:
         
         // DEBUG: In ra sau UVC
         if (dbg_imu_cnt % 2 == 0) {
-            RCLCPP_INFO(this->get_logger(), 
-                       "[AFTER UVC] dyi: %.1f→%.1f | dxi: %.1f→%.1f | autoH=%.1f",
-                       dyi_before, dyi, dxi_before, dxi, autoH);
+            // RCLCPP_INFO(this->get_logger(), 
+            //            "[AFTER UVC] dyi: %.1f→%.1f | dxi: %.1f→%.1f | autoH=%.1f",
+            //            dyi_before, dyi, dxi_before, dxi, autoH);
         }
         
         // 5. Tính độ cao nâng chân theo chu kỳ
@@ -488,9 +417,9 @@ private:
         // DEBUG: In ra roll geometry
         static int dbg_geom_cnt = 0;
         if (++dbg_geom_cnt % 2 == 0) {
-            RCLCPP_INFO(this->get_logger(),
-                       "[GEOM-Y] roll=%.3f rad | roll_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dyi_new=%.1f autoH=%.1f",
-                       roll, roll_scaled, k, ks, kl, dyi, autoH);
+            // RCLCPP_INFO(this->get_logger(),
+            //            "[GEOM-Y] roll=%.3f rad | roll_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dyi_new=%.1f autoH=%.1f",
+            //            roll, roll_scaled, k, ks, kl, dyi, autoH);
         }
         
         // ============ ĐIỀU CHỈNH X (trước-sau) ============
@@ -507,9 +436,9 @@ private:
         
         // DEBUG: In ra pitch geometry
         if (dbg_geom_cnt % 2 == 0) {
-            RCLCPP_INFO(this->get_logger(),
-                       "[GEOM-X] pitch=%.3f rad | pitch_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dxi_new=%.1f autoH=%.1f",
-                       pitch, pitch_scaled, k, ks, kl, dxi, autoH);
+            // RCLCPP_INFO(this->get_logger(),
+            //            "[GEOM-X] pitch=%.3f rad | pitch_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dxi_new=%.1f autoH=%.1f",
+            //            pitch, pitch_scaled, k, ks, kl, dxi, autoH);
         }
         
         // ============ GIỚI HẠN AN TOÀN ============
@@ -614,10 +543,10 @@ private:
         // Periodic debug logging for leg targets
         static int leg_dbg = 0;
         if (++leg_dbg % 6 == 0) { // ~every 300ms at 50ms timer
-            RCLCPP_INFO(this->get_logger(), "LEG TARGETS: fwct=%.1f/%.1f support=%s fh=%.2f swing_z(L:%.1f R:%.1f) support_z(L:%.1f R:%.1f) dxi=%.1f dxis=%.1f dyi=%.1f dyis=%.1f",
-                        fwct, fwctEnd, support_leg==0?"RIGHT":"LEFT", fh,
-                        swing_dz_left, swing_dz_right, support_dz_left, support_dz_right,
-                        dxi, dxis, dyi, dyis);
+            // RCLCPP_INFO(this->get_logger(), "LEG TARGETS: fwct=%.1f/%.1f support=%s fh=%.2f swing_z(L:%.1f R:%.1f) support_z(L:%.1f R:%.1f) dxi=%.1f dxis=%.1f dyi=%.1f dyis=%.1f",
+            //             fwct, fwctEnd, support_leg==0?"RIGHT":"LEFT", fh,
+            //             swing_dz_left, swing_dz_right, support_dz_left, support_dz_right,
+            //             dxi, dxis, dyi, dyis);
         }
         
         // Publish
@@ -652,8 +581,8 @@ private:
                 dyi = stance_width;
             }
             
-            RCLCPP_INFO(this->get_logger(), "Step cycle complete. New support leg: %s",
-                       support_leg == 0 ? "RIGHT" : "LEFT");
+            // RCLCPP_INFO(this->get_logger(), "Step cycle complete. New support leg: %s",
+            //            support_leg == 0 ? "RIGHT" : "LEFT");
         }
     }
     
@@ -717,6 +646,12 @@ private:
     void publish_legs(double l_hn, double l_ht, double l_dg, double l_mct, double l_mcn,
                       double r_hn, double r_ht, double r_dg, double r_mct, double r_mcn) {
         // Left Leg (mapping chosen to match URDF axes)
+        // send_cmd("base_hip_left", l_hn);
+        // send_cmd("hip_hip_left", -l_ht);
+        // send_cmd("hip_knee_left", l_dg);
+        // send_cmd("knee_ankle_left", l_mct);
+        // send_cmd("ankle_ankle_left", l_mcn);
+
         send_cmd("base_hip_left", l_hn);
         send_cmd("hip_hip_left", -l_ht);
         send_cmd("hip_knee_left", l_dg);
@@ -724,11 +659,11 @@ private:
         send_cmd("ankle_ankle_left", l_mcn);
 
         // Right Leg (mirrored mapping)
-        send_cmd("base_hip_right", -r_hn);
+        send_cmd("base_hip_right", r_hn);
         send_cmd("hip_hip_right", r_ht);
         send_cmd("hip_knee_right", -r_dg);
         send_cmd("knee_ankle_right", -r_mct);
-        send_cmd("ankle_ankle_right", r_mcn);
+        send_cmd("ankle_ankle_right", -r_mcn);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////

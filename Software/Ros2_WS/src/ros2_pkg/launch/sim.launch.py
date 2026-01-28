@@ -34,7 +34,20 @@ def generate_launch_description():
             get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
         launch_arguments={'gz_args': 'empty.sdf'}.items(),
     )
-
+    
+    # 4. Khởi động Gazebo Sim (ĐÃ SỬA: Tốc độ cao + Tắt GUI)
+    # world_file = os.path.join(pkg_share, 'worlds', 'turbo.sdf')
+    
+    # gazebo = IncludeLaunchDescription(
+    #     PythonLaunchDescriptionSource([os.path.join(
+    #         get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
+    #     launch_arguments={
+    #         # -r: Chạy ngay lập tức (không pause)
+    #         # -s: Server only (Headless mode) -> Tắt giao diện 3D để dồn CPU cho training
+    #         # -v 4: Log level
+    #         'gz_args': f'-r -s -v 4 {world_file}'
+    #     }.items(),
+    # )
     # 5. Node Spawn Robot
     spawn_robot = Node(
         package='ros_gz_sim',

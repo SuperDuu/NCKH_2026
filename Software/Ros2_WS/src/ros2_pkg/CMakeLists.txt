@@ -36,7 +36,7 @@ install(PROGRAMS
   DESTINATION lib/${PROJECT_NAME}
   RENAME rl_training_node)
 
-install(DIRECTORY launch urdf rviz
+install(DIRECTORY launch urdf rviz worlds
   DESTINATION share/${PROJECT_NAME})
 
 # Đảm bảo copy cả meshes nếu có

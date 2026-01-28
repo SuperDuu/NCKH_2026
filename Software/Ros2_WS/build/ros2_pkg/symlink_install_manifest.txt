@@ -41,6 +41,7 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/urdf/model.config
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/rviz/Rviz_robot_config/Robot.rviz
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/rviz/rviz.rviz
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/worlds/turbo.sdf
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_left_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/ankle_ankle_right_link.STL
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/share/ros2_pkg/urdf/meshes/base_hip_left_link.STL

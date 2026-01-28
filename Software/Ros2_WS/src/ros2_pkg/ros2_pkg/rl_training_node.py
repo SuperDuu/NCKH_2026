@@ -14,7 +14,8 @@ import threading
 import time
 import subprocess
 import signal
-
+from ros_gz_interfaces.srv import ControlWorld, SetEntityPose
+from geometry_msgs.msg import Pose, Point, Quaternion
 # --- MẠNG NEURAL ---
 class PolicyNetwork(nn.Module):
     def __init__(self, state_dim, action_dim):
@@ -86,10 +87,17 @@ class RLTrainingNode(Node):
         self.train_thread = threading.Thread(target=self.train_loop, daemon=True)
         self.train_thread.start()
 
+    # def feedback_callback(self, msg):
+    #     self.current_obs = np.array([msg.x, msg.y, msg.z])
+    #     self.data_received = True
+    #     if abs(msg.x) > 30.0 or abs(msg.y) > 30.0:
+    #         self.is_falling = True
     def feedback_callback(self, msg):
         self.current_obs = np.array([msg.x, msg.y, msg.z])
-        self.data_received = True
-        if abs(msg.x) > 30.0 or abs(msg.y) > 30.0:
+        # Cờ báo hiệu có dữ liệu mới để xử lý ngay
+        self.data_received = True 
+        
+        if abs(msg.x) > 35.0 or abs(msg.y) > 35.0:
             self.is_falling = True
 
     def run_gz_command(self, service_name, req_type, rep_type, req_data, timeout=3.0, max_retries=3):
@@ -199,16 +207,22 @@ class RLTrainingNode(Node):
         
         self.get_logger().info('✓ All joints commanded to neutral')
         time.sleep(0.3)
+
+
     def reset_simulation(self):
+        """Reset simulation for new episode (FAST MODE)"""
         self.reset_count += 1
         self.get_logger().info(f'========================================')
         self.get_logger().info(f'🔄 RESET #{self.reset_count}: Episode Start')
         
-        # 1. Gửi lệnh Reset=True: Bắt UVC vào chế độ chờ (mode -1) và duỗi chân
-        self.reset_pub.publish(Bool(data=True))
-        time.sleep(0.2) 
+        # 1. Gửi lệnh Reset=True: Bắt UVC vào chế độ chờ (giữ cứng chân)
+        try:
+            self.reset_pub.publish(Bool(data=True))
+            time.sleep(0.1)  # Giảm delay
+        except Exception as e:
+            self.get_logger().warn(f'UVC reset request failed: {e}')
         
-        # 2. Pause & Reset Pose như cũ
+        # 2. Pause & Reset Pose & Joints
         self.pause_simulation()
         self.reset_robot_pose()
         self.reset_all_joints() # Đưa khớp về 0
@@ -216,24 +230,32 @@ class RLTrainingNode(Node):
         # 3. Unpause để robot rơi xuống sàn
         self.unpause_simulation()
         
-        # --- THAY ĐỔI QUAN TRỌNG Ở ĐÂY ---
+        # 4. [THAY ĐỔI QUAN TRỌNG] Đợi vật lý ổn định
+        # Chỉ cần 1.5s là robot đã hết nảy và đứng yên (thay vì quy trình cũ)
+        self.get_logger().info('⏳ Settling physics (1.5s)...')
+        time.sleep(1.0)
         
-        # 4. Đợi 1 giây để robot rơi chạm đất và hết rung lắc
-        self.get_logger().info('⏳ Waiting for physics to settle...')
-        time.sleep(1.0) 
+        # 5. Kích hoạt Training (Reset=False)
+        # UVC sẽ nhảy thẳng vào chế độ sẵn sàng
+        self.get_logger().info('▶ Training Start!')
+        try:
+            self.reset_pub.publish(Bool(data=False))
+        except:
+            pass
+            
+        # 6. Delay nhỏ để đảm bảo tin nhắn đã gửi đi
+        time.sleep(0.1)
         
-        # 5. BÂY GIỜ mới báo UVC bắt đầu Calibrate (Reset=False)
-        self.get_logger().info('▶ Triggering Calibration...')
-        self.reset_pub.publish(Bool(data=False))
-        
-        # 6. Đợi Calibration hoàn tất (100 samples * 50ms = 5s -> đợi dư ra chút)
-        # Chúng ta đợi khoảng 5.5s
-        time.sleep(5.5)
-        
+        # Reset biến trạng thái nội bộ
         self.is_falling = False
         self.data_received = False
+        self.current_obs = np.array([0.0, 0.0, 0.0])
         
-        self.get_logger().info('✓ Reset sequence complete. Robot ready.')
+        # Publish tham số an toàn (nếu cần)
+        safe_params = Float64MultiArray()
+        safe_params.data = list(self.current_params)
+        self.param_pub.publish(safe_params)
+        
         self.get_logger().info(f'========================================\n')
     # def reset_simulation(self):
     #     """Reset simulation for new episode"""
@@ -340,89 +362,99 @@ class RLTrainingNode(Node):
             self.get_logger().error(f"Error saving checkpoint: {e}")
 
     def train_loop(self):
-        time.sleep(3) 
-        self.get_logger().info("=== RL TRAINING STARTED ===")
-        print("\n" + "="*100, flush=True)
-        print("RL TRAINING - Learning UVC Parameters", flush=True)
-        print("="*100 + "\n", flush=True)
+        time.sleep(2) 
+        print("\n" + "="*60, flush=True)
+        print("🚀 TURBO MODE ACTIVATED: Training as fast as possible...", flush=True)
+        print("="*60 + "\n", flush=True)
 
-        for episode in range(5000):
+        for episode in range(10000): # Tăng số episode lên
             self.reset_simulation()
             ep_reward = 0.0
             ep_step_count = 0
             tilt_samples = []
+            
+            # Reset cờ dữ liệu đầu episode
+            self.data_received = False
+            
             phys_act = self.current_params.copy()
-
-            if not self.running:
-                break
+            if not self.running: break
                 
             try:
-                for step in range(500):
-                    if not self.data_received:
-                        time.sleep(0.05)
-                        continue
+                for step in range(1000): # Tăng max steps cho mỗi episode
+                    
+                    # [HACK TỐC ĐỘ] Busy wait: Chờ dữ liệu mới nhưng không sleep cố định
+                    # CPU sẽ xử lý ngay lập tức khi gói tin tới
+                    wait_start = time.time()
+                    while not self.data_received:
+                        if time.time() - wait_start > 0.2: # Timeout nếu lag
+                            break
+                        pass 
+                    
+                    if not self.data_received: continue
+                    self.data_received = False # Đã xử lý xong, reset cờ
 
-                    # STATE
+                    # --- 1. STATE ---
                     pitch, roll, _ = self.current_obs
                     tilt_mag = float(np.sqrt(pitch**2 + roll**2))
-                    state = np.array([pitch, roll, tilt_mag], dtype=np.float32)
+                    state = np.array([pitch/45.0, roll/45.0, tilt_mag/45.0], dtype=np.float32)
                     tilt_samples.append(tilt_mag)
 
-                    # ACTION
+                    # --- 2. ACTION ---
                     state_tensor = torch.FloatTensor(state)
                     mu, std = self.policy(state_tensor)
                     dist = Normal(mu, std)
                     action = dist.sample()
-                    if action.dim() > 1:
-                        action = action.squeeze(0)
-
+                    action = torch.clamp(action, -1.0, 1.0)
+                    
+                    if action.dim() > 1: action = action.squeeze(0)
                     phys_act = self.scale_action(action.detach().cpu().numpy().reshape(-1))
+                    
                     msg = Float64MultiArray()
                     msg.data = list(phys_act)
                     self.param_pub.publish(msg)
 
-                    # REWARD
-                    stability_score = 1.0 / (1.0 + 0.05 * tilt_mag)
-                    fall_penalty = 1.0 if tilt_mag > 45.0 else 0.0
-                    reward = stability_score - 2.0 * fall_penalty
+                    # --- 3. REWARD & UPDATE ---
+                    stability_score = 1.0 - (tilt_mag / 40.0)
+                    if stability_score < 0: stability_score = 0
+                    
+                    alive_bonus = 0.2 
+                    fall_penalty = 0.0
+                    if tilt_mag > 35.0: fall_penalty = 5.0 
+                    
+                    reward = stability_score + alive_bonus - fall_penalty
                     ep_reward += reward
                     ep_step_count += 1
 
-                    # LEARNING
                     log_prob = dist.log_prob(action).sum()
                     loss = -log_prob * float(reward)
 
                     self.optimizer.zero_grad()
                     loss.backward()
-                    torch.nn.utils.clip_grad_norm_(self.policy.parameters(), 1.0)
+                    # Gradient clipping nhẹ hơn chút cho nhanh
+                    torch.nn.utils.clip_grad_norm_(self.policy.parameters(), 1.0) 
                     self.optimizer.step()
 
-                    if step % 50 == 0:
-                        print(f"Ep {episode:4d} Step {step:3d} | Tilt: {tilt_mag:.1f}° | Reward: {reward:.3f}", flush=True)
-
-                    time.sleep(0.05)
+                    # [QUAN TRỌNG] ĐÃ XÓA time.sleep(0.05) Ở ĐÂY
+                    # Code sẽ chạy với tốc độ tối đa của Gazebo/CPU
 
                     if self.is_falling:
-                        self.get_logger().warn(f"⚠ Episode {episode} - Robot fell at step {step}")
-                        phys_act = self.current_params.copy()
+                        # print(f"   ☠ Fell at step {step}", flush=True) # Tắt print rác cho nhanh
                         break
 
             except Exception as e:
-                self.get_logger().error(f"Episode {episode} error: {e}")
+                self.get_logger().error(f"Error: {e}")
                 continue
 
-            # EPISODE SUMMARY
+            # LOGGING: Chỉ in mỗi 10 episodes để đỡ lag terminal
             avg_tilt = np.mean(tilt_samples) if tilt_samples else 0.0
-
+            
             if ep_reward > self.best_reward:
                 self.best_reward = ep_reward
                 self.best_params = phys_act.copy()
-                print(f"🎉 NEW BEST! Ep {episode} | Reward: {ep_reward:.2f} | AvgTilt: {avg_tilt:.1f}°", flush=True)
-            else:
-                print(f"Ep {episode} | Reward: {ep_reward:.2f} | AvgTilt: {avg_tilt:.1f}° | Steps: {ep_step_count}", flush=True)
-
-            if episode % 100 == 0 and episode > 0:
-                self.save_checkpoint(episode)
+                torch.save(self.policy.state_dict(), "/tmp/best_policy.pt")
+                print(f"🔥 NEW BEST! Ep {episode} | R: {ep_reward:.1f} | Steps: {ep_step_count}", flush=True)
+            elif episode % 10 == 0:
+                print(f"Ep {episode} | R: {ep_reward:.1f} | Steps: {ep_step_count}", flush=True)
 
 def main():
     rclpy.init()

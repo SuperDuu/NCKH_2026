@@ -37,7 +37,7 @@
     <light directional="true" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" pos="0 0 5.0" dir="0 0 -1" />
     <geom name="ground" type="plane" pos="0 0 0" size="10 10 0.1" material="matplane" />
     
-    <body name="root" pos="0 0 0.5">
+    <body name="root" pos="0 0 0.295">
       <freejoint name="root_joint" />
       <site name="imu_site" pos="0 0 0" /> <body name="base_link" pos="0 0 0">
         <geom type="mesh" mesh="base_link" />

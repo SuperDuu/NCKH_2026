@@ -1,0 +1,141 @@
+<mujoco model="Robot">
+  <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
+
+  <default>
+    <joint limited="true" damping="0.5" armature="0.05" frictionloss="0.1" />
+    <geom condim="4" friction="0.99 0.1 0.1" material="mat_visual" />
+    <position ctrllimited="true" ctrlrange="-3.14 3.14" forcerange="-1.08 1.08" />
+  </default>
+
+  <asset>
+    <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .2 .3" width="100" height="100" />
+    <material name="matplane" reflectance="0.5" texture="texplane" />
+    <material name="mat_visual" rgba="0.7 0.7 0.7 1" />
+    
+    <mesh name="base_link" file="base_link.STL" />
+    <mesh name="base_hip_left_link" file="base_hip_left_link.STL" />
+    <mesh name="hip_hip_left_link" file="hip_hip_left_link.STL" />
+    <mesh name="hip_knee_left_link" file="hip_knee_left_link.STL" />
+    <mesh name="knee_ankle_left_link" file="knee_ankle_left_link.STL" />
+    <mesh name="ankle_ankle_left_link" file="ankle_ankle_left_link.STL" />
+    <mesh name="base_hip_right_link" file="base_hip_right_link.STL" />
+    <mesh name="hip_hip_right_link" file="hip_hip_right_link.STL" />
+    <mesh name="hip_knee_right_link" file="hip_knee_right_link.STL" />
+    <mesh name="knee_ankle_right_link" file="knee_ankle_right_link.STL" />
+    <mesh name="ankle_ankle_right_link" file="ankle_ankle_right_link.STL" />
+    <mesh name="base_hip_middle_link" file="base_hip_middle_link.STL" />
+    <mesh name="hip_head_link" file="hip_head_link.STL" />
+    <mesh name="hip_shoulder_left_link" file="hip_shoulder_left_link.STL" />
+    <mesh name="shoulder_shoulder_left_link" file="shoulder_shoulder_left_link.STL" />
+    <mesh name="shoulder_elbow_left_link" file="shoulder_elbow_left_link.STL" />
+    <mesh name="hip_shoulder_right_link" file="hip_shoulder_right_link.STL" />
+    <mesh name="shoulder_shoulder_right_link" file="shoulder_shoulder_right_link.STL" />
+    <mesh name="shoulder_elbow_right_link" file="shoulder_elbow_right_link.STL" />
+  </asset>
+
+  <worldbody>
+    <light directional="true" diffuse="0.8 0.8 0.8" specular="0.2 0.2 0.2" pos="0 0 5.0" dir="0 0 -1" />
+    <geom name="ground" type="plane" pos="0 0 0" size="10 10 0.1" material="matplane" />
+    
+    <body name="root" pos="0 0 0.5">
+      <freejoint name="root_joint" />
+      <site name="imu_site" pos="0 0 0" /> <body name="base_link" pos="0 0 0">
+        <geom type="mesh" mesh="base_link" />
+
+        <body name="base_hip_left_link" pos="-0.035 -0.0205 -0.027" quat="0 0 0.7071 0.7071">
+          <joint name="base_hip_left_joint" type="hinge" range="-0.17453 0.69813" axis="0 0 1" />
+          <geom type="mesh" mesh="base_hip_left_link" />
+          <body name="hip_hip_left_link" pos="0.0295 -0.0205 0.0105" quat="0.7071 0 0.7071 0">
+            <joint name="hip_hip_left_joint" type="hinge" range="-0.8 0.69813" axis="0 0 -1" />
+            <geom type="mesh" mesh="hip_hip_left_link" />
+            <body name="hip_knee_left_link" pos="0 -0.06 0">
+              <joint name="hip_knee_left_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
+              <geom type="mesh" mesh="hip_knee_left_link" />
+              <body name="knee_ankle_left_link" pos="0 -0.1034 0">
+                <joint name="knee_ankle_left_joint" type="hinge" range="-0.8 0.8" axis="0 0 -1" />
+                <geom type="mesh" mesh="knee_ankle_left_link" />
+                <body name="ankle_ankle_left_link" pos="0.0215 -0.057 -0.018" quat="0.7071 0 0.7071 0">
+                  <joint name="ankle_ankle_left_joint" type="hinge" range="-1.2217 1.2217" axis="0 0 -1" />
+                  <geom type="mesh" mesh="ankle_ankle_left_link" />
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+
+        <body name="base_hip_right_link" pos="0.035 -0.0205 -0.027" quat="0.7071 0.7071 0 0">
+          <joint name="base_hip_right_joint" type="hinge" range="-0.69813 0.17453" axis="0 0 -1" />
+          <geom type="mesh" mesh="base_hip_right_link" />
+          <body name="hip_hip_right_link" pos="0.0309 -0.0205 -0.0126" quat="0.7071 0 0.7071 0">
+            <joint name="hip_hip_right_joint" type="hinge" range="-0.69813 0.8" axis="0 0 -1" />
+            <geom type="mesh" mesh="hip_hip_right_link" />
+            <body name="hip_knee_right_link" pos="0 -0.06 0">
+              <joint name="hip_knee_right_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
+              <geom type="mesh" mesh="hip_knee_right_link" />
+              <body name="knee_ankle_right_link" pos="0 -0.1034 0">
+                <joint name="knee_ankle_right_joint" type="hinge" range="-0.8 0.8" axis="0 0 -1" />
+                <geom type="mesh" mesh="knee_ankle_right_link" />
+                <body name="ankle_ankle_right_link" pos="0.0215 -0.057 -0.0215" quat="0.7071 0 0.7071 0">
+                  <joint name="ankle_ankle_right_joint" type="hinge" range="-1.2217 1.2217" axis="0 0 -1" />
+                  <geom type="mesh" mesh="ankle_ankle_right_link" />
+                </body>
+              </body>
+            </body>
+          </body>
+        </body>
+
+        <body name="base_hip_middle_link" pos="0 0 0.0048">
+          <joint name="base_hip_middle_joint" type="hinge" range="-0.5236 0.5236" axis="0 0 1" />
+          <geom type="mesh" mesh="base_hip_middle_link" />
+          
+          <body name="hip_head_link" pos="0.001 -0.0017 0.1446">
+            <geom type="mesh" mesh="hip_head_link" />
+          </body>
+          
+          <body name="hip_shoulder_left_link" pos="-0.108 0.0195 0.1093" quat="0.7071 0.7071 0 0">
+            <joint name="hip_shoulder_left_joint" type="hinge" range="-1.2217 0.17453" axis="0 0 1" />
+            <geom type="mesh" mesh="hip_shoulder_left_link" />
+            <body name="shoulder_shoulder_left_link" pos="-0.0157 -0.0169 0.0309" quat="0.7071 0 0.7071 0">
+              <joint name="shoulder_shoulder_left_joint" type="hinge" range="-1.0472 1.0472" axis="0 0 -1" />
+              <geom type="mesh" mesh="shoulder_shoulder_left_link" />
+              <body name="shoulder_elbow_left_link" pos="0 -0.0636 0.0262">
+                <joint name="shoulder_elbow_left_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
+                <geom type="mesh" mesh="shoulder_elbow_left_link" />
+              </body>
+            </body>
+          </body>
+
+          <body name="hip_shoulder_right_link" pos="0.108 0.016 0.1093" quat="0 0 0.7071 0.7071">
+            <joint name="hip_shoulder_right_joint" type="hinge" range="-0.17453 1.2217" axis="0 0 -1" />
+            <geom type="mesh" mesh="hip_shoulder_right_link" />
+            <body name="shoulder_shoulder_right_link" pos="-0.0157 -0.0169 -0.0274" quat="0.7071 0 0.7071 0">
+              <joint name="shoulder_shoulder_right_joint" type="hinge" range="-1.0472 1.0472" axis="0 0 -1" />
+              <geom type="mesh" mesh="shoulder_shoulder_right_link" />
+              <body name="shoulder_elbow_right_link" pos="0 -0.0636 0.0262">
+                <joint name="shoulder_elbow_right_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
+                <geom type="mesh" mesh="shoulder_elbow_right_link" />
+              </body>
+            </body>
+          </body>
+        </body> </body> </body> </worldbody>
+
+  <actuator>
+    <position name="m_hip_middle" joint="base_hip_middle_joint" kp="300" />
+    <position name="m_hip_l_yaw" joint="base_hip_left_joint" kp="1000" />
+    <position name="m_hip_l_roll" joint="hip_hip_left_joint" kp="2000" />
+    <position name="m_hip_l_pitch" joint="hip_knee_left_joint" kp="1000" />
+    <position name="m_ankle_l_p" joint="knee_ankle_left_joint" kp="1000" />
+    <position name="m_ankle_l_r" joint="ankle_ankle_left_joint" kp="1000" />
+    <position name="m_hip_r_yaw" joint="base_hip_right_joint" kp="1000" />
+    <position name="m_hip_r_roll" joint="hip_hip_right_joint" kp="2000" />
+    <position name="m_hip_r_pitch" joint="hip_knee_right_joint" kp="1000" />
+    <position name="m_ankle_r_p" joint="knee_ankle_right_joint" kp="1000" />
+    <position name="m_ankle_r_r" joint="ankle_ankle_right_joint" kp="1000" />
+  </actuator>
+
+  <sensor>
+    <accelerometer name="accel" site="imu_site" />
+    <gyro name="gyro" site="imu_site" />
+    <framequat name="quat" objtype="site" objname="imu_site" />
+  </sensor>
+</mujoco>

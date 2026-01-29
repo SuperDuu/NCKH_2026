@@ -1,11 +1,24 @@
-# SolidWorks temp files
-~$*.SLDPRT
-~$*.SLDASM
-~$*.SLDDRW
-# Backup / temp
+# SolidWorks & CAD
+~$*.SLD*
 *.bak
 *.tmp
-# Log files
+*.STL
+*.step
+*.step
+
+# Python & Training
+venv/
+__pycache__/
+*.pyc
+logs/
+scripts/training_results/
+*.pt
+*.onnx
+
+# MuJoCo temp
 *.log
-#VSCode
+MUJOCO_LOG.TXT
+
+# IDE
 .vscode/
+.idea/

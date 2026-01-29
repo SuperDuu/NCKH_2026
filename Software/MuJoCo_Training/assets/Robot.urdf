@@ -1,0 +1,1086 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Robot">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-4.96073883700386E-08 0.000462672288009204 -0.013211586070026"
+        rpy="0 0 0" />
+      <mass
+        value="0.0505669356625173" />
+      <inertia
+        ixx="1.58512882562337E-05"
+        ixy="-6.32129709010695E-12"
+        ixz="3.06079220712807E-11"
+        iyy="3.95314057556552E-05"
+        iyz="-3.07371418289218E-06"
+        izz="3.98877370276516E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="base_hip_left_link">
+    <inertial>
+      <origin
+        xyz="0.0105399293507954 -0.0102302850973809 0.0211771872929315"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198733174" />
+      <inertia
+        ixx="1.74833584295454E-05"
+        ixy="-5.4261823336912E-11"
+        ixz="-3.52218118707271E-22"
+        iyy="2.77733120234834E-05"
+        iyz="-1.55692625071626E-10"
+        izz="1.74824329090152E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0350000000000001 -0.0204999999999994 -0.0270000000000001"
+      rpy="1.57079632679489 0 -3.14159265358979" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_left_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.17453"
+      upper="0.69813"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_hip_left_link">
+    <inertial>
+      <origin
+        xyz="-0.000477097737932343 -0.0311573778418832 -0.0159499008021752"
+        rpy="0 0 0" />
+      <mass
+        value="0.0244428963393535" />
+      <inertia
+        ixx="1.32742548435843E-05"
+        ixy="3.64347850214951E-07"
+        ixz="4.21416962626886E-14"
+        iyy="5.27954521577882E-06"
+        iyz="-2.60972777380945E-10"
+        izz="1.13630280868237E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_hip_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_hip_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_hip_left_joint"
+    type="revolute">
+    <origin
+      xyz="0.0295 -0.0205000000000001 0.0105"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="base_hip_left_link" />
+    <child
+      link="hip_hip_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.8"
+      upper="0.69813"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_knee_left_link">
+    <inertial>
+      <origin
+        xyz="1.22124532708767E-15 -0.0521312435280574 -0.0183200192860185"
+        rpy="0 0 0" />
+      <mass
+        value="0.130204487078614" />
+      <inertia
+        ixx="4.59198297178949E-05"
+        ixy="-2.09954448457571E-10"
+        ixz="-4.14207862176231E-20"
+        iyy="2.02899102584213E-05"
+        iyz="-3.81950404021968E-21"
+        izz="3.2855864207069E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_knee_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_knee_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_knee_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0599999999999997 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_hip_left_link" />
+    <child
+      link="hip_knee_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.3963"
+      upper="1.3963"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="knee_ankle_left_link">
+    <inertial>
+      <origin
+        xyz="3.93736869536421E-05 -0.027515550876819 -0.0176910938148466"
+        rpy="0 0 0" />
+      <mass
+        value="0.0298519989099933" />
+      <inertia
+        ixx="9.56697138711308E-06"
+        ixy="1.6471871683677E-06"
+        ixz="4.48957279114108E-07"
+        iyy="1.00406929638069E-05"
+        iyz="-1.44787293328076E-06"
+        izz="9.63973144953533E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/knee_ankle_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/knee_ankle_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_ankle_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.1034 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_knee_left_link" />
+    <child
+      link="knee_ankle_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.8"
+      upper="0.8"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="ankle_ankle_left_link">
+    <inertial>
+      <origin
+        xyz="-0.00809509712887917 -0.00727461919221756 -0.0218892657222814"
+        rpy="0 0 0" />
+      <mass
+        value="0.0850053645760622" />
+      <inertia
+        ixx="2.80542144992169E-05"
+        ixy="5.98719522678762E-07"
+        ixz="-9.6741363136071E-09"
+        iyy="4.73017474166376E-05"
+        iyz="5.07154009091567E-11"
+        izz="2.35375503104991E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/ankle_ankle_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/ankle_ankle_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_ankle_left_joint"
+    type="revolute">
+    <origin
+      xyz="0.0215 -0.057 -0.018"
+      rpy="0 1.5708 0" />
+    <parent
+      link="knee_ankle_left_link" />
+    <child
+      link="ankle_ankle_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.2217"
+      upper="1.2217"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="base_hip_right_link">
+    <inertial>
+      <origin
+        xyz="0.00949195871791609 -0.0102300939254159 -0.0222251579258068"
+        rpy="0 0 0" />
+      <mass
+        value="0.107894198733174" />
+      <inertia
+        ixx="1.74833584295454E-05"
+        ixy="5.42618233677653E-11"
+        ixz="-5.97555274508307E-21"
+        iyy="2.77733120234834E-05"
+        iyz="-1.55692625067553E-10"
+        izz="1.74824329090152E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0350000000000045 -0.0204999999999993 -0.027"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.69813"
+      upper="0.17453"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_hip_right_link">
+    <inertial>
+      <origin
+        xyz="0.000477097737926931 -0.0311605813995221 -0.0194499008139903"
+        rpy="0 0 0" />
+      <mass
+        value="0.0244428963393535" />
+      <inertia
+        ixx="1.32742548435843E-05"
+        ixy="-3.64347510988161E-07"
+        ixz="-4.02324809866883E-14"
+        iyy="5.27954521577882E-06"
+        iyz="2.60972777380989E-10"
+        izz="1.13630280868237E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_hip_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_hip_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_hip_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0309000000000001 -0.0204999999999999 -0.0126"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="base_hip_right_link" />
+    <child
+      link="hip_hip_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.69813"
+      upper="0.8"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_knee_right_link">
+    <inertial>
+      <origin
+        xyz="-5.05151476204446E-15 -0.0521312435280555 -0.021820019286026"
+        rpy="0 0 0" />
+      <mass
+        value="0.130204487078614" />
+      <inertia
+        ixx="4.59198297178948E-05"
+        ixy="-2.09954448445341E-10"
+        ixz="-4.24389374191222E-20"
+        iyy="2.02899102584212E-05"
+        iyz="-5.55957316879099E-21"
+        izz="3.28558642070689E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_knee_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_knee_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_knee_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0600000000000001 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_hip_right_link" />
+    <child
+      link="hip_knee_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.3963"
+      upper="1.3963"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="knee_ankle_right_link">
+    <inertial>
+      <origin
+        xyz="3.93736869474942E-05 -0.0275155508768176 -0.0211910938148541"
+        rpy="0 0 0" />
+      <mass
+        value="0.0298519989099934" />
+      <inertia
+        ixx="9.5669713871131E-06"
+        ixy="1.6471871683677E-06"
+        ixz="4.4895727911411E-07"
+        iyy="1.00406929638069E-05"
+        iyz="-1.44787293328077E-06"
+        izz="9.63973144953535E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/knee_ankle_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/knee_ankle_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="knee_ankle_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.1034 0"
+      rpy="0 0 0" />
+    <parent
+      link="hip_knee_right_link" />
+    <child
+      link="knee_ankle_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.8"
+      upper="0.8"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="ankle_ankle_right_link">
+    <inertial>
+      <origin
+        xyz="-0.00800882305491628 -0.00719708942027569 -0.0220325514980408"
+        rpy="0 0 0" />
+      <mass
+        value="0.085921074544987" />
+      <inertia
+        ixx="2.80785040143856E-05"
+        ixy="5.9871952267877E-07"
+        ixz="-9.67413631359786E-09"
+        iyy="4.73260369318063E-05"
+        iyz="5.07154009053639E-11"
+        izz="2.35857406698626E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/ankle_ankle_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/ankle_ankle_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ankle_ankle_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.0215 -0.057 -0.0215"
+      rpy="0 1.5708 0" />
+    <parent
+      link="knee_ankle_right_link" />
+    <child
+      link="ankle_ankle_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.2217"
+      upper="1.2217"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="base_hip_middle_link">
+    <inertial>
+      <origin
+        xyz="-0.000138551650698318 0.00951457019710301 0.0800390692774279"
+        rpy="0 0 0" />
+      <mass
+        value="0.319030319361419" />
+      <inertia
+        ixx="0.000475513590604162"
+        ixy="-2.14638462617598E-07"
+        ixz="-2.40807211313537E-08"
+        iyy="0.000835200522013369"
+        iyz="4.64558426111199E-07"
+        izz="0.000513246375882141" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_middle_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/base_hip_middle_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="base_hip_middle_joint"
+    type="revolute">
+    <origin
+      xyz="0 0 0.00479999999999899"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="base_hip_middle_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-0.5236"
+      upper="0.5236"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_shoulder_left_link">
+    <inertial>
+      <origin
+        xyz="-0.00998733125339235 9.54015962548183E-08 0.0218258506936438"
+        rpy="0 0 0" />
+      <mass
+        value="0.054051364576062" />
+      <inertia
+        ixx="8.31443086285314E-06"
+        ixy="-1.0497722424009E-10"
+        ixz="9.67413631360772E-09"
+        iyy="1.38876292348193E-05"
+        iyz="5.07154008414222E-11"
+        izz="9.1699484923172E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_shoulder_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_shoulder_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_shoulder_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.108 0.0195000000000005 0.1093"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_shoulder_left_link" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="-1.2217"
+      upper="0.17453"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="shoulder_shoulder_left_link">
+    <inertial>
+      <origin
+        xyz="0.00679109464747229 -0.0132231154303537 0.00466452110588329"
+        rpy="0 0 0" />
+      <mass
+        value="0.0794907034391992" />
+      <inertia
+        ixx="2.28341377776542E-05"
+        ixy="1.05146837614629E-10"
+        ixz="9.67409512653663E-09"
+        iyy="1.93090904264949E-05"
+        iyz="2.10254567353646E-10"
+        izz="2.19200033271726E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_shoulder_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_shoulder_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_shoulder_left_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0156724872211919 -0.0168781854564233 0.0309000000000023"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="hip_shoulder_left_link" />
+    <child
+      link="shoulder_shoulder_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.0472"
+      upper="1.0472"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="shoulder_elbow_left_link">
+    <inertial>
+      <origin
+        xyz="0.0012604629750603 -0.0335482693517731 -0.0230672553422172"
+        rpy="0 0 0" />
+      <mass
+        value="0.0922123668839718" />
+      <inertia
+        ixx="2.30109802754414E-05"
+        ixy="-1.35524902368697E-07"
+        ixz="2.5227698385325E-07"
+        iyy="1.15346026523125E-05"
+        iyz="-8.00240572311056E-08"
+        izz="1.89716616063928E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_elbow_left_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_elbow_left_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_elbow_left_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0636218145435769 0.0261724872211921"
+      rpy="0 0 0" />
+    <parent
+      link="shoulder_shoulder_left_link" />
+    <child
+      link="shoulder_elbow_left_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.3963"
+      upper="1.3963"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_shoulder_right_link">
+    <inertial>
+      <origin
+        xyz="-0.00998733125339192 -9.54015958315457E-08 -0.0183258506936388"
+        rpy="0 0 0" />
+      <mass
+        value="0.054051364576062" />
+      <inertia
+        ixx="8.31443086285314E-06"
+        ixy="1.049772242218E-10"
+        ixz="-9.67413631360733E-09"
+        iyy="1.38876292348193E-05"
+        iyz="5.0715400839158E-11"
+        izz="9.16994849231721E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_shoulder_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_shoulder_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_shoulder_right_joint"
+    type="revolute">
+    <origin
+      xyz="0.108 0.0159999999999952 0.1093"
+      rpy="1.5707963267949 0 3.14159265358979" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_shoulder_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-0.17453"
+      upper="1.2217"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="shoulder_shoulder_right_link">
+    <inertial>
+      <origin
+        xyz="-0.00679109444793513 -0.0132232451709656 0.00466452110588336"
+        rpy="0 0 0" />
+      <mass
+        value="0.0794907034391992" />
+      <inertia
+        ixx="2.28341377776542E-05"
+        ixy="1.05146837620443E-10"
+        ixz="-9.67417750069375E-09"
+        iyy="1.93090904264949E-05"
+        iyz="3.11685369056074E-10"
+        izz="2.19200033271726E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_shoulder_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_shoulder_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_shoulder_right_joint"
+    type="revolute">
+    <origin
+      xyz="-0.0156724872211916 -0.0168781854564282 -0.0273999999999952"
+      rpy="0 1.5707963267949 0" />
+    <parent
+      link="hip_shoulder_right_link" />
+    <child
+      link="shoulder_shoulder_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.0472"
+      upper="1.0472"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="shoulder_elbow_right_link">
+    <inertial>
+      <origin
+        xyz="0.000126644439908199 -0.033555308629725 -0.0230646392550646"
+        rpy="0 0 0" />
+      <mass
+        value="0.0921635034792499" />
+      <inertia
+        ixx="2.29848519100087E-05"
+        ixy="-9.31043220329645E-08"
+        ixz="-2.27181042450743E-07"
+        iyy="1.15344501568405E-05"
+        iyz="-8.05828663856898E-08"
+        izz="1.89450966184291E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_elbow_right_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.698039215686274 0.698039215686274 0.698039215686274 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/shoulder_elbow_right_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="shoulder_elbow_right_joint"
+    type="revolute">
+    <origin
+      xyz="0 -0.0636218145435714 0.0261724872211919"
+      rpy="0 0 0" />
+    <parent
+      link="shoulder_shoulder_right_link" />
+    <child
+      link="shoulder_elbow_right_link" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="-1.3963"
+      upper="1.3963"
+      effort="1.08"
+      velocity="6.16" />
+  </joint>
+  <link
+    name="hip_head_link">
+    <inertial>
+      <origin
+        xyz="-0.004720965516897 0.00262494414590749 0.00202353709790658"
+        rpy="0 0 0" />
+      <mass
+        value="0.114347135302489" />
+      <inertia
+        ixx="2.40002189328776E-05"
+        ixy="1.04977224220837E-10"
+        ixz="-9.67413631361185E-09"
+        iyy="2.95952418691319E-05"
+        iyz="8.14892265253216E-08"
+        izz="2.51608824852151E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_head_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="/home/du/Desktop/NCKH_2026/Software/MuJoCo_Training/assets/meshes/hip_head_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="hip_head_joint"
+    type="fixed">
+    <origin
+      xyz="0.00102807858096265 -0.00174999999999934 0.144615997868974"
+      rpy="0 0 0" />
+    <parent
+      link="base_hip_middle_link" />
+    <child
+      link="hip_head_link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+</robot>

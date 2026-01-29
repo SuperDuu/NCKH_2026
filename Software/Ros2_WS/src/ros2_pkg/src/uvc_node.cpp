@@ -13,7 +13,7 @@
 const double L3 = 60.0;
 const double L4 = 100.0;
 const double L5 = 65.0;
-const double HEIGHT_STD = 224.0;
+const double HEIGHT_STD = 224.0-20;
 
 class UvcControllerNode : public rclcpp::Node {
 public:
@@ -24,7 +24,7 @@ public:
         declare_parameter("step_duration", 25.0);
         
         // [THAY ĐỔI QUAN TRỌNG] Giảm từ 35.0 xuống 30.0 để tránh chân bị loe (nghiêng)
-        declare_parameter("stance_width", 30.0);
+        declare_parameter("stance_width", 20.0);
         
         declare_parameter("max_foot_lift", 12.0);
         declare_parameter("scale_base", 0.12);
@@ -54,10 +54,13 @@ public:
         fh = 0.0;
         
         // Tích phân vị trí - khởi tạo ở tư thế đứng song song
-        dxi = 0.0;      
+        dxi = 15.0;      
         dyi = stance_width;  
-        dxis = 0.0;     
+        dxis = 15.0;     
         dyis = -stance_width; 
+
+        dxi_before=dxi;
+        dyi_before=dyi;
         
         dxib = 0.0;
         dyib = 0.0;
@@ -136,7 +139,7 @@ private:
         rrr=roll_filtered;
 
     }
-    
+     
     ///////////////////////////////////////////////////////////////////////////////////
     //// RL PARAMETER UPDATE - Nhận tham số tối ưu từ RL training node ////
     ///////////////////////////////////////////////////////////////////////////////////
@@ -179,8 +182,8 @@ private:
             support_leg = 0;
             
             // 3. Reset vị trí chân về thế đứng chuẩn
-            dxi = 0.0; dyi = stance_width;
-            dxis = 0.0; dyis = -stance_width;
+            dxi = 15.0; dyi = stance_width;
+            dxis = 15.0; dyis = -stance_width;
             dxib = 0.0; dyib = 0.0;
             autoH = HEIGHT_STD; // <--- THÊM DÒNG NÀY (Khoảng dòng 130)
             // 4. Reset biến IMU
@@ -188,7 +191,8 @@ private:
             pitch_filtered = 0.0; roll_filtered = 0.0;
             pitch_prev = 0.0; roll_prev = 0.0;
             last_tilt_magnitude = 0.0;
-            
+            dxi_before=dxi;
+            dyi_before=dyi;
             // 5. Reset các bộ đếm
             calibration_samples = 0;
             stable_count = 0;
@@ -270,12 +274,14 @@ private:
             stable_count++;
             if (stable_count > 50) { // 2.5 giây ổn định
                 // Reset vị trí tích phân về stance song song
-                dxi = 0.0;
+                dxi = 15.0;
                 dyi = stance_width;
-                dxis = 0.0;
+                dxis = 15.0;
                 dyis = -stance_width;
                 fwct = 0.0;
                 support_leg = 0;
+                dxi_before=dxi;
+                dyi_before=dyi;
                 
                 // Publish tư thế đứng song song
                 publish_parallel_stance();
@@ -354,8 +360,8 @@ private:
         }
         
         // 4. Áp dụng UVC logic (giống main.c)
-        double dyi_before = dyi;
-        double dxi_before = dxi;
+        dyi_before = dyi;
+        dxi_before = dxi;
         apply_uvc_geometry_control();
         
         // DEBUG: In ra sau UVC
@@ -402,66 +408,145 @@ private:
     //// UVC GEOMETRY CONTROL - Điều chỉnh vị trí chân dùng hình học (giống main.c) ////
     ///////////////////////////////////////////////////////////////////////////////////
     void apply_uvc_geometry_control() {
-        // ============ ĐIỀU CHỈNH Y (trái-phải) ============
+        // 1. Tính toán UVC như bình thường
         double k = atan((dyi) / autoH);
         double kl = autoH / cos(k);
-        
-        // Khi roll > 0 (nghiêng phải), cần TRỪ khỏi k để dyi giảm (chân sang trái)
-        // Scale factor động: tăng nếu tilt lớn, giảm nếu tilt nhỏ
         double tilt_mag = sqrt(pitch * pitch + roll * roll);
-        double scale_base = 0.12;  // Tăng từ 0.1 lên 0.12
-        double scale_factor = scale_base * (1.0 + 0.5 * std::min(tilt_mag, 1.0));  // Max +50% ở tilt ~90°
-        double roll_scaled = scale_factor * roll;
-        double ks = k - roll_scaled;  // ĐỔI từ + thành -
+        double scale_factor = this->scale_base * (1.0 + 0.8 * std::min(tilt_mag, 1.0));
         
+        // ROLL Control
+        double p_term_roll = scale_factor * roll;
+        double d_term_roll = this->gain * this->roll_derivative; 
+        double ks = k - (p_term_roll + d_term_roll);
         dyi = kl * sin(ks);
         autoH = kl * cos(ks);
         
-        // DEBUG: In ra roll geometry
-        static int dbg_geom_cnt = 0;
-        if (++dbg_geom_cnt % 2 == 0) {
-            // RCLCPP_INFO(this->get_logger(),
-            //            "[GEOM-Y] roll=%.3f rad | roll_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dyi_new=%.1f autoH=%.1f",
-            //            roll, roll_scaled, k, ks, kl, dyi, autoH);
-        }
-        
-        // ============ ĐIỀU CHỈNH X (trước-sau) ============
+        // PITCH Control
         k = atan(dxi / autoH);
         kl = autoH / cos(k);
-        
-        // Khi pitch > 0 (nghiêng trước), cần TRỪ khỏi k để dxi giảm (chân sang sau)
-        // Sử dụng same scale factor như Y
-        double pitch_scaled = scale_factor * pitch;
-        ks = k - pitch_scaled;  // ĐỔI từ + thành -
-        
+        double p_term_pitch = scale_factor * pitch;
+        double d_term_pitch = this->gain * this->pitch_derivative; 
+        ks = k - (p_term_pitch + d_term_pitch); 
         dxi = kl * sin(ks);
         autoH = kl * cos(ks);
         
-        // DEBUG: In ra pitch geometry
-        if (dbg_geom_cnt % 2 == 0) {
-            // RCLCPP_INFO(this->get_logger(),
-            //            "[GEOM-X] pitch=%.3f rad | pitch_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dxi_new=%.1f autoH=%.1f",
-            //            pitch, pitch_scaled, k, ks, kl, dxi, autoH);
-        }
-        
-        // ============ GIỚI HẠN AN TOÀN ============
-        if (dyi < 0) dyi = 0;
-        if (dyi > 45) dyi = 45;
-        if (dxi < -45) dxi = -45;
-        if (dxi > 45) dxi = 45;
+        // 2. LIMITER: Cho phép bước dài (nhưng cẩn thận)
+        double max_change = 0.5 + (tilt_mag * 10.0);
+        if (dxi > dxi_before + max_change) dxi = dxi_before + max_change;
+        if (dxi < dxi_before - max_change) dxi = dxi_before - max_change;
+        if (dyi > dyi_before + max_change) dyi = dyi_before + max_change;
+        if (dyi < dyi_before - max_change) dyi = dyi_before - max_change;
+
+        // Cho phép bước rất dài (cả âm và dương)
+        if (dyi < -30.0) dyi = -30.0;
+        if (dyi > 65.0) dyi = 65.0;
+        if (dxi < -70.0) dxi = -70.0; 
+        if (dxi > 70.0) dxi = 70.0;
         
         dyis = dyi;
         dxis = -dxi;
         
-        // ============ PHỤC HỒI CHIỀU CAO ============
+        // 3. [QUAN TRỌNG NHẤT] DYNAMIC HEIGHT ADJUSTMENT (ĐIỀU CHỈNH ĐỘ CAO ĐỘNG)
+        // Tính độ dài chân cần thiết với dxi và dyi hiện tại
+        double leg_extension_sq = dxi*dxi + dyi*dyi;
+        double max_safe_H_sq = (225.0*225.0) - leg_extension_sq; // 225 là max chân
+        
+        // Nếu căn bậc 2 âm (tức là bước quá dài, chân không với tới), phải giới hạn
+        if (max_safe_H_sq < 0) max_safe_H_sq = 100.0; // Giá trị an toàn thấp
+        
+        double max_possible_H = sqrt(max_safe_H_sq) - 2.0; // Trừ 2mm để an toàn
+        
+        // Logic hồi phục:
+        // Cố gắng hồi phục về HEIGHT_STD (220mm)
         if (HEIGHT_STD > autoH) {
-            autoH += (HEIGHT_STD - autoH) * 0.07;
-        } else {
-            autoH = HEIGHT_STD;
+            autoH += (HEIGHT_STD - autoH) * this->rr;
         }
         
+        // NHƯNG: Không bao giờ được cao hơn max_possible_H (giới hạn vật lý)
+        // Nếu bước dài, max_possible_H sẽ giảm -> autoH bị ép giảm theo -> Robot tự hạ thấp
+        if (autoH > max_possible_H) {
+            autoH = max_possible_H;
+        }
+        
+        // Giới hạn dưới cùng
         if (autoH < 140) autoH = 140;
     }
+    // void apply_uvc_geometry_control() {
+    // // ============ ĐIỀU CHỈNH Y (trái-phải) ============
+    //     double k = atan((dyi) / autoH);
+    //     double kl = autoH / cos(k);
+        
+    //     double tilt_mag = sqrt(pitch * pitch + roll * roll);
+        
+    //     // 1. P-TERM (Dựa trên góc nghiêng - Đã sửa lỗi scale_base cục bộ ở bước trước)
+    //     double scale_factor = this->scale_base * (1.0 + 0.5 * std::min(tilt_mag, 1.0));
+    //     double p_term_roll = scale_factor * roll;
+        
+    //     // 2. D-TERM (Dựa trên tốc độ nghiêng - SỬ DỤNG BIẾN GAIN TỪ RL)
+    //     // gain đóng vai trò là Kd (Damping), giúp robot không bị lắc qua lắc lại
+    //     double d_term_roll = this->gain * this->roll_derivative; 
+        
+    //     // Tổng hợp điều khiển: Góc sửa = P + D
+    //     double roll_total_correction = p_term_roll + d_term_roll;
+
+    //     // Áp dụng vào công thức UVC
+    //     double ks = k - roll_total_correction;  // Dùng tổng hợp thay vì chỉ roll_scaled
+        
+    //     dyi = kl * sin(ks);
+    //     autoH = kl * cos(ks);
+        
+    //     // ============ ĐIỀU CHỈNH X (trước-sau) ============
+    //     k = atan(dxi / autoH);
+    //     kl = autoH / cos(k);
+        
+    //     // Tương tự cho trục Pitch
+    //     double p_term_pitch = scale_factor * pitch;
+    //     double d_term_pitch = this->gain * this->pitch_derivative; // Sử dụng gain
+        
+    //     double pitch_total_correction = p_term_pitch + d_term_pitch;
+        
+    //     ks = k - pitch_total_correction; // Dùng tổng hợp
+        
+    //     dxi = kl * sin(ks);
+    //     autoH = kl * cos(ks);
+        
+    //     // // DEBUG: In ra pitch geometry
+    //     // if (dbg_geom_cnt % 2 == 0) {
+    //     //     // RCLCPP_INFO(this->get_logger(),
+    //     //     //            "[GEOM-X] pitch=%.3f rad | pitch_scaled=%.3f | k=%.4f ks=%.4f | kl=%.1f | dxi_new=%.1f autoH=%.1f",
+    //     //     //            pitch, pitch_scaled, k, ks, kl, dxi, autoH);
+    //     // }
+        
+    //     // ============ GIỚI HẠN AN TOÀN ============
+
+    //     // double max_change = 0.5; // Chỉ cho phép thay đổi tối đa 2mm mỗi 10ms
+    //     double emergency_multiplier = 1.0; 
+    //     double max_change = 0.5 + (tilt_mag * emergency_multiplier);
+    //     // Kẹp dxi trong khoảng [old - 2.0, old + 2.0]
+    //     if (dxi > dxi_before + max_change) dxi = dxi_before + max_change;
+    //     if (dxi < dxi_before - max_change) dxi = dxi_before - max_change;
+        
+    //     // Kẹp dyi tương tự
+    //     if (dyi > dyi_before + max_change) dyi = dyi_before + max_change;
+    //     if (dyi < dyi_before - max_change) dyi = dyi_before - max_change;
+
+    //     if (dyi < -30) dyi = -30;
+    //     if (dyi > 65) dyi = 65;
+    //     if (dxi < -65) dxi = -65;
+    //     if (dxi > 65) dxi = 65;
+        
+    //     dyis = dyi;
+    //     dxis = -dxi;
+        
+    //     // ============ PHỤC HỒI CHIỀU CAO ============
+    //     if (HEIGHT_STD > autoH) {
+    //         autoH += (HEIGHT_STD - autoH) * this->rr;
+    //     } else {
+    //         autoH = HEIGHT_STD;
+    //     }
+        
+    //     if (autoH < 140) autoH = 140;
+    // }
     
     ///////////////////////////////////////////////////////////////////////////////////
     //// FOOT LIFT CALCULATION - Tính độ cao nâng chân theo hình sin ////
@@ -486,77 +571,56 @@ private:
             fh = 0.0;
         }
     }
-    
-    ///////////////////////////////////////////////////////////////////////////////////
-    //// LEG TARGETS & LANDING PHASE - Tính vị trí chân cuối cùng + landing ////
-    ///////////////////////////////////////////////////////////////////////////////////
+
     void calculate_and_publish_legs() {
         double l_hn, l_ht, l_dg, l_mct, l_mcn;
         double r_hn, r_ht, r_dg, r_mct, r_mcn;
         
-        // Ensure swing foot does not go below min_clearance
-        double swing_dz_right = autoH;
+        // 1. Tính độ cao (Z)
         double swing_dz_left = autoH;
+        double swing_dz_right = autoH;
         if (fh > 0.0) {
-            swing_dz_right = std::max(autoH - fh, min_clearance);
             swing_dz_left = std::max(autoH - fh, min_clearance);
+            swing_dz_right = std::max(autoH - fh, min_clearance);
         }
 
-        // During landing phase, bring swing foot back down to ground
         double swing_end = fwctEnd - landing_phase;
-
         if (fwct >= swing_end) {
-            // Landing phase: bring swing foot back to ground (autoH)
             double landing_progress = 0.0;
             double landing_duration = fwctEnd - swing_end;
-            if (landing_duration > 0.0) {
-                landing_progress = std::clamp((fwct - swing_end) / landing_duration, 0.0, 1.0);
-            } else {
-                landing_progress = 1.0;
-            }
+            if (landing_duration > 0.0) landing_progress = std::clamp((fwct - swing_end) / landing_duration, 0.0, 1.0);
+            else landing_progress = 1.0;
 
-            // Linearly bring swing foot from current height down to autoH
-            if (support_leg == 0) {
-                // left is swing -> lower to ground
-                swing_dz_left = autoH + (swing_dz_left - autoH) * (1.0 - landing_progress);
-            } else {
-                // right is swing -> lower to ground
-                swing_dz_right = autoH + (swing_dz_right - autoH) * (1.0 - landing_progress);
-            }
+            if (support_leg == 0) swing_dz_left = autoH + (swing_dz_left - autoH) * (1.0 - landing_progress);
+            else swing_dz_right = autoH + (swing_dz_right - autoH) * (1.0 - landing_progress);
         }
 
-        // Support feet always at full height for stability
-        double support_dz_right = autoH;
-        double support_dz_left = autoH;
+        double support_dz = autoH;
+
+        // 2. Tính Sway (Y) - Dời trọng tâm
+        // 15mm là khoảng cách đủ để trọng tâm rơi vào chân trụ
+        double sway_offset = 15.0; 
 
         if (support_leg == 0) { // Chân PHẢI trụ
-            // Chân phải (trụ) - độ cao có thể được hạ xuống trong landing
-            solve_ik(dxi, dyi, support_dz_right, r_hn, r_ht, r_dg, r_mct, r_mcn);
+            // Dịch hông sang phải -> Tức là giảm dy của chân phải đi
+            // dyi đang là 20, trừ 15 còn 5 -> Chân phải rất gần tâm -> Trọng tâm đè lên chân phải
+            double support_dy_right = dyi - sway_offset; 
+            double swing_dy_left = dyis;
 
-            // Chân trái (di chuyển) - nâng lên (z limited)
-            solve_ik(dxis, dyis, swing_dz_left, l_hn, l_ht, l_dg, l_mct, l_mcn);
+            solve_ik(dxi, support_dy_right, support_dz, r_hn, r_ht, r_dg, r_mct, r_mcn);
+            solve_ik(dxis, swing_dy_left, swing_dz_left, l_hn, l_ht, l_dg, l_mct, l_mcn);
+            
         } else { // Chân TRÁI trụ
-            // Chân trái (trụ) - có thể hạ xuống
-            solve_ik(dxis, dyis, support_dz_left, l_hn, l_ht, l_dg, l_mct, l_mcn);
+            // Dịch hông sang trái -> Tức là tăng dy của chân trái lên (đang âm cho về gần 0)
+            double support_dy_left = dyis + sway_offset;
+            double swing_dy_right = dyi;
 
-            // Chân phải (di chuyển) - nâng lên (z limited)
-            solve_ik(dxi, dyi, swing_dz_right, r_hn, r_ht, r_dg, r_mct, r_mcn);
-        }
-
-        // Periodic debug logging for leg targets
-        static int leg_dbg = 0;
-        if (++leg_dbg % 6 == 0) { // ~every 300ms at 50ms timer
-            // RCLCPP_INFO(this->get_logger(), "LEG TARGETS: fwct=%.1f/%.1f support=%s fh=%.2f swing_z(L:%.1f R:%.1f) support_z(L:%.1f R:%.1f) dxi=%.1f dxis=%.1f dyi=%.1f dyis=%.1f",
-            //             fwct, fwctEnd, support_leg==0?"RIGHT":"LEFT", fh,
-            //             swing_dz_left, swing_dz_right, support_dz_left, support_dz_right,
-            //             dxi, dxis, dyi, dyis);
+            solve_ik(dxis, support_dy_left, support_dz, l_hn, l_ht, l_dg, l_mct, l_mcn);
+            solve_ik(dxi, swing_dy_right, swing_dz_right, r_hn, r_ht, r_dg, r_mct, r_mcn);
         }
         
-        // Publish
-        publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
-                    r_hn, r_ht, r_dg, r_mct, r_mcn);
+        publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn, r_hn, r_ht, r_dg, r_mct, r_mcn);
     }
-    
     ///////////////////////////////////////////////////////////////////////////////////
     //// CYCLE COUNTER - Quản lý chu kỳ bước chân ////
     ///////////////////////////////////////////////////////////////////////////////////
@@ -583,7 +647,8 @@ private:
                 dyis = -stance_width;
                 dyi = stance_width;
             }
-            
+            dxi_before = dxi;
+            dyi_before = dyi;
             // RCLCPP_INFO(this->get_logger(), "Step cycle complete. New support leg: %s",
             //            support_leg == 0 ? "RIGHT" : "LEFT");
         }
@@ -598,9 +663,9 @@ private:
         double r_hn, r_ht, r_dg, r_mct, r_mcn;
         
         // Chân trái: giữa, bên trái
-        solve_ik(0.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
+        solve_ik(15.0, stance_width, HEIGHT_STD, l_hn, l_ht, l_dg, l_mct, l_mcn);
         // Chân phải: giữa, bên phải
-        solve_ik(0.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
+        solve_ik(15.0, -stance_width, HEIGHT_STD, r_hn, r_ht, r_dg, r_mct, r_mcn);
         
         publish_legs(l_hn, l_ht, l_dg, l_mct, l_mcn,
                     r_hn, r_ht, r_dg, r_mct, r_mcn);
@@ -639,7 +704,7 @@ private:
         double sin3 = sqrt(1.0 - cos3*cos3);
         dg = atan2(sin3, cos3);
         ht = atan2(sin3*L4, L3 + cos3*L4) + atan2(dx, d_yz - L5);
-        mct = -dg + ht;
+        mct = -dg + ht ;
         mcn = -hn;
     }
     
@@ -705,7 +770,7 @@ private:
     double dxis, dyis;
     double dxib, dyib;
     int support_leg;
-    
+    double dyi_before , dxi_before ;
     //// Biến IMU và điều khiển ////
     double pitch, roll;
     double pitch_filtered, roll_filtered;

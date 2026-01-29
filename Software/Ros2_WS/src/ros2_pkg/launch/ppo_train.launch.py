@@ -18,6 +18,9 @@ def generate_launch_description():
     # 2. Thiết lập đường dẫn tài nguyên
     resource_path = os.path.join(pkg_share, '..')
 
+    set_nvidia_offload = SetEnvironmentVariable(name='__NV_PRIME_RENDER_OFFLOAD', value='1')
+    set_nvidia_provider = SetEnvironmentVariable(name='__GLX_VENDOR_LIBRARY_NAME', value='nvidia')
+
     # 3. Node Robot State Publisher
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
@@ -44,7 +47,7 @@ def generate_launch_description():
         arguments=[
             '-name', 'humanoid_robot',
             '-topic', 'robot_description',
-            '-z', '0.30', # Độ cao vừa phải
+            '-z', '0.29', # Độ cao vừa phải
         ],
         output='screen',
     )
@@ -95,9 +98,11 @@ def generate_launch_description():
     uvc_ctrl = Node(package='ros2_pkg', executable='uvc_node', output='screen', parameters=[{'use_sim_time': True}])
     
     # 8. Node RL PPO (Chính là file rl_training_node.py đã sửa)
-    rl_train = Node(package='ros2_pkg', executable='rl_training_node', output='screen', parameters=[{'use_sim_time': True}])
+    rl_train = Node(package='ros2_pkg', executable='rl_ppo_training', output='screen', parameters=[{'use_sim_time': True}])
     
     return LaunchDescription([
+        set_nvidia_offload,
+        set_nvidia_provider,
         SetEnvironmentVariable(name='GZ_SIM_RESOURCE_PATH', value=resource_path),
         node_robot_state_publisher,
         gazebo,

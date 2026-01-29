@@ -70,6 +70,10 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_inference" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_inference.py")
 endif()
 
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "export_onnx" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/export_onnx.py")
+endif()
+
 if(CMAKE_INSTALL_COMPONENT)
   set(CMAKE_INSTALL_MANIFEST "install_manifest_${CMAKE_INSTALL_COMPONENT}.txt")
 else()

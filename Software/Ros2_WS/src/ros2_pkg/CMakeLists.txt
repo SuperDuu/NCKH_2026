@@ -42,7 +42,7 @@ install(PROGRAMS ros2_pkg/rl_training_node.py DESTINATION lib/${PROJECT_NAME} RE
 install(PROGRAMS ros2_pkg/rl_training_fast.py DESTINATION lib/${PROJECT_NAME} RENAME rl_training_fast)
 install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
 install(PROGRAMS ros2_pkg/rl_inference.py DESTINATION lib/${PROJECT_NAME} RENAME rl_inference)
-
+install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
 
 
 install(DIRECTORY launch urdf rviz worlds

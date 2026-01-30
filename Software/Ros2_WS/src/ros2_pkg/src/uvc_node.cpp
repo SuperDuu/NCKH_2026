@@ -11,9 +11,9 @@
 #include <chrono>  // Thêm dòng này nếu chưa có
 #include <thread>  // Thêm dòng này nếu chưa có
 const double L3 = 60.0;
-const double L4 = 100.0;
-const double L5 = 65.0;
-const double HEIGHT_STD = 224.0-20;
+const double L4 = 103.4;
+const double L5 = 57.0;
+const double HEIGHT_STD = 220.4-20;
 
 class UvcControllerNode : public rclcpp::Node {
 public:

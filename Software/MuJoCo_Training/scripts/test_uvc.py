@@ -4,52 +4,45 @@ import numpy as np
 import time
 from uvc_math import RobotMath
 
-# 1. Load model
+# 1. Load model chuẩn vật lý
 model = mujoco.MjModel.from_xml_path("../assets/Robot.xml")
 data = mujoco.MjData(model)
 math = RobotMath()
 
-# 2. Tham số UVC cố định (Lấy từ mặc định gazebo của bạn)
-# [gain, scale_base, step_duration, landing_phase, stance_width, max_foot_lift, recovery_rate]
-test_params = [0.18, 0.12, 25.0, 6.0, 20.0, 12.0, 0.1]
-
-# Biến điều khiển chu kỳ
-fwct = 0.0
-support_leg = 0 # 0: Phải trụ, 1: Trái trụ
+# 2. Tham số test (Đã chuyển đổi sang hệ mét cho các tham số kích thước)
+# Index: 0:gain, 1:scale_b, 2:fwctEnd, 3:landP, 4:stance_w(m), 5:fhMax(m), 6:rr
+# stance_w để 20mm = 0.02m
+test_params = [0.0, 0.0, 40.0, 6.0, 0.02, 0.0, 0.0] 
 
 with mujoco.viewer.launch_passive(model, data) as v:
-    print("🚀 Đang test UVC logic... Nhấn 'Space' để tạm dừng.")
+    print(f"🚀 TEST STANDING STILL (METRIC): Robot đứng yên, Target H: {math.HEIGHT_STD}m")
     
-    # Hạ thấp độ cao khởi tạo để tránh robot bị rơi tự do quá mạnh
-    data.qpos[2] = 0.26 # Hạ từ 0.35 xuống 0.26m
+    # Ép vị trí gốc (đơn vị Mét)
+    data.qpos[2] = 0.28 
     
     while v.is_running():
         step_start = time.time()
 
-        # Đọc IMU (Giả lập robot đứng thẳng nếu chưa có nhiễu)
+        # Giữ góc nghiêng bằng 0 để kiểm tra IK tĩnh
         pitch, roll = 0.0, 0.0 
-        # Nếu muốn test độ nhạy, bạn có thể thử cho pitch = 0.1 (nghiêng 5 độ)
         
-        # Tính toán 10 góc khớp
-        fwctEnd = test_params[2]
-        joint_angles = math.compute_steps(test_params, [pitch, roll], fwct, fwctEnd, support_leg)
+        # 3. Tính toán góc khớp (Sử dụng hàm đã chuẩn hóa Mét)
+        # Với pitch/roll = 0 và gain/rr = 0, autoH sẽ giữ nguyên ở 0.2m (200mm)
+        joint_angles = math.compute_joints(pitch, roll, test_params)
         
-        # Gửi lệnh đến Actuators
+        # 4. Gửi lệnh điều khiển 10 motor chân
         data.ctrl[:10] = joint_angles
         
-        # Chạy mô phỏng vật lý
-        mujoco.mj_step(model, data)
-        
-        # Cập nhật chu kỳ
-        fwct += 1.0
-        if fwct >= fwctEnd:
-            fwct = 0.0
-            support_leg = 1 - support_leg
-            print(f"🔄 Đổi chân trụ: {'TRÁI' if support_leg==1 else 'PHẢI'}")
+        # 5. Quan sát trạng thái
+        if int(time.time()*10) % 10 == 0:
+            # In ra mm để bạn dễ theo dõi nhưng tính toán vẫn là mét
+            print(f"H: {math.autoH*1000:.1f}mm | dxi: {math.dxi*1000:.1f}mm | Support: {math.support_leg} | ht: {joint_angles[1]*180/np.pi:.2f}°", flush=True)
 
+        # Chạy vật lý
+        mujoco.mj_step(model, data)
         v.sync()
         
-        # Duy trì tốc độ thời gian thực (100Hz)
+        # Duy trì 100Hz
         time_until_next_step = model.opt.timestep - (time.time() - step_start)
         if time_until_next_step > 0:
             time.sleep(time_until_next_step)

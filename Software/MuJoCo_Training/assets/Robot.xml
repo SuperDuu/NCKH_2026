@@ -39,22 +39,29 @@
     
     <body name="root" pos="0 0 0.295">
       <freejoint name="root_joint" />
-      <site name="imu_site" pos="0 0 0" /> <body name="base_link" pos="0 0 0">
+      <site name="imu_site" pos="0 0 0" /> 
+      <body name="base_link" pos="0 0 0">
+        <inertial pos="-4.96e-08 0.00046 -0.013" mass="0.0505" diaginertia="1.58e-05 3.95e-05 3.98e-05" />
         <geom type="mesh" mesh="base_link" />
 
         <body name="base_hip_left_link" pos="-0.035 -0.0205 -0.027" quat="0 0 0.7071 0.7071">
+          <inertial pos="0.0105 -0.0102 0.0211" mass="0.1078" diaginertia="1.74e-05 2.77e-05 1.74e-05" />
           <joint name="base_hip_left_joint" type="hinge" range="-0.17453 0.69813" axis="0 0 1" />
           <geom type="mesh" mesh="base_hip_left_link" />
           <body name="hip_hip_left_link" pos="0.0295 -0.0205 0.0105" quat="0.7071 0 0.7071 0">
+            <inertial pos="-0.00047 -0.0311 -0.0159" mass="0.0244" diaginertia="1.32e-05 5.27e-06 1.13e-05" />
             <joint name="hip_hip_left_joint" type="hinge" range="-0.8 0.69813" axis="0 0 -1" />
             <geom type="mesh" mesh="hip_hip_left_link" />
             <body name="hip_knee_left_link" pos="0 -0.06 0">
+              <inertial pos="0 -0.0521 -0.0183" mass="0.1302" diaginertia="4.59e-05 2.02e-05 3.28e-05" />
               <joint name="hip_knee_left_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
               <geom type="mesh" mesh="hip_knee_left_link" />
               <body name="knee_ankle_left_link" pos="0 -0.1034 0">
+                <inertial pos="3.9e-05 -0.0275 -0.0176" mass="0.0298" diaginertia="9.56e-06 1.00e-05 9.63e-06" />
                 <joint name="knee_ankle_left_joint" type="hinge" range="-0.8 0.8" axis="0 0 -1" />
                 <geom type="mesh" mesh="knee_ankle_left_link" />
                 <body name="ankle_ankle_left_link" pos="0.0215 -0.057 -0.018" quat="0.7071 0 0.7071 0">
+                  <inertial pos="-0.008 -0.0072 -0.0218" mass="0.085" diaginertia="2.80e-05 4.73e-05 2.35e-05" />
                   <joint name="ankle_ankle_left_joint" type="hinge" range="-1.2217 1.2217" axis="0 0 -1" />
                   <geom type="mesh" mesh="ankle_ankle_left_link" />
                 </body>
@@ -64,18 +71,23 @@
         </body>
 
         <body name="base_hip_right_link" pos="0.035 -0.0205 -0.027" quat="0.7071 0.7071 0 0">
+          <inertial pos="0.0094 -0.0102 -0.0222" mass="0.1078" diaginertia="1.74e-05 2.77e-05 1.74e-05" />
           <joint name="base_hip_right_joint" type="hinge" range="-0.69813 0.17453" axis="0 0 -1" />
           <geom type="mesh" mesh="base_hip_right_link" />
           <body name="hip_hip_right_link" pos="0.0309 -0.0205 -0.0126" quat="0.7071 0 0.7071 0">
+            <inertial pos="0.00047 -0.0311 -0.0194" mass="0.0244" diaginertia="1.32e-05 5.27e-06 1.13e-05" />
             <joint name="hip_hip_right_joint" type="hinge" range="-0.69813 0.8" axis="0 0 -1" />
             <geom type="mesh" mesh="hip_hip_right_link" />
             <body name="hip_knee_right_link" pos="0 -0.06 0">
+              <inertial pos="0 -0.0521 -0.0218" mass="0.1302" diaginertia="4.59e-05 2.02e-05 3.28e-05" />
               <joint name="hip_knee_right_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
               <geom type="mesh" mesh="hip_knee_right_link" />
               <body name="knee_ankle_right_link" pos="0 -0.1034 0">
+                <inertial pos="3.9e-05 -0.0275 -0.0211" mass="0.0298" diaginertia="9.56e-06 1.00e-05 9.63e-06" />
                 <joint name="knee_ankle_right_joint" type="hinge" range="-0.8 0.8" axis="0 0 -1" />
                 <geom type="mesh" mesh="knee_ankle_right_link" />
                 <body name="ankle_ankle_right_link" pos="0.0215 -0.057 -0.0215" quat="0.7071 0 0.7071 0">
+                  <inertial pos="-0.008 -0.0071 -0.0220" mass="0.0859" diaginertia="2.80e-05 4.73e-05 2.35e-05" />
                   <joint name="ankle_ankle_right_joint" type="hinge" range="-1.2217 1.2217" axis="0 0 -1" />
                   <geom type="mesh" mesh="ankle_ankle_right_link" />
                 </body>
@@ -85,20 +97,25 @@
         </body>
 
         <body name="base_hip_middle_link" pos="0 0 0.0048">
+          <inertial pos="-0.00013 0.0095 0.0800" mass="0.319" diaginertia="0.00047 0.00083 0.00051" />
           <joint name="base_hip_middle_joint" type="hinge" range="-0.5236 0.5236" axis="0 0 1" />
           <geom type="mesh" mesh="base_hip_middle_link" />
           
           <body name="hip_head_link" pos="0.001 -0.0017 0.1446">
+            <inertial pos="-0.0047 0.0026 0.0020" mass="0.1143" diaginertia="2.40e-05 2.95e-05 2.51e-05" />
             <geom type="mesh" mesh="hip_head_link" />
           </body>
           
           <body name="hip_shoulder_left_link" pos="-0.108 0.0195 0.1093" quat="0.7071 0.7071 0 0">
+            <inertial pos="-0.0099 0 0.0218" mass="0.0540" diaginertia="8.31e-06 1.38e-05 9.16e-06" />
             <joint name="hip_shoulder_left_joint" type="hinge" range="-1.2217 0.17453" axis="0 0 1" />
             <geom type="mesh" mesh="hip_shoulder_left_link" />
             <body name="shoulder_shoulder_left_link" pos="-0.0157 -0.0169 0.0309" quat="0.7071 0 0.7071 0">
+              <inertial pos="0.0067 -0.0132 0.0046" mass="0.0794" diaginertia="2.28e-05 1.93e-05 2.19e-05" />
               <joint name="shoulder_shoulder_left_joint" type="hinge" range="-1.0472 1.0472" axis="0 0 -1" />
               <geom type="mesh" mesh="shoulder_shoulder_left_link" />
               <body name="shoulder_elbow_left_link" pos="0 -0.0636 0.0262">
+                <inertial pos="0.0012 -0.0335 -0.0230" mass="0.0922" diaginertia="2.30e-05 1.15e-05 1.89e-05" />
                 <joint name="shoulder_elbow_left_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
                 <geom type="mesh" mesh="shoulder_elbow_left_link" />
               </body>
@@ -106,18 +123,24 @@
           </body>
 
           <body name="hip_shoulder_right_link" pos="0.108 0.016 0.1093" quat="0 0 0.7071 0.7071">
+            <inertial pos="-0.0099 0 -0.0183" mass="0.0540" diaginertia="8.31e-06 1.38e-05 9.16e-06" />
             <joint name="hip_shoulder_right_joint" type="hinge" range="-0.17453 1.2217" axis="0 0 -1" />
             <geom type="mesh" mesh="hip_shoulder_right_link" />
             <body name="shoulder_shoulder_right_link" pos="-0.0157 -0.0169 -0.0274" quat="0.7071 0 0.7071 0">
+              <inertial pos="-0.0067 -0.0132 0.0046" mass="0.0794" diaginertia="2.28e-05 1.93e-05 2.19e-05" />
               <joint name="shoulder_shoulder_right_joint" type="hinge" range="-1.0472 1.0472" axis="0 0 -1" />
               <geom type="mesh" mesh="shoulder_shoulder_right_link" />
               <body name="shoulder_elbow_right_link" pos="0 -0.0636 0.0262">
+                <inertial pos="0.0001 -0.0335 -0.0230" mass="0.0921" diaginertia="2.29e-05 1.15e-05 1.89e-05" />
                 <joint name="shoulder_elbow_right_joint" type="hinge" range="-1.3963 1.3963" axis="0 0 -1" />
                 <geom type="mesh" mesh="shoulder_elbow_right_link" />
               </body>
             </body>
           </body>
-        </body> </body> </body> </worldbody>
+        </body> 
+      </body> 
+    </body> 
+  </worldbody>
 
   <actuator>
     <position name="m_hip_middle" joint="base_hip_middle_joint" kp="300" />

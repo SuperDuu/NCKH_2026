@@ -31,7 +31,7 @@ with mujoco.viewer.launch_passive(model, data) as v:
         joint_angles = math.compute_joints(pitch, roll, test_params)
         
         # 4. Gửi lệnh điều khiển 10 motor chân
-        data.ctrl[:10] = joint_angles
+        data.ctrl[:11] = joint_angles
         
         # 5. Quan sát trạng thái
         if int(time.time()*10) % 10 == 0:

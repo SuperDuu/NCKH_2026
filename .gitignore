@@ -11,9 +11,7 @@ venv/
 __pycache__/
 *.pyc
 logs/
-scripts/training_results/
-*.pt
-*.onnx
+
 
 # MuJoCo temp
 *.log

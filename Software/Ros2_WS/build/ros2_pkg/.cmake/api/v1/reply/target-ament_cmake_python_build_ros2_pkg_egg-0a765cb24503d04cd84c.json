@@ -73,13 +73,13 @@
 		{
 			"backtrace" : 3,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_build_ros2_pkg_egg",
+			"path" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_build_ros2_pkg_egg",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 0,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.rule",
+			"path" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.rule",
 			"sourceGroupIndex" : 1
 		}
 	],

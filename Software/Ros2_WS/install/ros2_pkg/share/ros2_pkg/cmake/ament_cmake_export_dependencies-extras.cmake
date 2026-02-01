@@ -1,1 +1,1 @@
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake

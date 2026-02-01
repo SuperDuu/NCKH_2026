@@ -1,11 +1,17 @@
 <mujoco model="Robot">
   <compiler angle="radian" meshdir="meshes" eulerseq="zyx" autolimits="true" />
 
-  <default>
+  <!-- <default>
     <joint limited="true" damping="0.5" armature="0.05" frictionloss="0.1" />
     <geom condim="4" friction="0.99 0.1 0.1" material="mat_visual" />
-    <position ctrllimited="true" ctrlrange="-3.14 3.14" forcerange="-1.08 1.08" />
+    <position ctrllimited="true" ctrlrange="-3.14 3.14" forcerange="-2.08 2.08" />
+  </default> -->
+
+  <default>
+    <joint limited="true" damping="0.15" armature="0.02" frictionloss="0.08" />
+    <position ctrllimited="true" ctrlrange="-3.14 3.14" kp="0" />
   </default>
+
 
   <asset>
     <texture name="texplane" type="2d" builtin="checker" rgb1=".2 .3 .4" rgb2=".1 .2 .3" width="100" height="100" />
@@ -143,17 +149,21 @@
   </worldbody>
 
   <actuator>
-    <position name="m_hip_middle" joint="base_hip_middle_joint" kp="300" />
-    <position name="m_hip_l_yaw" joint="base_hip_left_joint" kp="1000" />
-    <position name="m_hip_l_roll" joint="hip_hip_left_joint" kp="2000" />
-    <position name="m_hip_l_pitch" joint="hip_knee_left_joint" kp="1000" />
-    <position name="m_ankle_l_p" joint="knee_ankle_left_joint" kp="1000" />
-    <position name="m_ankle_l_r" joint="ankle_ankle_left_joint" kp="1000" />
-    <position name="m_hip_r_yaw" joint="base_hip_right_joint" kp="1000" />
-    <position name="m_hip_r_roll" joint="hip_hip_right_joint" kp="2000" />
-    <position name="m_hip_r_pitch" joint="hip_knee_right_joint" kp="1000" />
-    <position name="m_ankle_r_p" joint="knee_ankle_right_joint" kp="1000" />
-    <position name="m_ankle_r_r" joint="ankle_ankle_right_joint" kp="1000" />
+    <position name="m_hip_middle" joint="base_hip_middle_joint" kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_hip_l_yaw"   joint="base_hip_left_joint"  kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_hip_l_roll"  joint="hip_hip_left_joint"   kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_hip_l_pitch" joint="hip_knee_left_joint"  kp="800" forcerange="-2.08 2.08"/>
+
+    <position name="m_ankle_l_p"   joint="knee_ankle_left_joint"  kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_ankle_l_r"   joint="ankle_ankle_left_joint" kp="20"/>
+
+    <position name="m_hip_r_yaw"   joint="base_hip_right_joint" kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_hip_r_roll"  joint="hip_hip_right_joint"  kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_hip_r_pitch" joint="hip_knee_right_joint" kp="800" forcerange="-2.08 2.08"/>
+
+    <position name="m_ankle_r_p"   joint="knee_ankle_right_joint"  kp="800" forcerange="-2.08 2.08"/>
+    <position name="m_ankle_r_r"   joint="ankle_ankle_right_joint" kp="800" forcerange="-2.08 2.08"/>
+
   </actuator>
 
   <sensor>

@@ -1,8 +1,8 @@
-# Install script for directory: /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+# Install script for directory: /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
+  set(CMAKE_INSTALL_PREFIX "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,35 +43,35 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
+  include("/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   execute_process(
         COMMAND
         "/usr/bin/python3" "-m" "compileall"
-        "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/python3.12/site-packages/ros2_pkg"
+        "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/python3.12/site-packages/ros2_pkg"
       )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_training_node" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_training_node.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_training_node" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_training_node.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_training_fast" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_training_fast.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_training_fast" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_training_fast.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_ppo_training" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_ppo_training.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_ppo_training" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_ppo_training.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_inference" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_inference.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_inference" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_inference.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "export_onnx" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/export_onnx.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "export_onnx" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/export_onnx.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -82,5 +82,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

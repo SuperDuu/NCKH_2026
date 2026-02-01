@@ -1,42 +1,39 @@
 import mujoco
 import mujoco.viewer
-import time
 import numpy as np
+import time
 
-# 1. Load model từ assets
+# ====== LOAD MODEL ======
 model = mujoco.MjModel.from_xml_path("../assets/Robot.xml")
-data = mujoco.MjData(model)
+data  = mujoco.MjData(model)
 
-def launch_inspector():
-    # 2. "Treo" robot lên không trung để dễ quan sát (giống Rviz)
-    # Chúng ta sẽ tắt trọng lực tạm thời hoặc ép vị trí gốc
-    model.opt.gravity[2] = 0 # Tắt trọng lực để robot không rơi
-    
-    # Đặt robot ở độ cao vừa tầm mắt
-    data.qpos[2] = 0.5 
-    
-    print("🚀 Đang mở Robot Inspector...")
-    print("💡 Mẹo: Dùng các thanh trượt 'Actuators' bên phải để xoay từng khớp.")
-    print("💡 Nhấn '0' để hiện hệ trục, 'J' để hiện tên khớp.")
+# ====== IN THÔNG TIN KHỚP & ACTUATOR ======
+print("=== ACTUATORS ===")
+for i in range(model.nu):
+    print(f"[{i}] actuator: {model.actuator(i).name}")
 
-    with mujoco.viewer.launch_passive(model, data) as v:
-        while v.is_running():
-            step_start = time.time()
-            
-            # Giữ robot cố định tại một điểm trong không gian
-            data.qpos[0:3] = [0, 0, 0.5] # X, Y, Z
-            data.qpos[3:7] = [1, 0, 0, 0] # Quaternion cân bằng
-            
-            # Chạy bước mô phỏng để cập nhật các thanh trượt điều khiển
-            mujoco.mj_step(model, data)
-            
-            # Đồng bộ hình ảnh
-            v.sync()
-            
-            # Duy trì tần số 60Hz để mượt mà
-            time_until_next_step = 1.0/60.0 - (time.time() - step_start)
-            if time_until_next_step > 0:
-                time.sleep(time_until_next_step)
+print("\n=== JOINTS ===")
+for i in range(model.njnt):
+    print(f"[{i}] joint: {model.joint(i).name}")
 
-if __name__ == "__main__":
-    launch_inspector()
+# ====== RESET ======
+mujoco.mj_resetData(model, data)
+data.qpos[:] = model.key_qpos[0] if model.nkey > 0 else data.qpos
+mujoco.mj_forward(model, data)
+
+# ====== VIEWER ======
+with mujoco.viewer.launch_passive(
+    model,
+    data,
+    show_left_ui=True,    # 👈 có slider
+    show_right_ui=True
+) as viewer:
+
+    print("\n🎮 DÙNG SLIDER BÊN TRÁI ĐỂ ĐIỀU KHIỂN ACTUATOR")
+    print("ESC để thoát")
+
+    while viewer.is_running():
+        # giữ ctrl = giá trị hiện tại (slider override)
+        mujoco.mj_step(model, data)
+        viewer.sync()
+        time.sleep(0.002)

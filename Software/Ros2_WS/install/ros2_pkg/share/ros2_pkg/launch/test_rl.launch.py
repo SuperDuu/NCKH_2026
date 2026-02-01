@@ -1,1 +1,1 @@
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch/test_rl.launch.py
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch/test_rl.launch.py

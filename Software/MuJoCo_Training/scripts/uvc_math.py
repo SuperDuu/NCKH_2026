@@ -98,21 +98,51 @@ class RobotMath:
         # The list order MUST match the actuator order in Robot.xml or how you assign them in the environment
         # Assuming environment sets ctrl as: [L_Yaw, L_Roll, L_Pitch, L_AnkleP, L_AnkleR, R_Yaw, R_Roll, R_Pitch, R_AnkleP, R_AnkleR]
         
-        joints = [0.0] * 10
+        joints = [0.0] * 11
         
-        # CHÂN TRÁI (Index 0-4 trong joint_angles, sẽ map vào ctrl[1-5])
-        joints[0] = l_j[0]   # base_hip_left_joint
-        joints[1] = -l_j[1]  # hip_hip_left_joint
-        joints[2] = l_j[2]   # hip_knee_left_joint
-        joints[3] = l_j[3]   # knee_ankle_left_joint (mct chân trái)
-        joints[4] = l_j[4]   # ankle_ankle_left_joint
+        # # CHÂN TRÁI (Index 0-4 trong joint_angles, sẽ map vào ctrl[1-5])
+        # joints[0] = l_j[0]   # base_hip_left_joint
+        # joints[1] = -l_j[1]  # hip_hip_left_joint
+        # joints[2] = l_j[2]   # hip_knee_left_joint
+        # joints[3] = l_j[3]   # knee_ankle_left_joint (mct chân trái)
+        # joints[4] = l_j[4]   # ankle_ankle_left_joint
         
-        # CHÂN PHẢI (Index 5-9 trong joint_angles, sẽ map vào ctrl[6-10])
-        joints[5] = r_j[0]   # base_hip_right_joint
-        joints[6] = r_j[1]   # hip_hip_right_joint
-        joints[7] = -r_j[2]  # hip_knee_right_joint
-        joints[8] = -r_j[3]  # knee_ankle_right_joint (mct chân phải - ĐẢO DẤU)
-        joints[9] = -r_j[4]  # ankle_ankle_right_joint
+        # # CHÂN PHẢI (Index 5-9 trong joint_angles, sẽ map vào ctrl[6-10])
+        # joints[5] = r_j[0]   # base_hip_right_joint
+        # joints[6] = r_j[1]   # hip_hip_right_joint
+        # joints[7] = -r_j[2]  # hip_knee_right_joint
+        # joints[8] = -r_j[3]  # knee_ankle_right_joint (mct chân phải - ĐẢO DẤU)
+        # joints[9] = -r_j[4]  # ankle_ankle_right_joint
+        
+        
+        # CHÂN TRÁI
+        # joints[0] = l_j[0]      # yaw
+        # joints[1] = -l_j[1]     # roll
+        # joints[2] = l_j[2]      # pitch
+        # joints[3] = l_j[3]      # ankle pitch
+        # joints[4] = l_j[4]      # ankle roll
+
+        # # CHÂN PHẢI (GƯƠNG)
+        # joints[5] = r_j[0]      # yaw
+        # joints[6] = -r_j[1]     # roll  ✅ FIX
+        # joints[7] = -r_j[2]     # pitch
+        # joints[8] = r_j[3]      # ankle pitch ✅ FIX NGÃ SAU
+        # joints[9] = r_j[4]      # ankle roll (test)
+        
+        joints[1] = l_j[0]   # m_hip_l_yaw
+        joints[2] = l_j[4]   # m_hip_l_roll  (Mapping ankle R logic to hip R if needed, or constant)
+        joints[3] = -l_j[1]  # m_hip_l_pitch (Negative usually moves hip forward)
+        joints[4] = l_j[2]   # m_ankle_l_p   (Knee angle from IK)
+        joints[5] = l_j[3]   # m_ankle_l_r   (Ankle pitch/roll logic)
+
+        # --- RIGHT LEG (Symmetry check required) ---
+        # r_j indices: [0:Yaw, 1:HipP, 2:Knee, 3:AnkleP, 4:AnkleR]
+        joints[6] = r_j[0]   # m_hip_r_yaw
+        joints[7] = -r_j[4]  # m_hip_r_roll  (Inverted for symmetry)
+        joints[8] = r_j[1]   # m_hip_r_pitch (Inverted relative to Left)
+        joints[9] = -r_j[2]  # m_ankle_r_p
+        joints[10] = -r_j[3] # m_ankle_r_r
+
         
         return joints
         

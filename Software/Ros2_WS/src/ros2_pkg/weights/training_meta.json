@@ -1,10 +1,5 @@
 {
-  "best_reward": 613.5729083439609,
-  "current_std": 0.08,
-  "episode": 5936,
-  "best_episode": 1015,
-  "pitch_offset": 0.07676394490673835,
-  "roll_offset": -0.2758636510550332,
-  "calibration_done": true,
-  "std_reduction_counter": 6
+  "best_reward": 12386.146444098727,
+  "episode": 1280,
+  "best_episode": 279
 }

@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -224,6 +224,19 @@ uvc_node/fast:
 .PHONY : uvc_node/fast
 
 #=============================================================================
+# Target rules for targets named task_space_controller
+
+# Build rule for target.
+task_space_controller: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 task_space_controller
+.PHONY : task_space_controller
+
+# fast build rule for target.
+task_space_controller/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/build
+.PHONY : task_space_controller/fast
+
+#=============================================================================
 # Target rules for targets named ament_cmake_python_symlink_ros2_pkg
 
 # Build rule for target.
@@ -273,6 +286,30 @@ src/imu_process_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node.dir/build.make CMakeFiles/imu_process_node.dir/src/imu_process_node.cpp.s
 .PHONY : src/imu_process_node.cpp.s
 
+src/task_space_controller.o: src/task_space_controller.cpp.o
+.PHONY : src/task_space_controller.o
+
+# target to build an object file
+src/task_space_controller.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o
+.PHONY : src/task_space_controller.cpp.o
+
+src/task_space_controller.i: src/task_space_controller.cpp.i
+.PHONY : src/task_space_controller.i
+
+# target to preprocess a source file
+src/task_space_controller.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.i
+.PHONY : src/task_space_controller.cpp.i
+
+src/task_space_controller.s: src/task_space_controller.cpp.s
+.PHONY : src/task_space_controller.s
+
+# target to generate assembly for a file
+src/task_space_controller.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.s
+.PHONY : src/task_space_controller.cpp.s
+
 src/uvc_node.o: src/uvc_node.cpp.o
 .PHONY : src/uvc_node.o
 
@@ -315,10 +352,14 @@ help:
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... imu_process_node"
+	@echo "... task_space_controller"
 	@echo "... uvc_node"
 	@echo "... src/imu_process_node.o"
 	@echo "... src/imu_process_node.i"
 	@echo "... src/imu_process_node.s"
+	@echo "... src/task_space_controller.o"
+	@echo "... src/task_space_controller.i"
+	@echo "... src/task_space_controller.s"
 	@echo "... src/uvc_node.o"
 	@echo "... src/uvc_node.i"
 	@echo "... src/uvc_node.s"

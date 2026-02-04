@@ -5,16 +5,16 @@
   <xacro:property name="petg_kp" value="100000.0" /> 
   <xacro:property name="petg_kd" value="10.0" />
 
-  <xacro:property name="silicone_mu" value="0.8" /> 
+  <xacro:property name="silicone_mu" value="0.99" /> 
   <xacro:property name="silicone_kp" value="40000.0" /> 
-  <xacro:property name="silicone_kd" value="12.0" /> 
+  <xacro:property name="silicone_kd" value="25.0" /> 
   <xacro:property name="silicone_thickness" value="0.002" />
 
   <xacro:macro name="setup_joint" params="joint_name">
     <gazebo reference="${joint_name}">
       <implicitSpringDamper>true</implicitSpringDamper>
-      <friction>0.2</friction> 
-      <damping>0.1</damping>
+      <friction>0.1</friction> 
+      <damping>0.05</damping>
     </gazebo>
   </xacro:macro>
 
@@ -27,7 +27,7 @@
     </gazebo>
   </xacro:macro>
 
-  <xacro:macro name="make_controller" params="joint_name p d">
+<xacro:macro name="make_controller" params="joint_name p d">
     <gazebo>
       <plugin filename="gz-sim-joint-position-controller-system" 
               name="gz::sim::systems::JointPositionController">
@@ -35,12 +35,12 @@
         <topic>/model/humanoid_robot/joint/${joint_name}/cmd_pos</topic>
         
         <p_gain>${p}</p_gain> 
-        <i_gain>0.01</i_gain> 
-        <d_gain>${d}</d_gain>
-        <i_max>1</i_max>
-        <i_min>-1</i_min>
-        <cmd_max>2.5</cmd_max> 
-        <cmd_min>-2.5</cmd_min>
+        <i_gain>0.0</i_gain> <d_gain>${d}</d_gain>
+        
+        <cmd_max>20.0</cmd_max> 
+        <cmd_min>-20.0</cmd_min>
+        
+        <velocity_max>6.0</velocity_max>
       </plugin>
     </gazebo>
   </xacro:macro>

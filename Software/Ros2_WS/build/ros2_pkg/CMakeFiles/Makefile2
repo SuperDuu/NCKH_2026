@@ -54,10 +54,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 #=============================================================================
 # Directory level rules for the build root directory
@@ -65,6 +65,7 @@ CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 # The main recursive "all" target.
 all: CMakeFiles/imu_process_node.dir/all
 all: CMakeFiles/uvc_node.dir/all
+all: CMakeFiles/task_space_controller.dir/all
 all: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
 .PHONY : all
 
@@ -77,6 +78,7 @@ clean: CMakeFiles/uninstall.dir/clean
 clean: CMakeFiles/ros2_pkg_uninstall.dir/clean
 clean: CMakeFiles/imu_process_node.dir/clean
 clean: CMakeFiles/uvc_node.dir/clean
+clean: CMakeFiles/task_space_controller.dir/clean
 clean: CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean
 clean: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean
 .PHONY : clean
@@ -88,14 +90,14 @@ clean: CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/clean
 CMakeFiles/uninstall.dir/all: CMakeFiles/ros2_pkg_uninstall.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uninstall.dir/build.make CMakeFiles/uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target uninstall"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target uninstall"
 .PHONY : CMakeFiles/uninstall.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/uninstall.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/uninstall.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/uninstall.dir/rule
 
 # Convenience name for target.
@@ -114,14 +116,14 @@ CMakeFiles/uninstall.dir/clean:
 CMakeFiles/ros2_pkg_uninstall.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_pkg_uninstall.dir/build.make CMakeFiles/ros2_pkg_uninstall.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ros2_pkg_uninstall.dir/build.make CMakeFiles/ros2_pkg_uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ros2_pkg_uninstall"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ros2_pkg_uninstall"
 .PHONY : CMakeFiles/ros2_pkg_uninstall.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ros2_pkg_uninstall.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ros2_pkg_uninstall.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/ros2_pkg_uninstall.dir/rule
 
 # Convenience name for target.
@@ -140,14 +142,14 @@ CMakeFiles/ros2_pkg_uninstall.dir/clean:
 CMakeFiles/imu_process_node.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node.dir/build.make CMakeFiles/imu_process_node.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node.dir/build.make CMakeFiles/imu_process_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=1,2 "Built target imu_process_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=1,2 "Built target imu_process_node"
 .PHONY : CMakeFiles/imu_process_node.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/imu_process_node.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/imu_process_node.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/imu_process_node.dir/rule
 
 # Convenience name for target.
@@ -166,14 +168,14 @@ CMakeFiles/imu_process_node.dir/clean:
 CMakeFiles/uvc_node.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/uvc_node.dir/build.make CMakeFiles/uvc_node.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=3,4 "Built target uvc_node"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=5,6 "Built target uvc_node"
 .PHONY : CMakeFiles/uvc_node.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/uvc_node.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/uvc_node.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/uvc_node.dir/rule
 
 # Convenience name for target.
@@ -186,20 +188,46 @@ CMakeFiles/uvc_node.dir/clean:
 .PHONY : CMakeFiles/uvc_node.dir/clean
 
 #=============================================================================
+# Target rules for target CMakeFiles/task_space_controller.dir
+
+# All Build rule for target.
+CMakeFiles/task_space_controller.dir/all:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=3,4 "Built target task_space_controller"
+.PHONY : CMakeFiles/task_space_controller.dir/all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/task_space_controller.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 2
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/task_space_controller.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+.PHONY : CMakeFiles/task_space_controller.dir/rule
+
+# Convenience name for target.
+task_space_controller: CMakeFiles/task_space_controller.dir/rule
+.PHONY : task_space_controller
+
+# clean rule for target.
+CMakeFiles/task_space_controller.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/task_space_controller.dir/build.make CMakeFiles/task_space_controller.dir/clean
+.PHONY : CMakeFiles/task_space_controller.dir/clean
+
+#=============================================================================
 # Target rules for target CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir
 
 # All Build rule for target.
 CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_symlink_ros2_pkg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_symlink_ros2_pkg"
 .PHONY : CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/rule
 
 # Convenience name for target.
@@ -218,14 +246,14 @@ CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/clean:
 CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all: CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build.make CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_build_ros2_pkg_egg"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num= "Built target ament_cmake_python_build_ros2_pkg_egg"
 .PHONY : CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir/rule
 
 # Convenience name for target.

@@ -82,7 +82,7 @@
 			{
 				"command" : 5,
 				"file" : 5,
-				"line" : 28,
+				"line" : 31,
 				"parent" : 0
 			},
 			{
@@ -106,7 +106,7 @@
 			{
 				"command" : 1,
 				"file" : 5,
-				"line" : 41,
+				"line" : 44,
 				"parent" : 0
 			},
 			{
@@ -124,7 +124,7 @@
 			{
 				"command" : 1,
 				"file" : 5,
-				"line" : 42,
+				"line" : 45,
 				"parent" : 0
 			},
 			{
@@ -142,7 +142,7 @@
 			{
 				"command" : 1,
 				"file" : 5,
-				"line" : 43,
+				"line" : 46,
 				"parent" : 0
 			},
 			{
@@ -160,7 +160,7 @@
 			{
 				"command" : 1,
 				"file" : 5,
-				"line" : 44,
+				"line" : 47,
 				"parent" : 0
 			},
 			{
@@ -178,7 +178,7 @@
 			{
 				"command" : 1,
 				"file" : 5,
-				"line" : 45,
+				"line" : 48,
 				"parent" : 0
 			},
 			{
@@ -192,6 +192,42 @@
 				"file" : 7,
 				"line" : 39,
 				"parent" : 28
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 49,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 30
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 39,
+				"parent" : 31
+			},
+			{
+				"command" : 1,
+				"file" : 5,
+				"line" : 50,
+				"parent" : 0
+			},
+			{
+				"command" : 6,
+				"file" : 0,
+				"line" : 34,
+				"parent" : 33
+			},
+			{
+				"command" : 0,
+				"file" : 7,
+				"line" : 39,
+				"parent" : 34
 			}
 		]
 	},
@@ -200,7 +236,7 @@
 		{
 			"backtrace" : 10,
 			"component" : "Unspecified",
-			"scriptFile" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake",
+			"scriptFile" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_symlink_install/ament_cmake_symlink_install.cmake",
 			"type" : "script"
 		},
 		{
@@ -269,6 +305,32 @@
 				{
 					"from" : "ros2_pkg/export_onnx.py",
 					"to" : "export_onnx"
+				}
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 32,
+			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg",
+			"paths" : 
+			[
+				{
+					"from" : "ros2_pkg/task_space_training.py",
+					"to" : "task_space_training"
+				}
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 35,
+			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg",
+			"paths" : 
+			[
+				{
+					"from" : "ros2_pkg/visual.py",
+					"to" : "visual"
 				}
 			],
 			"type" : "file"

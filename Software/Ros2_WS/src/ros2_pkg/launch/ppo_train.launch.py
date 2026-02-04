@@ -10,100 +10,96 @@ def generate_launch_description():
     pkg_name = 'ros2_pkg'
     pkg_share = get_package_share_directory(pkg_name)
     
-    # 1. Xử lý file Robot (Dùng main.xacro như yêu cầu)
+    # === CẤU HÌNH ĐƯỜNG DẪN ===
+    cyclonedds_xml_path = '/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/cyclonedds.xml'
+    
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')
     doc = xacro.process_file(xacro_file)
     robot_description_raw = doc.toxml()
 
-    # 2. Thiết lập đường dẫn tài nguyên
     resource_path = os.path.join(pkg_share, '..')
 
-    set_nvidia_offload = SetEnvironmentVariable(name='__NV_PRIME_RENDER_OFFLOAD', value='1')
-    set_nvidia_provider = SetEnvironmentVariable(name='__GLX_VENDOR_LIBRARY_NAME', value='nvidia')
+    # ========================================================================
+    # BIẾN MÔI TRƯỜNG (ENVIRONMENT VARIABLES)
+    # ========================================================================
+    env_vars = [
+        SetEnvironmentVariable(name='CYCLONEDDS_URI', value=cyclonedds_xml_path),
+        SetEnvironmentVariable(name='RMW_IMPLEMENTATION', value='rmw_cyclonedds_cpp'),
+        SetEnvironmentVariable(name='ROS_AUTOMATIC_DISCOVERY_RANGE', value='LOCALHOST'),
+        
+        # ÉP PYTHON IN LOG NGAY LẬP TỨC (Rất quan trọng cho RL)
+        SetEnvironmentVariable(name='PYTHONUNBUFFERED', value='1'),
+        
+        # GPU NVIDIA CONFIG
+        SetEnvironmentVariable(name='__NV_PRIME_RENDER_OFFLOAD', value='1'),
+        SetEnvironmentVariable(name='__GLX_VENDOR_LIBRARY_NAME', value='nvidia'),
+        SetEnvironmentVariable(name='VK_ICD_FILENAMES', value='/usr/share/vulkan/icd.d/nvidia_icd.json'),
+        SetEnvironmentVariable(name='GZ_SIM_RESOURCE_PATH', value=resource_path),
+    ]
 
-    # 3. Node Robot State Publisher
+    # ========================================================================
+    # KHAI BÁO NODES
+    # ========================================================================
+    
+    # 1. Robot State Publisher
     node_robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
         output='screen',
-        parameters=[{
-            'robot_description': robot_description_raw,
-            'use_sim_time': True
-        }]
+        parameters=[{'robot_description': robot_description_raw, 'use_sim_time': True}]
     )
 
-    # 4. Khởi động Gazebo Sim (REALTIME)
-    # Dùng empty.sdf (mặc định là Realtime)
+    # 2. Gazebo Sim
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource([os.path.join(
             get_package_share_directory('ros_gz_sim'), 'launch', 'gz_sim.launch.py')]),
-        launch_arguments={'gz_args': ' -r  empty.sdf'}.items(), 
+        launch_arguments={'gz_args': ' -r empty.sdf'}.items(), 
     )
 
-    # 5. Node Spawn Robot
+    # 3. Spawn Robot
     spawn_robot = Node(
         package='ros_gz_sim',
         executable='create',
-        arguments=[
-            '-name', 'humanoid_robot',
-            '-topic', 'robot_description',
-            '-z', '0.29', # Độ cao vừa phải
-        ],
+        arguments=['-name', 'humanoid_robot', '-topic', 'robot_description', '-z', '0.42'], # Spawn cao hơn chút
         output='screen',
     )
 
-    # 6. Node Bridge
+    # 4. ROS-GZ Bridge
     bridge = Node(
         package='ros_gz_bridge',
         executable='parameter_bridge',
         arguments=[
-            # Cảm biến & Clock
             '/imu@sensor_msgs/msg/Imu[gz.msgs.IMU',
             '/clock@rosgraph_msgs/msg/Clock[gz.msgs.Clock',
             '/world/empty/model/humanoid_robot/joint_state@sensor_msgs/msg/JointState[gz.msgs.Model',
             
-            # Services (Reset)
+            # --- CÁC DỊCH VỤ ĐIỀU KHIỂN THẾ GIỚI (Dùng cho Reset) ---
             '/world/empty/control@ros_gz_interfaces/srv/ControlWorld',
-            '/world/empty/set_pose@ros_gz_interfaces/srv/SetEntityPose',
-
-            # Khớp (Giống file cũ của bạn)
+            '/world/empty/set_pose@ros_gz_interfaces/srv/SetEntityPose', # Fix bridge cho pose
+            
+            # --- KHỚP CHÂN (Dùng cho Controller) ---
             '/model/humanoid_robot/joint/base_hip_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/hip_hip_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/hip_knee_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/knee_ankle_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/ankle_ankle_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            
             '/model/humanoid_robot/joint/base_hip_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/hip_hip_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/hip_knee_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/knee_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
             '/model/humanoid_robot/joint/ankle_ankle_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            
-            '/model/humanoid_robot/joint/hip_shoulder_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            '/model/humanoid_robot/joint/shoulder_shoulder_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            '/model/humanoid_robot/joint/shoulder_elbow_left_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            
-            '/model/humanoid_robot/joint/hip_shoulder_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            '/model/humanoid_robot/joint/shoulder_shoulder_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            '/model/humanoid_robot/joint/shoulder_elbow_right_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
-            
-            '/model/humanoid_robot/joint/base_hip_middle_joint/cmd_pos@std_msgs/msg/Float64]gz.msgs.Double',
         ],
         output='screen',
         respawn=True,
+        parameters=[{'use_sim_time': True}]
     )
 
-    # 7. Node Phụ trợ
+    # 5. Logic Nodes
     imu_proc = Node(package='ros2_pkg', executable='imu_process_node', output='screen', parameters=[{'use_sim_time': True}])
     uvc_ctrl = Node(package='ros2_pkg', executable='uvc_node', output='screen', parameters=[{'use_sim_time': True}])
-    
-    # 8. Node RL PPO (Chính là file rl_training_node.py đã sửa)
     rl_train = Node(package='ros2_pkg', executable='rl_ppo_training', output='screen', parameters=[{'use_sim_time': True}])
     
-    return LaunchDescription([
-        set_nvidia_offload,
-        set_nvidia_provider,
-        SetEnvironmentVariable(name='GZ_SIM_RESOURCE_PATH', value=resource_path),
+    return LaunchDescription(env_vars + [
         node_robot_state_publisher,
         gazebo,
         spawn_robot,

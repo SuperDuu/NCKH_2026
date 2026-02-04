@@ -1,10 +1,12 @@
 
 #build
+export RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+
+# Ép chạy nội bộ (Cực kỳ quan trọng cho máy 32GB RAM để tránh lag)
+export ROS_LOCALHOST_ONLY=1
 colcon build --symlink-install
 source install/setup.bash
 
-chmod +x src/ros2_pkg/ros2_pkg/rl_training_node.py
 chmod +x src/ros2_pkg/ros2_pkg/rl_ppo_training.py
-chmod +x src/ros2_pkg/ros2_pkg/rl_training_fast.py
 #launch file
 ros2 launch ros2_pkg ppo_train.launch.py

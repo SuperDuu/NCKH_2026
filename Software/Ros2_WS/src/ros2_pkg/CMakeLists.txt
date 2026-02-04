@@ -23,12 +23,15 @@ ament_target_dependencies(imu_process_node rclcpp sensor_msgs)
 add_executable(uvc_node src/uvc_node.cpp)
 ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
+add_executable(task_space_controller src/task_space_controller.cpp)
+ament_target_dependencies(task_space_controller rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
+
 # --- PHẦN PYTHON ---
 # Giả sử bạn để file py trong thư mục cùng tên package: ros2_pkg/
 ament_python_install_package(${PROJECT_NAME})
 
 # --- INSTALLATION ---
-install(TARGETS imu_process_node uvc_node
+install(TARGETS imu_process_node uvc_node task_space_controller
   DESTINATION lib/${PROJECT_NAME})
 
 # install(PROGRAMS
@@ -43,7 +46,8 @@ install(PROGRAMS ros2_pkg/rl_training_fast.py DESTINATION lib/${PROJECT_NAME} RE
 install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
 install(PROGRAMS ros2_pkg/rl_inference.py DESTINATION lib/${PROJECT_NAME} RENAME rl_inference)
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
-
+install(PROGRAMS ros2_pkg/task_space_training.py DESTINATION lib/${PROJECT_NAME} RENAME task_space_training)
+install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
 
 install(DIRECTORY launch urdf rviz worlds
   DESTINATION share/${PROJECT_NAME})

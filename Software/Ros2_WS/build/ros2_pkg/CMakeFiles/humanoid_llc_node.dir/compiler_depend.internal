@@ -15,12 +15,6 @@ CMakeFiles/humanoid_llc_node.dir/src/humanoid_llc_node.cpp.o
  /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/duration.hpp
  /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/rosidl_generator_cpp__visibility_control.hpp
  /opt/ros/jazzy/include/builtin_interfaces/builtin_interfaces/msg/time.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__builder.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__struct.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__traits.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/detail/vector3__type_support.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/rosidl_generator_cpp__visibility_control.hpp
- /opt/ros/jazzy/include/geometry_msgs/geometry_msgs/msg/vector3.hpp
  /opt/ros/jazzy/include/libstatistics_collector/libstatistics_collector/collector/collector.hpp
  /opt/ros/jazzy/include/libstatistics_collector/libstatistics_collector/collector/generate_statistics_message.hpp
  /opt/ros/jazzy/include/libstatistics_collector/libstatistics_collector/collector/metric_details_interface.hpp

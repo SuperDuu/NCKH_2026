@@ -2,7 +2,6 @@
 #include <std_msgs/msg/float64.hpp>
 #include <std_msgs/msg/float64_multi_array.hpp>
 #include <std_msgs/msg/bool.hpp> 
-#include <geometry_msgs/msg/vector3.hpp> 
 #include <cmath>
 #include <map>
 #include <vector>
@@ -10,7 +9,6 @@
 #include <algorithm>
 
 namespace TrajectoryMath {
-    // Nội suy tuyến tính để giữ vận tốc hằng số, tránh khựng ở cuối pha
     double linear_interp(double start, double end, double t_norm) {
         t_norm = std::clamp(t_norm, 0.0, 1.0);
         return start + (end - start) * t_norm;
@@ -28,173 +26,164 @@ public:
     double curr_x, curr_y, curr_z;
 
     LegStepper(double init_x, double init_y, double init_z) {
-        default_x = init_x; default_y = init_y; default_z = init_z;
+        d_x = init_x; d_y = init_y; d_z = init_z;
         reset_state();
     }
 
     void reset_state() {
-        curr_x = start_x = target_x = default_x;
-        curr_y = start_y = target_y = default_y;
-        curr_z = start_z = target_z = default_z;
+        curr_x = s_x = t_x = d_x;
+        curr_y = s_y = t_y = d_y;
+        curr_z = s_z = t_z = d_z;
         phase = 1.0; 
-        step_duration = 1.0;
-        swing_h = 0.0;
-        is_swinging = false;
+        duration = 0.05; 
+        is_sw = false;
     }
 
-    void set_target(double x, double y, double z, double duration, double lift_h) {
-        bool new_swing_state = (lift_h > 0.005);
-        if (new_swing_state && !is_swinging) {
-            start_x = curr_x; 
-            start_y = curr_y; 
-            start_z = curr_z;
-            phase = 0.0; 
-        }
-        target_x = x; target_y = y; target_z = z;
-        step_duration = std::max(duration, 0.1); 
-        swing_h = lift_h;
-        is_swinging = new_swing_state;
+    void set_target(double x, double y, double z, double dur, double lift) {
+        s_x = curr_x; s_y = curr_y; s_z = curr_z;
+        t_x = x; t_y = y; t_z = z;
+        phase = 0.0;
+        duration = std::max(dur, 0.01);
+        is_sw = (lift > 0.005);
+        s_h = lift;
     }
 
     void update(double dt) {
         if (phase < 1.0) {
-            phase += dt / step_duration;
+            phase += dt / duration;
             if (phase > 1.0) phase = 1.0;
         }
-
-        // Dùng mũ 0.5 để cân bằng giữa giật nhanh và mượt cho trục Z
-        double fast = std::pow(phase, 0.5); 
-
-        // SỬA: Dùng Linear thay vì Cosine cho X để không bị giảm tốc độ ở cuối bước
-        curr_x = TrajectoryMath::linear_interp(start_x, target_x, phase);
-
-        if (is_swinging) {
-            // CHÂN LĂNG: Di chuyển Y tuyến tính để giữ đà văng
-            curr_y = TrajectoryMath::linear_interp(start_y, target_y, phase);
-            double p1 = std::min(start_z, target_z) - swing_h;
-            curr_z = TrajectoryMath::bezier_quadratic(start_z, p1, target_z, fast);
-        } 
-        else {
-            // CHÂN TRỤ: Dùng fast_phase cho Y để ép hông lấn tâm cực nhanh ngay lập tức
-            curr_y = start_y + (target_y - start_y) * fast; 
-            curr_z = TrajectoryMath::linear_interp(start_z, target_z, phase);
+        curr_x = TrajectoryMath::linear_interp(s_x, t_x, phase);
+        curr_y = TrajectoryMath::linear_interp(s_y, t_y, phase);
+        if (is_sw) {
+            double mid_z = std::min(s_z, t_z) - s_h;
+            curr_z = TrajectoryMath::bezier_quadratic(s_z, mid_z, t_z, phase);
+        } else {
+            curr_z = TrajectoryMath::linear_interp(s_z, t_z, phase);
         }
     }
 
 private:
-    double default_x, default_y, default_z;
-    double start_x, start_y, start_z;
-    double target_x, target_y, target_z;
-    double phase, step_duration, swing_h;
-    bool is_swinging;
+    double d_x, d_y, d_z, s_x, s_y, s_z, t_x, t_y, t_z, phase, duration, s_h;
+    bool is_sw;
 };
 
 class HumanoidIKController : public rclcpp::Node {
 public:
+    // Chiều dài các đốt chân (m)
     const double L3 = 0.06;    
     const double L4 = 0.1034;  
     const double L5 = 0.057;   
+    const double ALPHA = 0.6; // Lọc thông thấp (0.1: rất chậm, 1.0: không lọc)
 
-    HumanoidIKController() : Node("humanoid_llc_node"),
-        left_leg(0.0, 0.02, 0.18),   
-        right_leg(0.0, -0.02, 0.18), 
-        is_resetting(false)
-    {
-        std::vector<std::string> joints = {
+    HumanoidIKController() : Node("humanoid_llc_node"), 
+        left_leg(0, 0.01, 0.195), right_leg(0, -0.01, 0.195) {
+        
+        std::vector<std::string> j_names = {
             "base_hip_left", "hip_hip_left", "hip_knee_left", "knee_ankle_left", "ankle_ankle_left",
             "base_hip_right", "hip_hip_right", "hip_knee_right", "knee_ankle_right", "ankle_ankle_right"
         };
 
-        for (const auto & name : joints) {
-            pubs_[name] = this->create_publisher<std_msgs::msg::Float64>(
-                "/model/humanoid_robot/joint/" + name + "_joint/cmd_pos", 10);
+        for (auto &n : j_names) {
+            pubs_[n] = create_publisher<std_msgs::msg::Float64>("/model/humanoid_robot/joint/" + n + "_joint/cmd_pos", 10);
+            last_pos_[n] = 0.0;
         }
 
-        reset_sub_ = this->create_subscription<std_msgs::msg::Bool>(
-            "/uvc_reset", 10, std::bind(&HumanoidIKController::reset_callback, this, std::placeholders::_1));
+        rl_sub_ = create_subscription<std_msgs::msg::Float64MultiArray>("/rl/leg_command", 10, 
+            [this](const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
+                if (is_res_ || msg->data.size() < 9) return;
+                left_leg.set_target(msg->data[0], msg->data[1], msg->data[2], msg->data[8], msg->data[3]);
+                right_leg.set_target(msg->data[4], msg->data[5], msg->data[6], msg->data[8], msg->data[7]);
+            });
 
-        rl_cmd_sub_ = this->create_subscription<std_msgs::msg::Float64MultiArray>(
-            "/rl/leg_command", 10, std::bind(&HumanoidIKController::rl_cmd_callback, this, std::placeholders::_1));
+        res_sub_ = create_subscription<std_msgs::msg::Bool>("/uvc_reset", 10, 
+            [this](const std_msgs::msg::Bool::SharedPtr msg) {
+                is_res_ = msg->data;
+                if (is_res_) { 
+                    left_leg.reset_state(); 
+                    right_leg.reset_state(); 
+                    // Reset bộ lọc
+                    for (auto const& [name, val] : last_pos_) last_pos_[name] = 0.0;
+                }
+            });
 
-        timer_ = this->create_wall_timer(std::chrono::milliseconds(10), std::bind(&HumanoidIKController::control_loop, this));
-        
-        RCLCPP_INFO(this->get_logger(), "--> LLC NODE READY: LINEAR-SYNC ACTIVATED (0.5s Support)");
-    }
-
-    bool solve_ik_safe(double dx, double dy, double dz, double &hn, double &ht, double &dg, double &mct, double &mcn) {
-        hn = std::atan2(dy, dz);
-        double d_yz = std::sqrt(dz * dz + dy * dy);
-        double cos3_raw = (std::pow(d_yz - L5, 2) + dx * dx - L3 * L3 - L4 * L4) / (2.0 * L3 * L4);
-        
-        if (cos3_raw < -1.0 || cos3_raw > 1.0) return false; 
-
-        double cos3 = std::clamp(cos3_raw, -1.0, 1.0);
-        double sin3 = std::sqrt(1.0 - cos3 * cos3);
-
-        dg = std::atan2(sin3, cos3);
-        ht = std::atan2(sin3 * L4, L3 + cos3 * L4) + std::atan2(dx, d_yz - L5);
-        mct = -dg + ht ; 
-        mcn = -hn;
-        return true;
+        timer_ = create_wall_timer(std::chrono::milliseconds(10), std::bind(&HumanoidIKController::loop, this));
+        RCLCPP_INFO(this->get_logger(), "LLC NODE: Ready at Z=0.195 with Alpha Filter 0.6");
     }
 
 private:
-    LegStepper left_leg;
-    LegStepper right_leg;
-    bool is_resetting;
+    LegStepper left_leg, right_leg;
+    bool is_res_ = false;
     std::map<std::string, rclcpp::Publisher<std_msgs::msg::Float64>::SharedPtr> pubs_;
-    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr rl_cmd_sub_; 
-    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr reset_sub_;
+    std::map<std::string, double> last_pos_;
+    rclcpp::Subscription<std_msgs::msg::Float64MultiArray>::SharedPtr rl_sub_;
+    rclcpp::Subscription<std_msgs::msg::Bool>::SharedPtr res_sub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
-    void reset_callback(const std_msgs::msg::Bool::SharedPtr msg) {
-        is_resetting = msg->data;
-        if (is_resetting) {
-            left_leg.reset_state();
-            right_leg.reset_state();
+    void publish_filtered(std::string name, double target) {
+        // Bộ lọc thông thấp giúp servo không bị sốc khi AI đổi Action
+        double filtered = last_pos_[name] + ALPHA * (target - last_pos_[name]);
+        std_msgs::msg::Float64 m; m.data = filtered;
+        pubs_[name]->publish(m);
+        last_pos_[name] = filtered;
+    }
+
+    bool solve_ik(double dx, double dy, double dz, double *a, bool is_r) {
+        // Tối ưu hóa: Nếu chân bị duỗi quá dài (vượt giới hạn vật lý), thu hẹp Y để cứu Z
+        double d_target = sqrt(dx*dx + dy*dy + dz*dz);
+        double MAX_REACH = L3 + L4 + L5 - 0.002; // Chừa 2mm an toàn cho gối
+
+        if (d_target > MAX_REACH) {
+            double scale = MAX_REACH / d_target;
+            dx *= scale; dy *= scale; dz *= scale;
         }
-    }
 
-    void rl_cmd_callback(const std_msgs::msg::Float64MultiArray::SharedPtr msg) {
-        if (is_resetting || msg->data.size() < 9) return;
-        left_leg.set_target(msg->data[0], msg->data[1], msg->data[2], msg->data[8], msg->data[3]);
-        right_leg.set_target(msg->data[4], msg->data[5], msg->data[6], msg->data[8], msg->data[7]);
-    }
-
-    void send_cmd(std::string name, double pos) {
-        auto msg = std_msgs::msg::Float64();
-        msg.data = pos;
-        pubs_[name]->publish(msg);
-    }
-
-    void control_loop() {
-        if (is_resetting) return; 
-
-        double l_hn, l_ht, l_dg, l_mct, l_mcn;
-        double r_hn, r_ht, r_dg, r_mct, r_mcn;
+        double hn = atan2(dy, dz);
+        double d_yz = sqrt(dz * dz + dy * dy);
+        double c3_raw = (pow(d_yz - L5, 2) + dx * dx - L3 * L3 - L4 * L4) / (2.0 * L3 * L4);
         
-        left_leg.update(0.01);
+        // Clamp lỏng hơn một chút (-1.05) để tránh mất giải nghiệm khi chân duỗi thẳng ở Z=0.195
+        if (c3_raw < -1.05 || c3_raw > 1.05) return false;
+        
+        double c3 = std::clamp(c3_raw, -1.0, 1.0);
+        double s3 = sqrt(1.0 - c3 * c3);
+        double dg = atan2(s3, c3); // Joint Knee
+        double ht = atan2(s3 * L4, L3 + c3 * L4) + atan2(dx, d_yz - L5); // Joint Hip pitch
+        
+        a[0] = hn;             // Hip roll
+        a[1] = is_r ? ht : -ht; // Hip pitch (đảo dấu cho chân trái)
+        a[2] = is_r ? -dg : dg; // Knee (đảo dấu cho chân phải)
+        a[3] = is_r ? -(ht - dg) : (ht - dg); // Ankle pitch
+        a[4] = -hn;            // Ankle roll
+        return true;
+    }
+
+    void loop() {
+        if (is_res_) return;
+        
+        left_leg.update(0.01); 
         right_leg.update(0.01);
-
-        if (solve_ik_safe(left_leg.curr_x, left_leg.curr_y, left_leg.curr_z, l_hn, l_ht, l_dg, l_mct, l_mcn) &&
-            solve_ik_safe(right_leg.curr_x, right_leg.curr_y, right_leg.curr_z, r_hn, r_ht, r_dg, r_mct, r_mcn)) {
+        
+        double l_a[5], r_a[5];
+        if (solve_ik(left_leg.curr_x, left_leg.curr_y, left_leg.curr_z, l_a, false) &&
+            solve_ik(right_leg.curr_x, right_leg.curr_y, right_leg.curr_z, r_a, true)) {
             
-            send_cmd("base_hip_left", l_hn); 
-            send_cmd("hip_hip_left", -l_ht); 
-            send_cmd("hip_knee_left", l_dg); 
-            send_cmd("knee_ankle_left", l_mct); 
-            send_cmd("ankle_ankle_left", l_mcn); 
+            publish_filtered("base_hip_left", l_a[0]);
+            publish_filtered("hip_hip_left", l_a[1]);
+            publish_filtered("hip_knee_left", l_a[2]);
+            publish_filtered("knee_ankle_left", l_a[3]);
+            publish_filtered("ankle_ankle_left", l_a[4]);
 
-            send_cmd("base_hip_right", r_hn); 
-            send_cmd("hip_hip_right", r_ht); 
-            send_cmd("hip_knee_right", -r_dg); 
-            send_cmd("knee_ankle_right", -r_mct); 
-            send_cmd("ankle_ankle_right", -r_mcn); 
+            publish_filtered("base_hip_right", r_a[0]);
+            publish_filtered("hip_hip_right", r_a[1]);
+            publish_filtered("hip_knee_right", r_a[2]);
+            publish_filtered("knee_ankle_right", r_a[3]);
+            publish_filtered("ankle_ankle_right", r_a[4]);
         }
     }
 };
 
-int main(int argc, char * argv[]) {
+int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
     rclcpp::spin(std::make_shared<HumanoidIKController>());
     rclcpp::shutdown();

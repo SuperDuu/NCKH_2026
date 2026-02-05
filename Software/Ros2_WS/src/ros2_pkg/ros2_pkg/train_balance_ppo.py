@@ -26,17 +26,17 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DT = 0.05 
 MAX_STEPS = 3000 
 MAX_LEG_LENGTH = 0.2204
-SAFE_LIMIT = MAX_LEG_LENGTH * 0.99
+SAFE_LIMIT = MAX_LEG_LENGTH * 0.98 # Chừa 2% dư địa an toàn tuyệt đối
 
-STD_Z = 0.20  
-STD_Y = 0.02    
-LIFT_H = 0.025
+STD_Z = 0.195 # Hạ xuống để cứu trục Z
+STD_Y = 0.01  
+LIFT_H = 0.03 # 3cm là mức lý tưởng cho Z=0.195
 ACTION_DIM = 4 
 STATE_DIM = 6
 STEPS_PER_PHASE = 15 
 
 # ==============================================================================
-# THUẬT TOÁN PPO
+# THUẬT TOÁN PPO (GIỮ NGUYÊN KIẾN TRÚC)
 # ==============================================================================
 class ActorCritic(nn.Module):
     def __init__(self, state_dim, action_dim, action_std_init=0.3):
@@ -75,7 +75,6 @@ class PPO:
         self.K_epochs = 10
         self.buffer_states, self.buffer_actions, self.buffer_logprobs = [], [], []
         self.buffer_rewards, self.buffer_is_terminals = [], []
-        
         self.policy = ActorCritic(state_dim, action_dim).to(DEVICE)
         self.optimizer = torch.optim.Adam([
             {'params': self.policy.actor.parameters(), 'lr': 0.0003},
@@ -89,76 +88,33 @@ class PPO:
         with torch.no_grad():
             state_t = torch.FloatTensor(state).to(DEVICE)
             action, logprob, _ = self.policy_old.act(state_t)
-        self.buffer_states.append(state_t)
-        self.buffer_actions.append(action)
-        self.buffer_logprobs.append(logprob)
+        self.buffer_states.append(state_t); self.buffer_actions.append(action); self.buffer_logprobs.append(logprob)
         return action.cpu().numpy().flatten()
 
-    # def update(self):
-    #     rewards = []
-    #     discounted_reward = 0
-    #     for reward, is_terminal in zip(reversed(self.buffer_rewards), reversed(self.buffer_is_terminals)):
-    #         if is_terminal: discounted_reward = 0
-    #         discounted_reward = reward + (self.gamma * discounted_reward)
-    #         rewards.insert(0, discounted_reward)
-    #     rewards = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
-    #     rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
-    #     old_states = torch.stack(self.buffer_states).detach()
-    #     old_actions = torch.stack(self.buffer_actions).detach()
-    #     old_logprobs = torch.stack(self.buffer_logprobs).detach()
-    #     for _ in range(self.K_epochs):
-    #         logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
-    #         ratios = torch.exp(logprobs - old_logprobs)
-    #         advantages = rewards - state_values.squeeze().detach()
-    #         surr1 = ratios * advantages
-    #         surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-    #         loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values.squeeze(), rewards) - 0.01 * dist_entropy
-    #         self.optimizer.zero_grad(); loss.mean().backward(); self.optimizer.step()
-    #     self.policy_old.load_state_dict(self.policy.state_dict())
-    #     self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
     def update(self):
-        # 1. Kiểm tra sự đồng bộ của Buffer trước khi tính toán
-        # Nếu lệch size, ta cắt bớt mảng dài hơn để khớp với mảng ngắn nhất
         min_size = min(len(self.buffer_states), len(self.buffer_rewards))
-        
-        if min_size == 0: return # Không có gì để update
-
-        rewards = []
-        discounted_reward = 0
-        # Chỉ lấy phần dữ liệu khớp nhau (min_size)
-        for reward, is_terminal in zip(reversed(self.buffer_rewards[:min_size]), 
-                                       reversed(self.buffer_is_terminals[:min_size])):
+        if min_size == 0: return 
+        rewards, discounted_reward = [], 0
+        for reward, is_terminal in zip(reversed(self.buffer_rewards[:min_size]), reversed(self.buffer_is_terminals[:min_size])):
             if is_terminal: discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
-            
         rewards = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
-
-        # Cắt bớt các mảng Buffer cho khớp với min_size
         old_states = torch.stack(self.buffer_states[:min_size]).detach()
         old_actions = torch.stack(self.buffer_actions[:min_size]).detach()
         old_logprobs = torch.stack(self.buffer_logprobs[:min_size]).detach()
-
         for _ in range(self.K_epochs):
             logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
-            state_values = torch.squeeze(state_values)
             ratios = torch.exp(logprobs - old_logprobs)
-            advantages = rewards - state_values.detach()
-            
+            advantages = rewards - state_values.squeeze().detach()
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - 0.01 * dist_entropy
-            
-            self.optimizer.zero_grad()
-            loss.mean().backward()
-            self.optimizer.step()
-            
+            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values.squeeze(), rewards) - 0.01 * dist_entropy
+            self.optimizer.zero_grad(); loss.mean().backward(); self.optimizer.step()
         self.policy_old.load_state_dict(self.policy.state_dict())
-        
-        # Xóa sạch toàn bộ buffer sau khi update thành công
-        self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear()
-        self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
+        self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
+
 # ==============================================================================
 # ROS2 TRAINING NODE
 # ==============================================================================
@@ -176,19 +132,22 @@ class HumanoidTrainNode(Node):
         self.reset_pub = self.create_publisher(Bool, '/uvc_reset', 10) 
         self.imu_sub = self.create_subscription(Vector3, '/robot_orientation', self.imu_callback, 10)
         self.clock_sub = self.create_subscription(Clock, '/clock', self.clock_callback, 10)
-        self.world_control_client = self.create_client(ControlWorld, '/world/empty/control')
-        self.set_pose_client = self.create_client(SetEntityPose, '/world/empty/set_pose')
+        self.w_cli = self.create_client(ControlWorld, '/world/empty/control')
+        self.p_cli = self.create_client(SetEntityPose, '/world/empty/set_pose')
 
-        self.joint_pubs = {}
-        joints = ['base_hip_left', 'hip_hip_left', 'hip_knee_left', 'knee_ankle_left', 'ankle_ankle_left',
-                  'base_hip_right', 'hip_hip_right', 'hip_knee_right', 'knee_ankle_right', 'ankle_ankle_right']
-        for j in joints:
-            self.joint_pubs[j] = self.create_publisher(Float64, f'/model/humanoid_robot/joint/{j}_joint/cmd_pos', 10)
+        self.joint_pubs = {j: self.create_publisher(Float64, f'/model/humanoid_robot/joint/{j}_joint/cmd_pos', 10) for j in 
+                          ['base_hip_left', 'hip_hip_left', 'hip_knee_left', 'knee_ankle_left', 'ankle_ankle_left',
+                           'base_hip_right', 'hip_hip_right', 'hip_knee_right', 'knee_ankle_right', 'ankle_ankle_right']}
 
+        # Khởi tạo các bộ lọc
         self.roll = self.pitch = self.prev_roll = self.prev_pitch = 0.0
+        self.smooth_roll = self.smooth_pitch = 0.0
+        self.prev_action = np.zeros(ACTION_DIM)
+        
         self.is_left_support = True; self.current_sim_time = 0.0
         self.best_reward = -float('inf'); self.start_episode = 0
-        
+        self.step_in_episode = 0
+
         self.ppo = PPO(STATE_DIM, ACTION_DIM)
         self.load_training_state()
         
@@ -198,31 +157,28 @@ class HumanoidTrainNode(Node):
 
         threading.Thread(target=self.train_loop, daemon=True).start()
 
-    def call_pause_physics(self, paused=True):
-        req = ControlWorld.Request(); req.world_control.pause = paused
-        future = self.world_control_client.call_async(req)
-        while not future.done(): time.sleep(0.005)
-        return future.result().success
-
-    def call_set_pose(self, z_height=0.3):
-        req = SetEntityPose.Request(); req.entity.name = "humanoid_robot"
-        req.pose.position.x = 0.0; req.pose.position.y = 0.0; req.pose.position.z = z_height
-        req.pose.orientation.w = 1.0 
-        future = self.set_pose_client.call_async(req)
-        while not future.done(): time.sleep(0.005)
-        return future.result().success
-
     def imu_callback(self, msg):
         self.prev_roll, self.prev_pitch = self.roll, self.pitch
         self.pitch, self.roll = msg.x * (np.pi/180), msg.y * (np.pi/180)
+        # Lọc thông thấp IMU (Alpha = 0.7) để tránh AI bị sốc bởi rung động chạm đất
+        self.smooth_roll = 0.3 * self.smooth_roll + 0.7 * self.roll
+        self.smooth_pitch = 0.3 * self.smooth_pitch + 0.7 * self.pitch
 
     def clock_callback(self, msg): self.current_sim_time = msg.clock.sec + msg.clock.nanosec * 1e-9
+
+    def call_pause_physics(self, p):
+        req = ControlWorld.Request(); req.world_control.pause = p
+        self.w_cli.call_async(req)
+
+    def call_set_pose(self, z):
+        req = SetEntityPose.Request(); req.entity.name = "humanoid_robot"
+        req.pose.position.z = z; req.pose.orientation.w = 1.0 
+        self.p_cli.call_async(req)
 
     def load_training_state(self):
         if os.path.exists(self.meta_path):
             with open(self.meta_path, 'r') as f:
-                data = json.load(f)
-                self.best_reward = data.get('best_reward', -float('inf'))
+                data = json.load(f); self.best_reward = data.get('best_reward', -float('inf'))
                 self.start_episode = data.get('current_episode', 0) + 1
         if os.path.exists(self.latest_model_path):
             self.ppo.policy.load_state_dict(torch.load(self.latest_model_path, map_location=DEVICE))
@@ -237,82 +193,115 @@ class HumanoidTrainNode(Node):
             print(f"\n\033[1;33m⭐ NEW BEST: {reward:.2f} | Ep: {ep}\033[0m\n", flush=True)
 
     def get_observation(self):
-        obs = [self.roll, self.pitch, (self.roll-self.prev_roll)/DT, (self.pitch-self.prev_pitch)/DT]
+        d_roll = (self.smooth_roll - self.prev_roll) / DT
+        d_pitch = (self.smooth_pitch - self.prev_pitch) / DT
+        obs = [self.smooth_roll, self.smooth_pitch, d_roll, d_pitch]
         if not self.is_left_support: obs[0] *= -1; obs[2] *= -1
         phase = (self.current_sim_time % (STEPS_PER_PHASE*DT*2)) * np.pi
         return np.array(obs + [np.sin(phase), np.cos(phase)])
 
     def check_safety_and_prepare_cmd(self, action):
-        dx, dy, dz, dst = action[0]*0.06, action[1]*0.05, action[2]*0.01, action[3]*0.02
-        tz = STD_Z + dz
-        if self.is_left_support:
-            tl, tr = [0.0, -0.005+dy, tz, 0.0], [dx, -0.035-dst, tz-0.015, LIFT_H]
-        else:
-            tl, tr = [dx, 0.035+dst, tz-0.015, LIFT_H], [0.0, 0.005-dy, tz, 0.0]
-        if np.linalg.norm([0, tl[1], tl[2]]) > SAFE_LIMIT or np.linalg.norm([dx, tr[1], tr[2]]) > SAFE_LIMIT: return False, None, -200.0
-        msg = Float64MultiArray(); msg.data = [tl[0], tl[1], tl[2], tl[3], tr[0], tr[1], tr[2], tr[3], STEPS_PER_PHASE*DT]
+        # 1. Smoothing Action
+        smooth_act = 0.7 * self.prev_action + 0.3 * action
+        self.prev_action = smooth_act
+
+        dx_s, dy_s, dz_s, dst_s = smooth_act[0]*0.06, smooth_act[1]*0.02, smooth_act[2]*0.02, smooth_act[3]*0.02
+        tz = STD_Z + dz_s
+
+        total_steps = STEPS_PER_PHASE * 2
+        progress = (self.step_in_episode % total_steps) / total_steps
+        weight_shift = np.sin(progress * 2 * np.pi)
+        
+        # 2. Logic nhấc chân (Lift) dứt khoát
+        lift_l = lift_r = 0.0
+        if weight_shift < -0.4:
+            norm_l = (-weight_shift - 0.4) / 0.6
+            lift_l = LIFT_H * (norm_l ** 0.3) 
+        elif weight_shift > 0.4:
+            norm_r = (weight_shift - 0.4) / 0.6
+            lift_r = LIFT_H * (norm_r ** 0.3)
+
+        # 3. ĐƯA dst_s VÀO LOGIC Y (Quan trọng!)
+        # Chân trụ: Chỉ lấn tâm (dy_s)
+        # Chân lăng: Đá ra ngoài (mặc định) + xoạc thêm (dst_s)
+        
+        # Mặc định ban đầu
+        target_y_l = 0.01 + dy_s
+        target_y_r = -0.01 - dy_s
+
+        if weight_shift > 0: # Chân trái trụ, chân phải lăng
+            target_y_l = 0.01 - 0.012 * weight_shift + dy_s # Lấn tâm
+            target_y_r = -0.01 - dst_s # Chân phải xoạc ngang theo AI
+        elif weight_shift < 0: # Chân phải trụ, chân trái lăng
+            target_y_r = -0.01 + 0.012 * abs(weight_shift) - dy_s # Lấn tâm
+            target_y_l = 0.01 + dst_s # Chân trái xoạc ngang theo AI
+            
+        # 4. Logic X (Tiến tới)
+        tx_l = dx_s if lift_l > 0.01 else 0.0
+        tx_r = dx_s if lift_r > 0.01 else 0.0
+
+        if np.linalg.norm([tx_l, target_y_l, tz]) > SAFE_LIMIT or \
+           np.linalg.norm([tx_r, target_y_r, tz]) > SAFE_LIMIT:
+            return True, self.get_safe_msg(), -5.0 
+
+        msg = Float64MultiArray()
+        msg.data = [tx_l, target_y_l, tz, lift_l, tx_r, target_y_r, tz, lift_r, DT]
         return True, msg, 0.0
 
     def stabilize_robot(self):
         msg = Float64MultiArray()
-        msg.data = [0.0, 0.02, STD_Z, 0.0, 0.0, -0.02, STD_Z, 0.0, 1]
+        msg.data = [0.0, 0.01, STD_Z, 0.0, 0.0, -0.01, STD_Z, 0.0, 1.0]
         for _ in range(3): self.action_pub.publish(msg); time.sleep(0.1)
         time.sleep(1.5)
 
     def reset_simulation(self): 
-         self.reset_pub.publish(Bool(data=True)) 
-         time.sleep(1.0)  
-         self.call_pause_physics(True) 
-         time.sleep(0.2) 
-         self.call_set_pose(0.3) 
-         time.sleep(0.5)  
-         safe_pose = { 
-             'hip_hip_left_joint': 0,   'hip_hip_right_joint': 0, 
-             'hip_knee_left_joint': 0,  'hip_knee_right_joint': 0, 
-             'knee_ankle_left_joint': 0, 'knee_ankle_right_joint': 0, 
-             'ankle_ankle_left_joint': 0.0, 'ankle_ankle_right_joint': 0.0, 
-             'base_hip_left_joint': 0.0, 'base_hip_right_joint': 0.0 
-         } 
+         self.reset_pub.publish(Bool(data=True)); time.sleep(1.0)  
+         self.call_pause_physics(True); time.sleep(0.2); self.call_set_pose(0.3); time.sleep(0.5)  
+         safe_pose = { 'hip_hip_left_joint': 0, 'hip_hip_right_joint': 0, 'hip_knee_left_joint': 0, 
+                      'hip_knee_right_joint': 0, 'knee_ankle_left_joint': 0, 'knee_ankle_right_joint': 0, 
+                      'ankle_ankle_left_joint': 0.0, 'ankle_ankle_right_joint': 0.0, 'base_hip_left_joint': 0.0, 'base_hip_right_joint': 0.0 } 
          for _ in range(15):  
              for name, val in safe_pose.items(): 
-                 if f"{name}" in self.joint_pubs: 
-                    self.joint_pubs[name].publish(Float64(data=val)) 
-         time.sleep(0.5) 
-         self.call_pause_physics(False) 
-         start_check = self.current_sim_time 
-         while self.current_sim_time - start_check < 0.02: 
-             time.sleep(0.01) 
-         self.reset_pub.publish(Bool(data=False)) 
-         self.roll = 0.0; self.pitch = 0.0; self.is_left_support = True 
-         self.stabilize_robot()
+                 if name in self.joint_pubs: self.joint_pubs[name].publish(Float64(data=val)) 
+         time.sleep(0.5); self.call_pause_physics(False) 
+         sc = self.current_sim_time 
+         while self.current_sim_time - sc < 0.02: time.sleep(0.01) 
+         self.reset_pub.publish(Bool(data=False)); self.roll = 0.0; self.pitch = 0.0; self.is_left_support = True; self.step_in_episode = 0
+         self.prev_action = np.zeros(ACTION_DIM); self.stabilize_robot()
 
     def train_loop(self):
         time.sleep(3); ep = self.start_episode
         while rclpy.ok():
-            self.reset_simulation()
-            ep_reward = 0; failed_at_start = False; reason = "TIME_LIMIT"
+            self.reset_simulation(); ep_reward = 0; failed_at_start = False; reason = "TIME_LIMIT"
             for t in range(MAX_STEPS):
+                self.step_in_episode = t
                 state = self.get_observation()
                 action = self.ppo.select_action(state)
                 ok, msg, pen = self.check_safety_and_prepare_cmd(action)
+                
                 if not ok:
-                    self.ppo.buffer_rewards.append(-300.0); self.ppo.buffer_is_terminals.append(True)
-                    reason = "IK_FAIL"; break
+                    self.ppo.buffer_rewards.append(-300.0); self.ppo.buffer_is_terminals.append(True); reason = "IK_FAIL"; break
+                
                 self.action_pub.publish(msg); time.sleep(DT)
-                done = abs(self.pitch) > 0.6 or abs(self.roll) > 0.6
-                reward = (2.0 + 3.0*np.exp(-5.0*np.sqrt(self.pitch**2+self.roll**2))) + pen
-                if done: reward = -10.0
-                if t == 0 and done:
-                    failed_at_start = True; break
+                done = abs(self.smooth_roll) > 0.6 or abs(self.smooth_pitch) > 0.6
+                
+                # Reward: Cân bằng giữa giữ thẳng và tiết kiệm Action (Energy)
+                reward = (1.5 + 3.5*np.exp(-6.0*np.sqrt(self.smooth_pitch**2+self.smooth_roll**2))) + pen
+                
+                if done: reward = -15.0
+                if t == 0 and done: failed_at_start = True; break
                 self.ppo.buffer_rewards.append(reward); self.ppo.buffer_is_terminals.append(done); ep_reward += reward
+                
                 if len(self.ppo.buffer_rewards) >= 2000:
                     print("\033[92m>>> UPDATING POLICY <<<\033[0m"); self.ppo.update()
-                if t > 0 and t % STEPS_PER_PHASE == 0: self.is_left_support = not self.is_left_support
+                
+                self.is_left_support = (np.sin((t % (STEPS_PER_PHASE*2)) / (STEPS_PER_PHASE*2) * 2 * np.pi) > 0)
                 if done: reason = "FALL"; break
+            
             if not failed_at_start:
-                is_new_best = ep_reward > self.best_reward
-                if is_new_best: self.best_reward = ep_reward
-                self.save_state(ep, ep_reward, is_new_best)
+                is_nb = ep_reward > self.best_reward
+                if is_nb: self.best_reward = ep_reward
+                self.save_state(ep, ep_reward, is_nb)
                 with open(self.history_path, 'a', newline='') as f:
                     csv.writer(f).writerow([ep, f"{ep_reward:.2f}", t, reason, datetime.now().strftime("%H:%M:%S")])
                 print(f"Ep {ep} | Reward: {ep_reward:.2f} | Steps: {t} | {reason}")

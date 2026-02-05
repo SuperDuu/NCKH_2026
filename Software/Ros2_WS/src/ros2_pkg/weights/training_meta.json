@@ -1,5 +1,6 @@
 {
-  "best_reward": 12386.146444098727,
-  "episode": 1280,
-  "best_episode": 279
+    "best_reward": 90.23925807837382,
+    "best_episode": 74,
+    "current_episode": 160,
+    "timestamp": "2026-02-05 12:26:04"
 }

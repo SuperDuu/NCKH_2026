@@ -1,7 +1,4 @@
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/rl_training_node
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/rl_training_fast
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/train_balance_ppo
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/rl_ppo_training
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/rl_inference
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/export_onnx
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/task_space_training
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/ros2_pkg/visual

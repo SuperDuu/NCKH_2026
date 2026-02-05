@@ -4,7 +4,9 @@ project(ros2_pkg)
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
-
+if(POLICY CMP0009)
+  cmake_policy(SET CMP0009 NEW)
+endif()
 # Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
@@ -26,27 +28,21 @@ ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs geometry_m
 add_executable(task_space_controller src/task_space_controller.cpp)
 ament_target_dependencies(task_space_controller rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
+add_executable(humanoid_llc_node src/humanoid_llc_node.cpp)
+ament_target_dependencies(humanoid_llc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
+
 # --- PHẦN PYTHON ---
 # Giả sử bạn để file py trong thư mục cùng tên package: ros2_pkg/
 ament_python_install_package(${PROJECT_NAME})
 
 # --- INSTALLATION ---
-install(TARGETS imu_process_node uvc_node task_space_controller
+install(TARGETS imu_process_node uvc_node task_space_controller humanoid_llc_node
   DESTINATION lib/${PROJECT_NAME})
 
-# install(PROGRAMS
-#   ros2_pkg/rl_training_node.py
-#   ros2_pkg/rl_training_fast
-#   DESTINATION lib/${PROJECT_NAME}
-#   RENAME rl_training_node
-#   RENAME rl_training_fast)
 
-install(PROGRAMS ros2_pkg/rl_training_node.py DESTINATION lib/${PROJECT_NAME} RENAME rl_training_node)
-install(PROGRAMS ros2_pkg/rl_training_fast.py DESTINATION lib/${PROJECT_NAME} RENAME rl_training_fast)
+install(PROGRAMS ros2_pkg/train_balance_ppo.py DESTINATION lib/${PROJECT_NAME} RENAME train_balance_ppo)
 install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
-install(PROGRAMS ros2_pkg/rl_inference.py DESTINATION lib/${PROJECT_NAME} RENAME rl_inference)
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
-install(PROGRAMS ros2_pkg/task_space_training.py DESTINATION lib/${PROJECT_NAME} RENAME task_space_training)
 install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
 
 install(DIRECTORY launch urdf rviz worlds

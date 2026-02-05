@@ -293,70 +293,124 @@ class RLTrainingNode(Node):
             return result.returncode == 0
         except: return False
 
-    # def reset_simulation_physics(self):
-    #     self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: true')
-    #     z_reset = (RESET_HEIGHT + L5 + ANKLE_HEIGHT + 20.0) / 1000.0
-    #     pose_msg = f'name: "humanoid_robot" position {{ x: 0.0 y: 0.0 z: {z_reset:.3f} }} orientation {{ x: 0.0 y: 0.0 z: 0.0 w: 1.0 }}'
-    #     self.run_gz_command('/world/empty/set_pose', 'gz.msgs.Pose', pose_msg)
+    def reset_simulation(self):
+        # 1. STOP C++
+        self.reset_pub.publish(Bool(data=True))
         
-    #     # Tư thế khuỵu gối nhẹ để IK C++ tiếp quản mượt hơn
+        # 2. TÍNH TOÁN SAFE POSE THEO CÔNG THỨC IK CỦA BẠN
+        # Giả lập: ht=0.24, dg=0.48 (Tư thế khuỵu gối chuẩn)
+        val_ht = 0.24
+        val_dg = 0.48
+        
+        # Công thức từ C++: mct = -dg + ht
+        val_mct = -val_dg + val_ht  # = -0.24
+        val_mcn = 0.0               # mcn = -hn = 0 (Do đứng thẳng)
+
+        # Mapping theo yêu cầu:
+        # hip_hip -> ht
+        # hip_knee -> dg
+        # knee_ankle -> mct
+        # ankle_ankle -> mcn
+        
+        safe_pose = {
+            'hip_hip_left_joint': val_ht,   'hip_hip_right_joint': val_ht,
+            'hip_knee_left_joint': val_dg,  'hip_knee_right_joint': val_dg,
+            'knee_ankle_left_joint': val_mct, 'knee_ankle_right_joint': val_mct,
+            'ankle_ankle_left_joint': val_mcn, 'ankle_ankle_right_joint': val_mcn,
+            
+            # Các khớp khác về 0
+            'base_hip_left_joint': 0.0, 'base_hip_right_joint': 0.0
+        }
+
+        # Gửi lệnh duỗi chân (Spam lệnh để đảm bảo nhận)
+        for _ in range(5): 
+            for name, val in safe_pose.items():
+                if f"{name}" in self.joint_pubs:
+                   self.joint_pubs[name].publish(Float64(data=val))
+            time.sleep(0.1) 
+        time.sleep(1.0) # Chờ khớp chạy về vị trí
+
+        # 3. PAUSE & CLEAN
+        os.system("ipcs -m | awk '{print $2}' | xargs -rn1 ipcrm -m > /dev/null 2>&1")
+        while not self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: true'):
+            time.sleep(0.2)
+            
+        # 4. TELEPORT (Đặt robot xuống đất nhẹ nhàng)
+        # Z = 0.29 (Căn chỉnh tùy chiều cao chân robot khi khuỵu, nếu nảy thì giảm xuống 0.28)
+        pose_reset = 'name: "humanoid_robot" position { x: 0.0 y: 0.0 z: 0.29 } orientation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }'
+        while not self.run_gz_command('/world/empty/set_pose', 'gz.msgs.Pose', pose_reset):
+            time.sleep(0.5)
+        
+        # 5. GỬI LẠI POSE LẦN NỮA (Để chắc chắn)
+        for name, val in safe_pose.items():
+            if f"{name}" in self.joint_pubs:
+               self.joint_pubs[name].publish(Float64(data=val))
+        
+        # 6. UNPAUSE
+        unpaused = False
+        start_check = self.current_sim_time
+        
+        for _ in range(20): 
+            self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: false')
+            time.sleep(0.2)
+            if self.current_sim_time - start_check > 0.001:
+                unpaused = True
+                break
+        
+        if not unpaused:
+            print("⚠️ Force Unpause...", flush=True)
+            os.system("gz service -s /world/empty/control --reqtype gz.msgs.WorldControl --req 'pause: false' &")
+        
+        # 7. START
+        self.reset_pub.publish(Bool(data=False))
+        self.roll = 0.0; self.pitch = 0.0; self.is_left_support = True
+        self.stabilize_robot()
+    # def reset_simulation_physics(self):
+    #     """Hàm Reset chuẩn cũ, lặp cho tới khi thành công"""
+    #     # 1. Clear IPC (Dọn dẹp bộ nhớ chia sẻ để tránh xung đột Gazebo)
+        
+    #     os.system("ipcs -m | awk '{print $2}' | xargs -rn1 ipcrm -m > /dev/null 2>&1")
+    #     time.sleep(2)
+    #     # 2. Pause Simulation
+    #     # Lặp cho tới khi Gazebo phản hồi đã Pause thành công
+    #     while not self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: true'):
+    #         time.sleep(0.5)
+    #     time.sleep(2.0)
+    #     # 3. Set Pose (Đưa robot về vị trí trên không để rơi xuống)
+    #     # z: 0.42 tương ứng với khoảng 420mm
+    #     pose_msg = 'name: "humanoid_robot" position { x: 0.0 y: 0.0 z: 0.30 } orientation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }'
+    #     while not self.run_gz_command('/world/empty/set_pose', 'gz.msgs.Pose', pose_msg):
+    #         time.sleep(0.5)
+    #     time.sleep(2.0)
+    #     # 4. Set Joints (Gập chân nhẹ để robot không bị khóa khớp khi bắt đầu)
     #     safe_pose = {
-    #         'hip_knee_left_joint': 0.1, 
-    #         'hip_knee_right_joint': 0.1, 
-    #         'knee_ankle_left_joint': -0.05, 
-    #         'knee_ankle_right_joint': -0.05
+    #         'hip_knee_left_joint': 0.3, 
+    #         'hip_knee_right_joint': 0.3, 
+    #         'knee_ankle_left_joint': -0.15, 
+    #         'knee_ankle_right_joint': -0.15
     #     }
     #     for name, val in safe_pose.items():
-    #         if name in self.joint_pubs: self.joint_pubs[name].publish(Float64(data=val))
-            
-    #     time.sleep(0.5)
-    #     return self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: false')
-    def reset_simulation_physics(self):
-        """Hàm Reset chuẩn cũ, lặp cho tới khi thành công"""
-        # 1. Clear IPC (Dọn dẹp bộ nhớ chia sẻ để tránh xung đột Gazebo)
+    #         if name in self.joint_pubs:
+    #             self.joint_pubs[name].publish(Float64(data=val))
+    #     time.sleep(1)
+    #     # Kích hoạt tín hiệu Reset sang Node C++
+    #     self.reset_pub.publish(Bool(data=True))
+    #     time.sleep(1)
+    #     self.reset_pub.publish(Bool(data=False))
+    #     time.sleep(1)
+    #     # Khởi tạo lại các biến trạng thái RL
+    #     self.prev_action = np.zeros(self.action_dim)
+    #     # Nếu bạn có dùng obs_history thì clear, nếu không có thể bỏ qua dòng dưới
+    #     if hasattr(self, 'obs_history'):
+    #         self.obs_history.clear()
         
-        os.system("ipcs -m | awk '{print $2}' | xargs -rn1 ipcrm -m > /dev/null 2>&1")
-        time.sleep(2)
-        # 2. Pause Simulation
-        # Lặp cho tới khi Gazebo phản hồi đã Pause thành công
-        while not self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: true'):
-            time.sleep(0.5)
-        time.sleep(2.0)
-        # 3. Set Pose (Đưa robot về vị trí trên không để rơi xuống)
-        # z: 0.42 tương ứng với khoảng 420mm
-        pose_msg = 'name: "humanoid_robot" position { x: 0.0 y: 0.0 z: 0.30 } orientation { x: 0.0 y: 0.0 z: 0.0 w: 1.0 }'
-        while not self.run_gz_command('/world/empty/set_pose', 'gz.msgs.Pose', pose_msg):
-            time.sleep(0.5)
-        time.sleep(2.0)
-        # 4. Set Joints (Gập chân nhẹ để robot không bị khóa khớp khi bắt đầu)
-        safe_pose = {
-            'hip_knee_left_joint': 0.3, 
-            'hip_knee_right_joint': 0.3, 
-            'knee_ankle_left_joint': -0.15, 
-            'knee_ankle_right_joint': -0.15
-        }
-        for name, val in safe_pose.items():
-            if name in self.joint_pubs:
-                self.joint_pubs[name].publish(Float64(data=val))
-        time.sleep(1)
-        # Kích hoạt tín hiệu Reset sang Node C++
-        self.reset_pub.publish(Bool(data=True))
-        time.sleep(1)
-        self.reset_pub.publish(Bool(data=False))
-        time.sleep(1)
-        # Khởi tạo lại các biến trạng thái RL
-        self.prev_action = np.zeros(self.action_dim)
-        # Nếu bạn có dùng obs_history thì clear, nếu không có thể bỏ qua dòng dưới
-        if hasattr(self, 'obs_history'):
-            self.obs_history.clear()
-        
-        # 5. Unpause Simulation
-        while not self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: false'):
-            time.sleep(0.5)
-        time.sleep(0.1)    
-        self.is_falling = False
-        self.data_received = False
-        return True
+    #     # 5. Unpause Simulation
+    #     while not self.run_gz_command('/world/empty/control', 'gz.msgs.WorldControl', 'pause: false'):
+    #         time.sleep(0.5)
+    #     time.sleep(0.1)    
+    #     self.is_falling = False
+    #     self.data_received = False
+    #     return True
 
     def save_training_state(self, is_best=False):
         if is_best: torch.save(self.ppo_agent.policy_old.state_dict(), self.model_path)

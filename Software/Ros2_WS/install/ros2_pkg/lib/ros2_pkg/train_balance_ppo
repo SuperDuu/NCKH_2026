@@ -25,15 +25,15 @@ from datetime import datetime
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DT = 0.05 
 MAX_STEPS = 3000 
-MAX_LEG_LENGTH = 0.220
-SAFE_LIMIT = MAX_LEG_LENGTH * 1.02 
+MAX_LEG_LENGTH = 0.2204
+SAFE_LIMIT = MAX_LEG_LENGTH * 0.99
 
-STD_Z = 0.18   
+STD_Z = 0.20  
 STD_Y = 0.02    
 LIFT_H = 0.025
 ACTION_DIM = 4 
 STATE_DIM = 6
-STEPS_PER_PHASE = 10 
+STEPS_PER_PHASE = 15 
 
 # ==============================================================================
 # THUẬT TOÁN PPO
@@ -94,29 +94,71 @@ class PPO:
         self.buffer_logprobs.append(logprob)
         return action.cpu().numpy().flatten()
 
+    # def update(self):
+    #     rewards = []
+    #     discounted_reward = 0
+    #     for reward, is_terminal in zip(reversed(self.buffer_rewards), reversed(self.buffer_is_terminals)):
+    #         if is_terminal: discounted_reward = 0
+    #         discounted_reward = reward + (self.gamma * discounted_reward)
+    #         rewards.insert(0, discounted_reward)
+    #     rewards = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
+    #     rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
+    #     old_states = torch.stack(self.buffer_states).detach()
+    #     old_actions = torch.stack(self.buffer_actions).detach()
+    #     old_logprobs = torch.stack(self.buffer_logprobs).detach()
+    #     for _ in range(self.K_epochs):
+    #         logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
+    #         ratios = torch.exp(logprobs - old_logprobs)
+    #         advantages = rewards - state_values.squeeze().detach()
+    #         surr1 = ratios * advantages
+    #         surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
+    #         loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values.squeeze(), rewards) - 0.01 * dist_entropy
+    #         self.optimizer.zero_grad(); loss.mean().backward(); self.optimizer.step()
+    #     self.policy_old.load_state_dict(self.policy.state_dict())
+    #     self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
     def update(self):
+        # 1. Kiểm tra sự đồng bộ của Buffer trước khi tính toán
+        # Nếu lệch size, ta cắt bớt mảng dài hơn để khớp với mảng ngắn nhất
+        min_size = min(len(self.buffer_states), len(self.buffer_rewards))
+        
+        if min_size == 0: return # Không có gì để update
+
         rewards = []
         discounted_reward = 0
-        for reward, is_terminal in zip(reversed(self.buffer_rewards), reversed(self.buffer_is_terminals)):
+        # Chỉ lấy phần dữ liệu khớp nhau (min_size)
+        for reward, is_terminal in zip(reversed(self.buffer_rewards[:min_size]), 
+                                       reversed(self.buffer_is_terminals[:min_size])):
             if is_terminal: discounted_reward = 0
             discounted_reward = reward + (self.gamma * discounted_reward)
             rewards.insert(0, discounted_reward)
+            
         rewards = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
         rewards = (rewards - rewards.mean()) / (rewards.std() + 1e-7)
-        old_states = torch.stack(self.buffer_states).detach()
-        old_actions = torch.stack(self.buffer_actions).detach()
-        old_logprobs = torch.stack(self.buffer_logprobs).detach()
+
+        # Cắt bớt các mảng Buffer cho khớp với min_size
+        old_states = torch.stack(self.buffer_states[:min_size]).detach()
+        old_actions = torch.stack(self.buffer_actions[:min_size]).detach()
+        old_logprobs = torch.stack(self.buffer_logprobs[:min_size]).detach()
+
         for _ in range(self.K_epochs):
             logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
+            state_values = torch.squeeze(state_values)
             ratios = torch.exp(logprobs - old_logprobs)
-            advantages = rewards - state_values.squeeze().detach()
+            advantages = rewards - state_values.detach()
+            
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1-self.eps_clip, 1+self.eps_clip) * advantages
-            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values.squeeze(), rewards) - 0.01 * dist_entropy
-            self.optimizer.zero_grad(); loss.mean().backward(); self.optimizer.step()
+            loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values, rewards) - 0.01 * dist_entropy
+            
+            self.optimizer.zero_grad()
+            loss.mean().backward()
+            self.optimizer.step()
+            
         self.policy_old.load_state_dict(self.policy.state_dict())
-        self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
-
+        
+        # Xóa sạch toàn bộ buffer sau khi update thành công
+        self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear()
+        self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
 # ==============================================================================
 # ROS2 TRAINING NODE
 # ==============================================================================
@@ -201,7 +243,7 @@ class HumanoidTrainNode(Node):
         return np.array(obs + [np.sin(phase), np.cos(phase)])
 
     def check_safety_and_prepare_cmd(self, action):
-        dx, dy, dz, dst = action[0]*0.05, action[1]*0.01, action[2]*0.02, action[3]*0.01
+        dx, dy, dz, dst = action[0]*0.06, action[1]*0.05, action[2]*0.01, action[3]*0.02
         tz = STD_Z + dz
         if self.is_left_support:
             tl, tr = [0.0, -0.005+dy, tz, 0.0], [dx, -0.035-dst, tz-0.015, LIFT_H]
@@ -213,16 +255,16 @@ class HumanoidTrainNode(Node):
 
     def stabilize_robot(self):
         msg = Float64MultiArray()
-        msg.data = [0.0, 0.02, STD_Z, 0.0, 0.0, -0.02, STD_Z, 0.0, 0.5]
+        msg.data = [0.0, 0.02, STD_Z, 0.0, 0.0, -0.02, STD_Z, 0.0, 1]
         for _ in range(3): self.action_pub.publish(msg); time.sleep(0.1)
-        time.sleep(1.0)
+        time.sleep(1.5)
 
     def reset_simulation(self): 
          self.reset_pub.publish(Bool(data=True)) 
          time.sleep(1.0)  
          self.call_pause_physics(True) 
          time.sleep(0.2) 
-         self.call_set_pose(0.28) 
+         self.call_set_pose(0.3) 
          time.sleep(0.5)  
          safe_pose = { 
              'hip_hip_left_joint': 0,   'hip_hip_right_joint': 0, 
@@ -231,13 +273,14 @@ class HumanoidTrainNode(Node):
              'ankle_ankle_left_joint': 0.0, 'ankle_ankle_right_joint': 0.0, 
              'base_hip_left_joint': 0.0, 'base_hip_right_joint': 0.0 
          } 
-         for _ in range(3):  
+         for _ in range(15):  
              for name, val in safe_pose.items(): 
                  if f"{name}" in self.joint_pubs: 
                     self.joint_pubs[name].publish(Float64(data=val)) 
+         time.sleep(0.5) 
          self.call_pause_physics(False) 
          start_check = self.current_sim_time 
-         while self.current_sim_time - start_check < 0.05: 
+         while self.current_sim_time - start_check < 0.02: 
              time.sleep(0.01) 
          self.reset_pub.publish(Bool(data=False)) 
          self.roll = 0.0; self.pitch = 0.0; self.is_left_support = True 

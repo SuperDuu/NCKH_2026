@@ -29,8 +29,8 @@ state_dim = 6
 # Output: 7 Servo
 action_dim = 7  
 
-input_path = "/home/du/Documents/best.pt"
-output_path = "/home/du/Documents/robot_brain.onnx"
+input_path = "/home/nckh/Documents/best.pt"
+output_path = "/home/nckh/Documents/robot_brain.onnx"
 
 # ==========================================
 # 3. QUY TRÌNH CHUYỂN ĐỔI

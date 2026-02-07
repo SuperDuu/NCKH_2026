@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -250,17 +250,17 @@ humanoid_llc_node/fast:
 .PHONY : humanoid_llc_node/fast
 
 #=============================================================================
-# Target rules for targets named ament_cmake_python_symlink_ros2_pkg
+# Target rules for targets named ament_cmake_python_copy_ros2_pkg
 
 # Build rule for target.
-ament_cmake_python_symlink_ros2_pkg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_symlink_ros2_pkg
-.PHONY : ament_cmake_python_symlink_ros2_pkg
+ament_cmake_python_copy_ros2_pkg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_copy_ros2_pkg
+.PHONY : ament_cmake_python_copy_ros2_pkg
 
 # fast build rule for target.
-ament_cmake_python_symlink_ros2_pkg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
-.PHONY : ament_cmake_python_symlink_ros2_pkg/fast
+ament_cmake_python_copy_ros2_pkg/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build
+.PHONY : ament_cmake_python_copy_ros2_pkg/fast
 
 #=============================================================================
 # Target rules for targets named ament_cmake_python_build_ros2_pkg_egg
@@ -385,7 +385,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ament_cmake_python_build_ros2_pkg_egg"
-	@echo "... ament_cmake_python_symlink_ros2_pkg"
+	@echo "... ament_cmake_python_copy_ros2_pkg"
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... humanoid_llc_node"

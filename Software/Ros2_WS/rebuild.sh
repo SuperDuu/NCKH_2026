@@ -8,6 +8,6 @@ sleep 1
 
 rm -rf build/ install/ log/
 
-colcon build --symlink-install
+colcon build
 
 source install/setup.bash

@@ -1,0 +1,124 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-a6e7e9596aacef64d67e.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.20"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"name" : "",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ros2_pkg",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						5,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_build_ros2_pkg_egg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_build_ros2_pkg_egg-6e01068eab7e1e957587.json",
+					"name" : "ament_cmake_python_build_ros2_pkg_egg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ament_cmake_python_copy_ros2_pkg::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ament_cmake_python_copy_ros2_pkg-a024a08fd2d738dff1a6.json",
+					"name" : "ament_cmake_python_copy_ros2_pkg",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "humanoid_llc_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-humanoid_llc_node-52675622dc8cd0dee57e.json",
+					"name" : "humanoid_llc_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "imu_process_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imu_process_node-aac109cf5119c884cded.json",
+					"name" : "imu_process_node",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ros2_pkg_uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ros2_pkg_uninstall-cbcfb824d1e9a367aef7.json",
+					"name" : "ros2_pkg_uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "task_space_controller::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-task_space_controller-30b6449e3b759deb1353.json",
+					"name" : "task_space_controller",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uninstall::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uninstall-efc0a82a574ffc6aa261.json",
+					"name" : "uninstall",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "uvc_node::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-uvc_node-04a7d56eca1f9480d25c.json",
+					"name" : "uvc_node",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg",
+		"source" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

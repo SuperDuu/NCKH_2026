@@ -11,7 +11,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory(pkg_name)
     
     # === CẤU HÌNH ĐƯỜNG DẪN ===
-    cyclonedds_xml_path = '/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/cyclonedds.xml'
+    cyclonedds_xml_path = '/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/cyclonedds.xml'
     
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')
     doc = xacro.process_file(xacro_file)

@@ -40,7 +40,7 @@ STEPS_PER_PHASE = 15
 # THUẬT TOÁN PPO (GIỮ NGUYÊN KIẾN TRÚC 256x256)
 # ==============================================================================
 class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim, action_std_init=0.16): # FINE-TUNE BẮT ĐẦU TỪ 0.16
+    def __init__(self, state_dim, action_dim, action_std_init=0.06): # FINE-TUNE BẮT ĐẦU TỪ 0.16
         super(ActorCritic, self).__init__()
         self.action_var = torch.full((action_dim,), action_std_init * action_std_init).to(DEVICE)
         
@@ -310,7 +310,7 @@ class HumanoidTrainNode(Node):
                 if t == 0 and done: failed_at_start = True; break
                 self.ppo.buffer_rewards.append(reward); self.ppo.buffer_is_terminals.append(done); ep_reward += reward
                 
-                if len(self.ppo.buffer_rewards) >= 8000:
+                if len(self.ppo.buffer_rewards) >= 16000:
                     print("\033[92m>>> FINE-TUNE UPDATING POLICY (K=20) <<<\033[0m"); self.ppo.update()
                 
                 self.is_left_support = (np.sin((t % (STEPS_PER_PHASE*2)) / (STEPS_PER_PHASE*2) * 2 * np.pi) > 0)
@@ -326,7 +326,7 @@ class HumanoidTrainNode(Node):
                 ep += 1
                 
                 # QUẢN LÝ STD TRONG FINE-TUNING (CHỈ GIẢM KHI CỰC KỲ VỮNG)
-                if ep % 100 == 0 and ep > 0:
+                if ep % 10 == 0 and ep > 0:
                     current_std = torch.sqrt(self.ppo.policy.action_var[0]).item()
                     new_std = max(0.1, current_std * 0.99) # Giảm chậm hơn để giữ tính khám phá Yaw
                     self.ppo.policy.set_action_std(new_std)

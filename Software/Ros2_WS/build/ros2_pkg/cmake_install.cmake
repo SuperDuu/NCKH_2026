@@ -183,6 +183,10 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_force" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_force.py")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE DIRECTORY FILES
     "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch"
     "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf"

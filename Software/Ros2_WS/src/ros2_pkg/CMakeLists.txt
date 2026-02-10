@@ -45,7 +45,7 @@ install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} REN
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
 install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
 install(PROGRAMS ros2_pkg/ft_yaw.py DESTINATION lib/${PROJECT_NAME} RENAME ft_yaw)
-
+install(PROGRAMS ros2_pkg/ft_force.py DESTINATION lib/${PROJECT_NAME} RENAME ft_force)
 
 install(DIRECTORY launch urdf rviz worlds
   DESTINATION share/${PROJECT_NAME})

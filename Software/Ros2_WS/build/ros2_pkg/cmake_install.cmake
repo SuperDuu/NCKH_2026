@@ -1,8 +1,8 @@
-# Install script for directory: /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+# Install script for directory: /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
+  set(CMAKE_INSTALL_PREFIX "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -43,26 +43,26 @@ if(NOT DEFINED CMAKE_OBJDUMP)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/pythonpath.sh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/pythonpath.sh")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/pythonpath.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/pythonpath.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3.12/site-packages/ros2_pkg-0.0.0-py3.12.egg-info" TYPE DIRECTORY FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_python/ros2_pkg/ros2_pkg.egg-info/")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3.12/site-packages/ros2_pkg-0.0.0-py3.12.egg-info" TYPE DIRECTORY FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_python/ros2_pkg/ros2_pkg.egg-info/")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3.12/site-packages/ros2_pkg" TYPE DIRECTORY FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/" REGEX "/[^/]*\\.pyc$" EXCLUDE REGEX "/\\_\\_pycache\\_\\_$" EXCLUDE)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python3.12/site-packages/ros2_pkg" TYPE DIRECTORY FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/" REGEX "/[^/]*\\.pyc$" EXCLUDE REGEX "/\\_\\_pycache\\_\\_$" EXCLUDE)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   execute_process(
         COMMAND
         "/usr/bin/python3" "-m" "compileall"
-        "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/python3.12/site-packages/ros2_pkg"
+        "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/install/ros2_pkg/lib/python3.12/site-packages/ros2_pkg"
       )
 endif()
 
@@ -73,7 +73,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/imu_process_node"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/imu_process_node")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/imu_process_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/imu_process_node" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/imu_process_node")
     file(RPATH_CHANGE
@@ -87,7 +87,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/imu_process_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
+  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/imu_process_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -97,7 +97,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_node"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/uvc_node")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/uvc_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_node" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/uvc_node")
     file(RPATH_CHANGE
@@ -111,7 +111,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/uvc_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
+  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/uvc_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -121,7 +121,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/task_space_controller"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/task_space_controller")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/task_space_controller")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/task_space_controller" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/task_space_controller")
     file(RPATH_CHANGE
@@ -135,7 +135,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/task_space_controller.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
+  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/task_space_controller.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -145,7 +145,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
          FILE "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/humanoid_llc_node"
          RPATH "")
   endif()
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/humanoid_llc_node")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE EXECUTABLE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/humanoid_llc_node")
   if(EXISTS "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/humanoid_llc_node" AND
      NOT IS_SYMLINK "$ENV{DESTDIR}${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg/humanoid_llc_node")
     file(RPATH_CHANGE
@@ -159,52 +159,56 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  include("/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/humanoid_llc_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
+  include("/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/humanoid_llc_node.dir/install-cxx-module-bmi-noconfig.cmake" OPTIONAL)
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "train_balance_ppo" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/train_balance_ppo.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "train_balance_ppo" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/train_balance_ppo.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_ppo_training" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_ppo_training.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "rl_ppo_training" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/rl_ppo_training.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "export_onnx" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/export_onnx.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "export_onnx" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/export_onnx.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "visual" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/visual.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "visual" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/visual.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_yaw" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_yaw.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_yaw" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_yaw.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_force" FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_force.py")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_force" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_force.py")
+endif()
+
+if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/ros2_pkg" TYPE PROGRAM RENAME "ft_walk" FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/ros2_pkg/ft_walk.py")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE DIRECTORY FILES
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch"
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf"
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/rviz"
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/worlds"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/launch"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/rviz"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/worlds"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/urdf" TYPE DIRECTORY FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf/meshes")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/urdf" TYPE DIRECTORY FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/urdf/meshes")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/package_run_dependencies" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/ros2_pkg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/parent_prefix_path" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/ros2_pkg")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -212,7 +216,7 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/ament_prefix_path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/ament_prefix_path.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
@@ -220,46 +224,46 @@ if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/path.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/environment" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/path.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.bash")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.bash")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.sh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.sh")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.zsh")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.zsh")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/local_setup.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/package.dsv")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_environment_hooks/package.dsv")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/packages/ros2_pkg")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ament_index/resource_index/packages" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_index/share/ament_index/resource_index/packages/ros2_pkg")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/cmake" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/cmake" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg/cmake" TYPE FILE FILES
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_core/ros2_pkgConfig.cmake"
-    "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_core/ros2_pkgConfig-version.cmake"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_core/ros2_pkgConfig.cmake"
+    "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/ament_cmake_core/ros2_pkgConfig-version.cmake"
     )
 endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
-  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/package.xml")
+  file(INSTALL DESTINATION "${CMAKE_INSTALL_PREFIX}/share/ros2_pkg" TYPE FILE FILES "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/package.xml")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -270,5 +274,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

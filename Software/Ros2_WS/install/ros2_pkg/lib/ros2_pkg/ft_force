@@ -22,21 +22,21 @@ import csv
 from datetime import datetime
 
 # ==============================================================================
-# CẤU HÌNH HỆ THỐNG & VẬT LÝ
+# CẤU HÌNH TỐI ƯU CHO SERVO MG996R & PUSH RECOVERY
 # ==============================================================================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DT = 0.05 
 MAX_STEPS = 9999 
 MAX_LEG_LENGTH = 0.2204
 SAFE_LIMIT = MAX_LEG_LENGTH * 0.98
-STD_Z, STD_Y, LIFT_H = 0.195, 0.01, 0.03 
+STD_Z, STD_Y, LIFT_H = 0.195, 0.01, 0.05 
 ACTION_DIM, STATE_DIM, STEPS_PER_PHASE = 4, 7, 15 
 
-# --- THÔNG SỐ STD DECAY THEO YÊU CẦU ---
-ACTION_STD_INIT = 0.15      # Bắt đầu với 0.15 cho Fine-tuning
+# --- THÔNG SỐ STD DECAY ---
+ACTION_STD_INIT = 0.05      
 ACTION_STD_MIN = 0.05       
-DECAY_FACTOR = 0.99         # Giảm 1% mỗi chu kỳ
-DECAY_INTERVAL_EP = 30      # Mỗi 50 episodes giảm một lần
+DECAY_FACTOR = 0.99         
+DECAY_INTERVAL_EP = 30      
 
 # ==============================================================================
 # MẠNG NEURAL (PPO)
@@ -104,13 +104,13 @@ class PPO:
         self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
 
 # ==============================================================================
-# MAIN NODE
+# MAIN NODE - RESTORE LOGIC
 # ==============================================================================
-class HumanoidForceNode(Node):
+class HumanoidServoNode(Node):
     def __init__(self):
-        super().__init__('humanoid_force_node')
+        super().__init__('humanoid_servo_node')
         
-        self.base_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
+        self.base_dir = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
         self.force_dir = os.path.join(self.base_dir, "finetunning_force")
         os.makedirs(self.force_dir, exist_ok=True)
         self.latest_model_path = os.path.join(self.force_dir, "latest_model.pth")
@@ -119,7 +119,6 @@ class HumanoidForceNode(Node):
         self.history_path = os.path.join(self.force_dir, "training_history_force.csv")
 
         force_qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, durability=DurabilityPolicy.VOLATILE, history=HistoryPolicy.KEEP_LAST, depth=1)
-
         self.force_pub = self.create_publisher(Wrench, '/model/humanoid_robot/link/base_footprint/wrench', force_qos)
         self.action_pub = self.create_publisher(Float64MultiArray, '/rl/leg_command', 10)
         self.reset_pub = self.create_publisher(Bool, '/uvc_reset', 10) 
@@ -146,18 +145,21 @@ class HumanoidForceNode(Node):
             with open(self.history_path, 'w', newline='') as f: 
                 csv.writer(f).writerow(["Episode", "Reward", "Steps", "Reason", "Time"])
 
-        print(f"\033[94m>>> Node Ready. Initial STD: {self.current_std:.4f}\033[0m")
+        print(f"\033[94m>>> Node Ready. Full Logic Restored. Initial STD: {self.current_std:.4f}\033[0m")
         threading.Thread(target=self.train_loop, daemon=True).start()
 
-    def apply_random_force(self):
-        threading.Thread(target=self._force_worker, daemon=True).start()
+    def apply_random_force(self, episode):
+        # Curriculum: Lực tăng dần theo episode để servo thích nghi
+        max_f = min(450.0, 200.0 + (episode // 40) * 10.0)
+        threading.Thread(target=self._force_worker, args=(max_f,), daemon=True).start()
 
-    def _force_worker(self):
+    def _force_worker(self, max_f):
         msg = Wrench()
-        f_val = np.random.uniform(200.0, 300.0) * np.random.choice([-1, 1])
-        print(f"\033[1;31m⚡ PUNCH: {abs(f_val):.2f} N\033[0m")
+        f_val = np.random.uniform(0.6 * max_f, max_f) * np.random.choice([-1, 1])
         msg.force.y = f_val
         self.force_pub.publish(msg)
+        time.sleep(0.08)
+        self.force_pub.publish(Wrench())
 
     def load_training_state(self):
         if os.path.exists(self.meta_path):
@@ -173,9 +175,7 @@ class HumanoidForceNode(Node):
         data = {"best_reward": float(self.best_reward), "current_episode": int(ep)}
         with open(self.meta_path, 'w') as f: json.dump(data, f, indent=4)
         torch.save(self.ppo.policy.state_dict(), self.latest_model_path)
-        if is_best: 
-            torch.save(self.ppo.policy.state_dict(), self.best_model_path)
-            print(f"\n\033[1;33m⭐ NEW BEST: {reward:.2f} | Ep: {ep}\033[0m\n", flush=True)
+        if is_best: torch.save(self.ppo.policy.state_dict(), self.best_model_path)
 
     def imu_callback(self, msg):
         self.prev_roll, self.prev_pitch = self.roll, self.pitch
@@ -235,7 +235,7 @@ class HumanoidForceNode(Node):
 
     def train_loop(self):
         while self.current_sim_time == 0: time.sleep(1.0)
-        time.sleep(2); ep = self.start_episode
+        ep = self.start_episode
         while rclpy.ok():
             self.reset_simulation()
             ep_reward = 0; failed_at_start = False; reason = "TIME_LIMIT"
@@ -245,38 +245,44 @@ class HumanoidForceNode(Node):
                 action = self.ppo.select_action(state)
                 ok, msg, pen = self.check_safety_and_prepare_cmd(action)
                 if not ok: 
-                    self.ppo.buffer_rewards.append(-300.0); self.ppo.buffer_is_terminals.append(True); reason = "IK_FAIL"; break
+                    self.ppo.buffer_rewards.append(-100.0); self.ppo.buffer_is_terminals.append(True); reason = "IK_FAIL"; break
                 self.action_pub.publish(msg); time.sleep(DT)
                 
-                if t > 100 and t % np.random.randint(20, 30) == 0: self.apply_random_force()
+                if t > 80 and t % np.random.randint(80, 150) == 0: self.apply_random_force(ep)
 
                 done = abs(self.smooth_roll) > 0.6 or abs(self.smooth_pitch) > 0.6
-                r_alive = 3.5 
-                r_balance = 8.0 * np.exp(-15.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
-                r_yaw = -3 * max(0.0, abs(self.yaw) - 0.174) 
-                r_action = -0.5 * np.sum(np.square(action))
+                r_alive = 4.0 
+                r_balance = 10.0 * np.exp(-12.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
+                r_yaw = -1.5 * max(0.0, abs(self.yaw) - 0.2) 
+                r_action = -0.4 * np.sum(np.square(action))
                 reward = r_alive + r_balance + r_yaw + r_action + pen
 
-                if done: reward = -50.0 
+                if done: reward = -100.0 
                 if t == 0 and done: failed_at_start = True; break
                 self.ppo.buffer_rewards.append(reward); self.ppo.buffer_is_terminals.append(done); ep_reward += reward
-                if len(self.ppo.buffer_rewards) >= 8000: self.ppo.update()
+                if len(self.ppo.buffer_states) >= 8000: self.ppo.update()
                 self.is_left_support = (np.sin((t % (STEPS_PER_PHASE*2)) / (STEPS_PER_PHASE*2) * 2 * np.pi) > 0)
                 if done: reason = "FALL"; break
+
             if not failed_at_start:
-                # --- EXPONENTIAL STD DECAY ---
                 if ep > 0 and ep % DECAY_INTERVAL_EP == 0:
                     self.current_std = max(ACTION_STD_MIN, self.current_std * DECAY_FACTOR)
                     self.ppo.policy.set_action_std(self.current_std)
                     self.ppo.policy_old.set_action_std(self.current_std)
-                    print(f"\033[92m>>> STD DECAYED TO: {self.current_std:.6f}\033[0m")
 
-                if ep_reward > self.best_reward: self.best_reward = ep_reward
-                self.save_state(ep, ep_reward, ep_reward == self.best_reward)
+                if ep_reward > self.best_reward: 
+                    self.best_reward = ep_reward; self.save_state(ep, ep_reward, True)
+                    print(f"\033[1;33m⭐ NEW BEST: {ep_reward:.2f}\033[0m")
+                else: 
+                    self.save_state(ep, ep_reward, False)
+
                 with open(self.history_path, 'a', newline='') as f:
                     csv.writer(f).writerow([ep, f"{ep_reward:.2f}", t, reason, datetime.now().strftime("%H:%M:%S")])
-                print(f"FORCE-Ep {ep} | Reward: {ep_reward:.2f} | Steps: {t} | STD: {self.current_std:.4f} | {reason}"); ep += 1
+                
+                # IN THÊM BEST REWARD ĐỂ TIỆN THEO DÕI
+                print(f"SERVO-Ep {ep} | R: {ep_reward:.2f} | Best: {self.best_reward:.2f} | Steps: {t} | STD: {self.current_std:.4f} | {reason}")
+                ep += 1
             else: print("\033[91m⚠️ Reset Lag Detected. Ignoring episode.\033[0m")
 
-def main(): rclpy.init(); rclpy.spin(HumanoidForceNode())
+def main(): rclpy.init(); rclpy.spin(HumanoidServoNode())
 if __name__ == '__main__': main()

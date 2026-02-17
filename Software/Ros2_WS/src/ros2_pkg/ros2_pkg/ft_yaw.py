@@ -131,7 +131,7 @@ class HumanoidTrainNode(Node):
         super().__init__('humanoid_train_node')
         
         # CẤU HÌNH ĐƯỜNG DẪN MỚI
-        self.base_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
+        self.base_dir = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
         self.ft_dir = os.path.join(self.base_dir, "finetunning_yaw")
         os.makedirs(self.ft_dir, exist_ok=True)
         

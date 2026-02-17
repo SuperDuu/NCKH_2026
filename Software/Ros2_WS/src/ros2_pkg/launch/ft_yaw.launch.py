@@ -12,7 +12,7 @@ def generate_launch_description():
     
     # === CẤU HÌNH ĐƯỜNG DẪN ===
     # Sử dụng file cyclonedds.xml bạn đã tạo
-    cyclonedds_xml_path = '/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/cyclonedds.xml'
+    cyclonedds_xml_path = '/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/cyclonedds.xml'
     
     # Xử lý file Robot URDF/Xacro
     xacro_file = os.path.join(pkg_share, 'urdf', 'main.xacro')

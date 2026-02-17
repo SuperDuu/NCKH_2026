@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
+CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
+CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg
 
 # Include any dependencies generated for this target.
 include CMakeFiles/task_space_controller.dir/depend.make
@@ -70,18 +70,18 @@ include CMakeFiles/task_space_controller.dir/progress.make
 include CMakeFiles/task_space_controller.dir/flags.make
 
 CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o: CMakeFiles/task_space_controller.dir/flags.make
-CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o: /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp
+CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o: /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp
 CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o: CMakeFiles/task_space_controller.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o -MF CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o.d -o CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o -c /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o -MF CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o.d -o CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.o -c /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp
 
 CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp > CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp > CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.i
 
 CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp -o CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/src/task_space_controller.cpp -o CMakeFiles/task_space_controller.dir/src/task_space_controller.cpp.s
 
 # Object files for target task_space_controller
 task_space_controller_OBJECTS = \
@@ -191,7 +191,7 @@ task_space_controller: /opt/ros/jazzy/lib/librcpputils.so
 task_space_controller: /opt/ros/jazzy/lib/librosidl_runtime_c.so
 task_space_controller: /opt/ros/jazzy/lib/librcutils.so
 task_space_controller: CMakeFiles/task_space_controller.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable task_space_controller"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable task_space_controller"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/task_space_controller.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -203,6 +203,6 @@ CMakeFiles/task_space_controller.dir/clean:
 .PHONY : CMakeFiles/task_space_controller.dir/clean
 
 CMakeFiles/task_space_controller.dir/depend:
-	cd /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/task_space_controller.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/task_space_controller.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/task_space_controller.dir/depend
 

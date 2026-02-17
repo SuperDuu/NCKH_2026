@@ -128,7 +128,7 @@ class PPO:
 class HumanoidTrainNode(Node):
     def __init__(self):
         super().__init__('humanoid_train_node')
-        self.weights_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
+        self.weights_dir = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS/src/ros2_pkg/weights"
         os.makedirs(self.weights_dir, exist_ok=True)
         self.best_model_path = os.path.join(self.weights_dir, "best_model.pth")
         self.latest_model_path = os.path.join(self.weights_dir, "latest_model.pth")

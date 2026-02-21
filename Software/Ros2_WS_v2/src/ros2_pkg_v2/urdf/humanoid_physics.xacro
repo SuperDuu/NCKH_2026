@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ============================================================
+       VẬT LIỆU PETG: Dùng cho tất cả link NGOẠI TRỪ bàn chân
+       ============================================================ -->
+  <xacro:property name="petg_mu" value="0.6" />
+  <xacro:property name="petg_kp" value="100000.0" />
+  <xacro:property name="petg_kd" value="10.0" />
+
+  <!-- ============================================================
+       MACRO: Setup link với ma sát PETG (cho thân, tay, đùi...)
+       Dùng <gazebo reference="link_name"> → tương thích Harmonic SDF
+       ============================================================ -->
+  <xacro:macro name="setup_link" params="link_name">
+    <gazebo reference="${link_name}">
+      <mu1>${petg_mu}</mu1>
+      <mu2>${petg_mu}</mu2>
+      <kp>${petg_kp}</kp>
+      <kd>${petg_kd}</kd>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- ============================================================
+       BÀN CHÂN: Ma sát cao + neo chặt (KHÔNG dùng setup_link)
+       Đây là bề mặt tiếp đất, cần grip tối đa
+       ============================================================ -->
+  <gazebo reference="ankle_ankle_left_link">
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <minDepth>0.005</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+  <gazebo reference="ankle_ankle_right_link">
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <kp>1000000.0</kp>
+    <kd>100.0</kd>
+    <minDepth>0.005</minDepth>
+    <maxVel>0.0</maxVel>
+  </gazebo>
+
+  <!-- ============================================================
+       LƯU Ý: Không cần setup_joint macro nữa!
+       
+       Lý do:
+       - Gazebo Harmonic (SDF) KHÔNG hỗ trợ <friction> và <damping>
+         trong <gazebo reference="joint">. Đó là cú pháp Gazebo Classic.
+       - Tất cả 17 khớp đã nằm trong <ros2_control> với hold_joints=true
+         → controller giữ vị trí tự động, không cần damping vật lý.
+       - Nếu sau này cần damping vật lý, dùng <dynamics damping="0.05"
+         friction="0.1"/> trong thẻ <joint> của Robot.urdf.
+       ============================================================ -->
+
+</robot>

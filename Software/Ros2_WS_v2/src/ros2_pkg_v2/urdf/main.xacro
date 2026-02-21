@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<robot name="robot_humanoid" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find ros2_pkg_v2)/urdf/urdf/Robot.urdf" />
+  <xacro:include filename="$(find ros2_pkg_v2)/urdf/humanoid_physics.xacro" />
+
+  <link name="base_footprint"/>
+
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+  <xacro:setup_link link_name="base_link" />
+  <xacro:setup_link link_name="base_hip_middle_link" />
+
+  <xacro:setup_link link_name="base_hip_left_link" />
+  <xacro:setup_link link_name="hip_hip_left_link" />
+  <xacro:setup_link link_name="hip_knee_left_link" />
+  <xacro:setup_link link_name="knee_ankle_left_link" />
+  <!-- ankle_ankle_left_link: dùng mu=1.5 riêng trong humanoid_physics.xacro -->
+
+  <xacro:setup_link link_name="base_hip_right_link" />
+  <xacro:setup_link link_name="hip_hip_right_link" />
+  <xacro:setup_link link_name="hip_knee_right_link" />
+  <xacro:setup_link link_name="knee_ankle_right_link" />
+  <!-- ankle_ankle_right_link: dùng mu=1.5 riêng trong humanoid_physics.xacro -->
+
+  <xacro:setup_link link_name="hip_shoulder_left_link" />
+  <xacro:setup_link link_name="shoulder_shoulder_left_link" />
+  <xacro:setup_link link_name="shoulder_elbow_left_link" />
+  <xacro:setup_link link_name="hip_shoulder_right_link" />
+  <xacro:setup_link link_name="shoulder_shoulder_right_link" />
+  <xacro:setup_link link_name="shoulder_elbow_right_link" />
+
+  <gazebo reference="base_hip_middle_link">
+    <sensor name="imu_sensor" type="imu">
+      <always_on>1</always_on> <update_rate>100</update_rate> 
+      <visualize>true</visualize>
+      <topic>/imu</topic>
+      <pose>0 0 0 0 0 0</pose> 
+    </sensor>
+  </gazebo>
+
+  <!-- <xacro:robot_brain /> -->
+  
+  <ros2_control name="GazeboSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
+    
+    <!-- Left Leg Joints -->
+    <joint name="base_hip_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="hip_hip_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="hip_knee_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="knee_ankle_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="ankle_ankle_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <!-- Right Leg Joints -->
+    <joint name="base_hip_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="hip_hip_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="hip_knee_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="knee_ankle_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="ankle_ankle_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <!-- Hông giữa -->
+    <joint name="base_hip_middle_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <!-- Tay trái -->
+    <joint name="hip_shoulder_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="shoulder_shoulder_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="shoulder_elbow_left_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+
+    <!-- Tay phải -->
+    <joint name="hip_shoulder_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="shoulder_shoulder_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+    <joint name="shoulder_elbow_right_joint">
+      <command_interface name="position" />
+      <state_interface name="position" />
+      <state_interface name="velocity" />
+    </joint>
+  </ros2_control>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find ros2_pkg_v2)/config/controller_config.yaml</parameters>
+      <hold_joints>true</hold_joints>
+    </plugin>
+  </gazebo>
+
+</robot>

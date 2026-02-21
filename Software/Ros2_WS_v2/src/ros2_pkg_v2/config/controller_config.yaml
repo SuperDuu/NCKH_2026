@@ -1,0 +1,53 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Tần số 1kHz để điều khiển MG996R mịn màng
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - base_hip_left_joint
+      - hip_hip_left_joint
+      - hip_knee_left_joint
+      - knee_ankle_left_joint
+      - ankle_ankle_left_joint
+      - base_hip_right_joint
+      - hip_hip_right_joint
+      - hip_knee_right_joint
+      - knee_ankle_right_joint
+      - ankle_ankle_right_joint
+
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+    # Ràng buộc vận tốc cố định 6.0 rad/s như bạn muốn
+    constraints:
+      stopped_velocity_tolerance: 0.01
+      goal_time: 0.0
+      base_hip_left_joint: { trajectory: 0.1, goal: 0.1 }
+      # (Các khớp khác sẽ tự kế thừa hoặc bạn có thể liệt kê thêm)
+
+gz_ros2_control:
+  ros__parameters:
+    pid_gains:
+      # Thông số Kp giảm một nửa theo yêu cầu, làm khớp mềm (compliant) và giống MG996R thực tế hơn
+      base_hip_left_joint:    {kp: 50.0, ki: 2.0, kd: 0.05}
+      hip_hip_left_joint:     {kp: 50.0, ki: 2.5, kd: 0.05}
+      hip_knee_left_joint:    {kp: 50.0, ki: 2.5, kd: 0.05}
+      knee_ankle_left_joint:  {kp: 50.0, ki: 2.0, kd: 0.05}
+      ankle_ankle_left_joint: {kp: 50.0, ki: 1.5, kd: 0.05}
+      
+      base_hip_right_joint:   {kp: 50.0, ki: 2.0, kd: 0.05}
+      hip_hip_right_joint:    {kp: 50.0, ki: 2.5, kd: 0.05}
+      hip_knee_right_joint:   {kp: 50.0, ki: 2.5, kd: 0.05}
+      knee_ankle_right_joint: {kp: 50.0, ki: 2.0, kd: 0.05}
+      ankle_ankle_right_joint: {kp: 50.0, ki: 1.5, kd: 0.05}

@@ -1,20 +1,18 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <xacro:property name="petg_mu" value="0.6" /> 
+  <xacro:property name="petg_mu" value="0.9" /> 
   <xacro:property name="petg_kp" value="100000.0" /> 
   <xacro:property name="petg_kd" value="10.0" />
 
-  <xacro:property name="silicone_mu" value="0.99" /> 
-  <xacro:property name="silicone_kp" value="40000.0" /> 
-  <xacro:property name="silicone_kd" value="25.0" /> 
+  <xacro:property name="silicone_mu" value="0.99" />  
+  <xacro:property name="silicone_kp" value="100000.0" /> 
+  <xacro:property name="silicone_kd" value="10.0" /> 
   <xacro:property name="silicone_thickness" value="0.002" />
 
   <xacro:macro name="setup_joint" params="joint_name">
     <gazebo reference="${joint_name}">
       <implicitSpringDamper>true</implicitSpringDamper>
-      <friction>0.1</friction> 
-      <damping>0.05</damping>
     </gazebo>
   </xacro:macro>
 
@@ -24,6 +22,7 @@
       <mu2>${petg_mu}</mu2>
       <kp>${petg_kp}</kp>
       <kd>${petg_kd}</kd>
+      <self_collide>false</self_collide>
     </gazebo>
   </xacro:macro>
 
@@ -37,8 +36,8 @@
         <p_gain>${p}</p_gain> 
         <i_gain>0.0</i_gain> <d_gain>${d}</d_gain>
         
-        <cmd_max>20.0</cmd_max> 
-        <cmd_min>-20.0</cmd_min>
+        <cmd_max>2.5</cmd_max> 
+        <cmd_min>-2.5</cmd_min>
         
         <velocity_max>6.0</velocity_max>
       </plugin>
@@ -54,65 +53,67 @@
     </gazebo>
 
     <xacro:setup_joint joint_name="base_hip_left_joint"/>
-    <xacro:make_controller joint_name="base_hip_left_joint"    p="2000" d="20"/>
+    <xacro:make_controller joint_name="base_hip_left_joint"    p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="hip_hip_left_joint"/>
-    <xacro:make_controller joint_name="hip_hip_left_joint"     p="2000" d="20"/>
+    <xacro:make_controller joint_name="hip_hip_left_joint"     p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="hip_knee_left_joint"/>
-    <xacro:make_controller joint_name="hip_knee_left_joint"    p="2000" d="20"/>
+    <xacro:make_controller joint_name="hip_knee_left_joint"    p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="knee_ankle_left_joint"/>
-    <xacro:make_controller joint_name="knee_ankle_left_joint"  p="2000" d="20"/>
+    <xacro:make_controller joint_name="knee_ankle_left_joint"  p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="ankle_ankle_left_joint"/>
-    <xacro:make_controller joint_name="ankle_ankle_left_joint" p="2000" d="20"/>
+    <xacro:make_controller joint_name="ankle_ankle_left_joint" p="8000" d="40"/>
 
     <gazebo reference="ankle_ankle_left_link">
       <mu1>${silicone_mu}</mu1>
       <mu2>${silicone_mu}</mu2>
       <kp>${silicone_kp}</kp>
       <kd>${silicone_kd}</kd>
+      <self_collide>false</self_collide>
     </gazebo>
 
     <xacro:setup_joint joint_name="base_hip_right_joint"/>
-    <xacro:make_controller joint_name="base_hip_right_joint"    p="2000" d="20"/>
+    <xacro:make_controller joint_name="base_hip_right_joint"    p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="hip_hip_right_joint"/>
-    <xacro:make_controller joint_name="hip_hip_right_joint"     p="2000" d="20"/>
+    <xacro:make_controller joint_name="hip_hip_right_joint"     p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="hip_knee_right_joint"/>
-    <xacro:make_controller joint_name="hip_knee_right_joint"    p="2000" d="20"/>
+    <xacro:make_controller joint_name="hip_knee_right_joint"    p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="knee_ankle_right_joint"/>
-    <xacro:make_controller joint_name="knee_ankle_right_joint"  p="2000" d="20"/>
+    <xacro:make_controller joint_name="knee_ankle_right_joint"  p="8000" d="40"/>
     
     <xacro:setup_joint joint_name="ankle_ankle_right_joint"/>
-    <xacro:make_controller joint_name="ankle_ankle_right_joint" p="2000" d="20"/>
+    <xacro:make_controller joint_name="ankle_ankle_right_joint" p="8000" d="40"/>
 
     <gazebo reference="ankle_ankle_right_link">
       <mu1>${silicone_mu}</mu1>
       <mu2>${silicone_mu}</mu2>
       <kp>${silicone_kp}</kp>
       <kd>${silicone_kd}</kd>
+      <self_collide>false</self_collide>
     </gazebo>
     
     <xacro:setup_joint joint_name="base_hip_middle_joint"/>
-    <xacro:make_controller joint_name="base_hip_middle_joint"   p="300" d="5"/>
+    <xacro:make_controller joint_name="base_hip_middle_joint"   p="8000" d="40"/>
 
     <xacro:setup_joint joint_name="hip_shoulder_left_joint"/>
-    <xacro:make_controller joint_name="hip_shoulder_left_joint"      p="200" d="5"/>
+    <xacro:make_controller joint_name="hip_shoulder_left_joint"      p="8000" d="40"/>
     <xacro:setup_joint joint_name="shoulder_shoulder_left_joint"/>
-    <xacro:make_controller joint_name="shoulder_shoulder_left_joint" p="200" d="5"/>
+    <xacro:make_controller joint_name="shoulder_shoulder_left_joint" p="8000" d="40"/>
     <xacro:setup_joint joint_name="shoulder_elbow_left_joint"/>
-    <xacro:make_controller joint_name="shoulder_elbow_left_joint"    p="200" d="5"/>
+    <xacro:make_controller joint_name="shoulder_elbow_left_joint"    p="8000" d="40"/>
 
     <xacro:setup_joint joint_name="hip_shoulder_right_joint"/>
-    <xacro:make_controller joint_name="hip_shoulder_right_joint"      p="200" d="5"/>
+    <xacro:make_controller joint_name="hip_shoulder_right_joint"      p="8000" d="40"/>
     <xacro:setup_joint joint_name="shoulder_shoulder_right_joint"/>
-    <xacro:make_controller joint_name="shoulder_shoulder_right_joint" p="200" d="5"/>
+    <xacro:make_controller joint_name="shoulder_shoulder_right_joint" p="8000" d="40"/>
     <xacro:setup_joint joint_name="shoulder_elbow_right_joint"/>
-    <xacro:make_controller joint_name="shoulder_elbow_right_joint"    p="200" d="5"/>
+    <xacro:make_controller joint_name="shoulder_elbow_right_joint"    p="8000" d="40"/>
 
   </xacro:macro>
 </robot>

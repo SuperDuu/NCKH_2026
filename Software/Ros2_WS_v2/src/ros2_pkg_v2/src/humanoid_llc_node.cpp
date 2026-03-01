@@ -81,7 +81,10 @@ public:
         
         std::vector<std::string> j_names = {
             "base_hip_left_joint", "hip_hip_left_joint", "hip_knee_left_joint", "knee_ankle_left_joint", "ankle_ankle_left_joint",
-            "base_hip_right_joint", "hip_hip_right_joint", "hip_knee_right_joint", "knee_ankle_right_joint", "ankle_ankle_right_joint"
+            "base_hip_right_joint", "hip_hip_right_joint", "hip_knee_right_joint", "knee_ankle_right_joint", "ankle_ankle_right_joint",
+            "base_hip_middle_joint",
+            "hip_shoulder_left_joint", "shoulder_shoulder_left_joint", "shoulder_elbow_left_joint",
+            "hip_shoulder_right_joint", "shoulder_shoulder_right_joint", "shoulder_elbow_right_joint"
         };
         
         traj_pub_ = create_publisher<trajectory_msgs::msg::JointTrajectory>("/joint_trajectory_controller/joint_trajectory", 10);
@@ -172,21 +175,37 @@ private:
             traj_msg.header.stamp = this->now();
             traj_msg.joint_names = {
                 "base_hip_left_joint", "hip_hip_left_joint", "hip_knee_left_joint", "knee_ankle_left_joint", "ankle_ankle_left_joint",
-                "base_hip_right_joint", "hip_hip_right_joint", "hip_knee_right_joint", "knee_ankle_right_joint", "ankle_ankle_right_joint"
+                "base_hip_right_joint", "hip_hip_right_joint", "hip_knee_right_joint", "knee_ankle_right_joint", "ankle_ankle_right_joint",
+                "base_hip_middle_joint",
+                "hip_shoulder_left_joint", "shoulder_shoulder_left_joint", "shoulder_elbow_left_joint",
+                "hip_shoulder_right_joint", "shoulder_shoulder_right_joint", "shoulder_elbow_right_joint"
             };
 
             trajectory_msgs::msg::JointTrajectoryPoint point;
+            point.positions.reserve(17);
+            
+            // Chân trái
             point.positions.push_back(filter_joint("base_hip_left_joint", l_a[0]));
             point.positions.push_back(filter_joint("hip_hip_left_joint", l_a[1]));
             point.positions.push_back(filter_joint("hip_knee_left_joint", l_a[2]));
             point.positions.push_back(filter_joint("knee_ankle_left_joint", l_a[3]));
             point.positions.push_back(filter_joint("ankle_ankle_left_joint", l_a[4]));
 
+            // Chân phải
             point.positions.push_back(filter_joint("base_hip_right_joint", r_a[0]));
             point.positions.push_back(filter_joint("hip_hip_right_joint", r_a[1]));
             point.positions.push_back(filter_joint("hip_knee_right_joint", r_a[2]));
             point.positions.push_back(filter_joint("knee_ankle_right_joint", r_a[3]));
             point.positions.push_back(filter_joint("ankle_ankle_right_joint", -r_a[4]));
+
+            // Thân và Tay: nội suy ở mức 0.0 để giữ nguyên tư thế thẳng, không rũ
+            point.positions.push_back(filter_joint("base_hip_middle_joint", 0.0));
+            point.positions.push_back(filter_joint("hip_shoulder_left_joint", 0.0));
+            point.positions.push_back(filter_joint("shoulder_shoulder_left_joint", 0.0));
+            point.positions.push_back(filter_joint("shoulder_elbow_left_joint", 0.0));
+            point.positions.push_back(filter_joint("hip_shoulder_right_joint", 0.0));
+            point.positions.push_back(filter_joint("shoulder_shoulder_right_joint", 0.0));
+            point.positions.push_back(filter_joint("shoulder_elbow_right_joint", 0.0));
 
             point.time_from_start = rclcpp::Duration(0, 10000000); // 0.01s (10ms)
             traj_msg.points.push_back(point);

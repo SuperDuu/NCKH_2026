@@ -29,13 +29,8 @@ ament_python_install_package(ros2_pkg)
 install(TARGETS imu_process_node humanoid_llc_node DESTINATION lib/${PROJECT_NAME})
 
 
-install(PROGRAMS ros2_pkg/train_balance_ppo.py DESTINATION lib/${PROJECT_NAME} RENAME train_balance_ppo)
-install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
 install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
-install(PROGRAMS ros2_pkg/ft_yaw.py DESTINATION lib/${PROJECT_NAME} RENAME ft_yaw)
-install(PROGRAMS ros2_pkg/ft_force.py DESTINATION lib/${PROJECT_NAME} RENAME ft_force)
-install(PROGRAMS ros2_pkg/ft_walk.py DESTINATION lib/${PROJECT_NAME} RENAME ft_walk)
 install(PROGRAMS ros2_pkg/stand_test.py DESTINATION lib/${PROJECT_NAME} RENAME stand_test)
 install(PROGRAMS ros2_pkg/reactive_balance.py DESTINATION lib/${PROJECT_NAME} RENAME reactive_balance)
 

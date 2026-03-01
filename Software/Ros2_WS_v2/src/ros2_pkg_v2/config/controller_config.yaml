@@ -22,6 +22,13 @@ joint_trajectory_controller:
       - hip_knee_right_joint
       - knee_ankle_right_joint
       - ankle_ankle_right_joint
+      - base_hip_middle_joint
+      - hip_shoulder_left_joint
+      - shoulder_shoulder_left_joint
+      - shoulder_elbow_left_joint
+      - hip_shoulder_right_joint
+      - shoulder_shoulder_right_joint
+      - shoulder_elbow_right_joint
 
     command_interfaces:
       - position
@@ -51,3 +58,13 @@ gz_ros2_control:
       hip_knee_right_joint:   {kp: 50.0, ki: 2.5, kd: 0.05}
       knee_ankle_right_joint: {kp: 50.0, ki: 2.0, kd: 0.05}
       ankle_ankle_right_joint: {kp: 50.0, ki: 1.5, kd: 0.05}
+      
+      base_hip_middle_joint:    {kp: 40.0, ki: 1.0, kd: 0.05}
+      
+      hip_shoulder_left_joint:  {kp: 30.0, ki: 1.0, kd: 0.05}
+      shoulder_shoulder_left_joint: {kp: 30.0, ki: 1.0, kd: 0.05}
+      shoulder_elbow_left_joint: {kp: 30.0, ki: 1.0, kd: 0.05}
+
+      hip_shoulder_right_joint: {kp: 30.0, ki: 1.0, kd: 0.05}
+      shoulder_shoulder_right_joint: {kp: 30.0, ki: 1.0, kd: 0.05}
+      shoulder_elbow_right_joint: {kp: 30.0, ki: 1.0, kd: 0.05}

@@ -1,5 +1,6 @@
 // File: src/ros2_pkg/src/imu_process_node.cpp
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/qos.hpp>
 #include "sensor_msgs/msg/imu.hpp"
 #include "geometry_msgs/msg/vector3.hpp" // Dùng để gửi 3 góc R/P/Y
 #include <cmath>
@@ -8,9 +9,14 @@
 class ImuProcessNode : public rclcpp::Node {
 public:
     ImuProcessNode() : Node("imu_process_node") {
+        // Cấu hình QoS BestEffort để khớp với gz_bridge
+        rclcpp::QoS qos(rclcpp::KeepLast(10));
+        qos.best_effort();
+        qos.durability_volatile();
+
         // Đăng ký nhận dữ liệu IMU thô
         imu_sub_ = this->create_subscription<sensor_msgs::msg::Imu>(
-            "/imu", 10, std::bind(&ImuProcessNode::imu_callback, this, std::placeholders::_1));
+            "/imu", qos, std::bind(&ImuProcessNode::imu_callback, this, std::placeholders::_1));
 
         // Tạo Publisher để gửi góc ĐỘ đã tính toán
         angle_pub_ = this->create_publisher<geometry_msgs::msg::Vector3>(
@@ -51,8 +57,8 @@ private:
         angle_msg.z = yaw_rad * (180.0 / M_PI);;   // Z đại diện cho YAW
         angle_pub_->publish(angle_msg);
         // DEBUG: in ra để biết /imu có data không
-        std::cout << "[IMU] roll=" << angle_msg.x << " pitch=" << angle_msg.y 
-                  << " yaw=" << angle_msg.z << std::endl;
+        // std::cout << "[IMU] roll=" << angle_msg.x << " pitch=" << angle_msg.y 
+                  // << " yaw=" << angle_msg.z << std::endl;
     }
 
     rclcpp::Subscription<sensor_msgs::msg::Imu>::SharedPtr imu_sub_;

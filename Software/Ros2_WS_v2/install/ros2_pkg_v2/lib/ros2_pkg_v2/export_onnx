@@ -3,107 +3,116 @@ import torch.nn as nn
 import numpy as np
 
 # ==========================================
-# 1. ĐỊNH NGHĨA LẠI MẠNG ACTOR
+# 1. ĐỊNH NGHĨA LẠI MẠNG ACTOR (v2 — 4 Trụ Cột)
 # (Phải giống hệt cấu trúc lúc train)
 # ==========================================
-class Actor(nn.Module):
+
+class SteFloor(torch.autograd.Function):
+    """STE Floor — chỉ cần định nghĩa lại cho load_state_dict."""
+    @staticmethod
+    def forward(ctx, x):
+        return x.floor()
+    @staticmethod
+    def backward(ctx, grad):
+        return grad
+
+class InputDiscretizer(nn.Module):
+    """Ép kiểu số nguyên roll/pitch. Scale = 57.29 (1°)."""
+    def __init__(self, scale=57.29):
+        super().__init__()
+        self.scale = scale
+    def forward(self, x):
+        return SteFloor.apply(x * self.scale) / self.scale
+
+
+class ActorForExport(nn.Module):
+    """Actor-only cho ONNX export (không cần Sigma Head / Critic).
+    Bao gồm InputDiscretizer + Shared Extractor + Mean Head."""
     def __init__(self, state_dim, action_dim):
-        super(Actor, self).__init__()
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 256),
+        super().__init__()
+        self.imu_discretizer = InputDiscretizer(scale=57.29)
+        self.actor_extractor = nn.Sequential(
+            nn.Linear(state_dim, 512),
+            nn.ELU(),
+            nn.GroupNorm(32, 512),
+            nn.Linear(512, 256),
+            nn.ELU(),
+            nn.Dropout(0.1),
+        )
+        self.mean_head = nn.Sequential(
+            nn.Linear(256, 128),
+            nn.ELU(),
+            nn.Linear(128, action_dim),
             nn.Tanh(),
-            nn.Linear(256, 256),
-            nn.Tanh(),
-            nn.Linear(256, action_dim),
-            nn.Tanh()
         )
 
     def forward(self, state):
-        return self.actor(state)
+        s = state.clone()
+        s[:, :4] = self.imu_discretizer(s[:, :4])
+        features = self.actor_extractor(s)
+        return self.mean_head(features)
+
 
 # ==========================================
 # 2. CẤU HÌNH THÔNG SỐ
 # ==========================================
-# Input: [Pitch, Roll, Mag, dPitch, dRoll, dMag]
-state_dim = 6   
-# Output: 7 Servo
-action_dim = 7  
+state_dim = 18
+action_dim = 6
 
-input_path = "/home/nckh/Documents/best.pt"
-output_path = "/home/nckh/Documents/robot_brain.onnx"
+input_path = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/weights/reactive_balance/best_model.pth"
+output_path = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/weights/reactive_balance/robot_brain_v2.onnx"
+
 
 # ==========================================
 # 3. QUY TRÌNH CHUYỂN ĐỔI
 # ==========================================
 def convert():
     print(f"🔄 Đang đọc file: {input_path}...")
-    
-    # Khởi tạo mô hình rỗng
-    model = Actor(state_dim, action_dim)
-    
+
+    model = ActorForExport(state_dim, action_dim)
+
     try:
-        # Load toàn bộ checkpoint (thường chứa cả Actor, Critic, Optimizer...)
         checkpoint = torch.load(input_path, map_location=torch.device('cpu'))
-        
-        # Dictionary mới để chứa trọng số sạch
         actor_weights = {}
-        
-        # LỌC TRỌNG SỐ: Chỉ lấy phần của Actor
-        # File .pt của PPO thường lưu key kiểu: "actor.0.weight" hoặc "policy.actor.0.weight"
         for key, value in checkpoint.items():
-            # Nếu key có chứa chữ 'actor' (hoặc nếu file chỉ lưu mỗi actor thì lấy hết)
-            if "actor" in key:
-                # Xóa các tiền tố thừa để khớp với model khai báo ở trên
-                # Ví dụ: "policy_old.actor.0.weight" -> "actor.0.weight"
+            # Chỉ lấy: imu_discretizer.*, actor_extractor.*, mean_head.*
+            if any(prefix in key for prefix in ['imu_discretizer', 'actor_extractor', 'mean_head']):
                 new_key = key
-                if "policy_old." in new_key:
-                    new_key = new_key.replace("policy_old.", "")
-                if "policy." in new_key:
-                    new_key = new_key.replace("policy.", "")
-                    
-                # Trong class Actor ở trên, mình khai báo self.actor = nn.Sequential...
-                # Nên key phải bắt đầu bằng "actor."
-                if not new_key.startswith("actor."):
-                     new_key = "actor." + new_key
-                     
+                # Xoá prefix policy nếu có
+                for prefix in ['policy_old.', 'policy.']:
+                    if new_key.startswith(prefix):
+                        new_key = new_key[len(prefix):]
                 actor_weights[new_key] = value
-                
-        # Nạp trọng số vào mô hình
+
         if len(actor_weights) > 0:
             model.load_state_dict(actor_weights)
-            print("✅ Đã trích xuất và nạp trọng số Actor thành công!")
+            print("✅ Đã trích xuất và nạp trọng số Actor v2 thành công!")
         else:
-            # Trường hợp file .pt lưu trực tiếp state_dict của Actor mà không có prefix
             model.load_state_dict(checkpoint)
             print("✅ Đã nạp trực tiếp state dict!")
 
     except Exception as e:
         print(f"❌ Lỗi khi load file .pt: {e}")
-        print("Gợi ý: Kiểm tra xem file best.pt có đúng đường dẫn không.")
         return
 
-    # Chuyển sang chế độ lại (quan trọng để tắt Dropout/Batchnorm nếu có)
     model.eval()
-
-    # Tạo dữ liệu giả (Dummy Input) đúng kích thước để vẽ đồ thị
-    # Batch size = 1, Input = 6
     dummy_input = torch.randn(1, state_dim)
 
-    # Xuất ra ONNX
     print("🔄 Đang xuất file ONNX...")
     torch.onnx.export(
-        model,                      # Mô hình đang chạy
-        dummy_input,                # Đầu vào giả
-        output_path,                # Tên file xuất
-        export_params=True,         # Lưu trọng số bên trong file
-        opset_version=13,           # Version ổn định cho Embedded/STM32
-        do_constant_folding=True,   # Tối ưu hóa các hằng số
-        input_names=['input_state'],  # Đặt tên đầu vào (dễ gọi trong C code)
-        output_names=['output_action'] # Đặt tên đầu ra
+        model,
+        dummy_input,
+        output_path,
+        export_params=True,
+        opset_version=13,
+        do_constant_folding=True,
+        input_names=['input_state'],
+        output_names=['output_action']
     )
-    
+
     print(f"🚀 XONG! File đã lưu tại: {output_path}")
     print("👉 Bước tiếp theo: Nạp file này vào STM32CubeMX (X-CUBE-AI).")
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     convert()

@@ -17,7 +17,7 @@
   <world name="empty">
     <physics name="1ms" type="ignored">
       <max_step_size>0.001</max_step_size>             <!-- Phải giữ 1ms để khớp với gz_ros2_control update period -->
-      <real_time_factor>1.0</real_time_factor>         <!-- 0.0 nghĩa là chạy nhanh tối đa có thể (Uncapped) -->
+      <real_time_factor>0.0</real_time_factor>         <!-- 0.0 nghĩa là chạy nhanh tối đa có thể (Uncapped) -->
     </physics>
 
     <plugin filename="gz-sim-physics-system"

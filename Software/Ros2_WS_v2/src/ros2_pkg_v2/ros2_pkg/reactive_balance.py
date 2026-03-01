@@ -1,22 +1,19 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-REACTIVE BALANCE TRAINING (PPO)
-================================
+REACTIVE BALANCE TRAINING (PPO) — 4 Trụ Cột Kỹ Thuật v7
+=========================================================
 Mục tiêu: Robot đứng yên. Khi bị đẩy (400N theo Y) → bước chân lăng để 
 phục hồi cân bằng → thu chân về vị trí chuẩn khi ổn định.
 
-Logic khác với CPG walking:
-- KHÔNG dùng pha thời gian cố định để đổi chân
-- AI quyết định KHI NÀO bước và bước ĐẾN ĐÂU dựa trên roll/pitch
-- Khi đã ổn định → từ từ thu chân về vị trí đứng chuẩn
+4 Trụ Cột:
+  1. Input Discretization (STE Floor) — triệt tiêu nhiễu trắng IMU
+  2. Dynamic Action Variance — Sigma phụ thuộc State, không dùng hằng số
+  3. Independent Critic — mạng sâu hơn, không chia sẻ trọng số Actor
+  4. Anti-overfitting — Dropout + BatchNorm + Entropy regularization
 
-STATE_DIM = 7: [roll, pitch, d_roll, d_pitch, yaw, sin(phase), cos(phase)]
-ACTION_DIM = 4: [dy_shift, dz, step_y, step_x]
-  - dy_shift: Dịch trọng tâm sang bên (chân trụ lấn vào giữa)
-  - dz: Điều chỉnh chiều cao
-  - step_y: Bước chân lăng theo Y (hướng nghiêng)
-  - step_x: Bước chân lăng theo X (trước/sau)
+STATE_DIM = 18: [roll, pitch, d_roll, d_pitch, 6_offsets, 6_prev_actions, angular_vel_mag, yaw]
+ACTION_DIM = 6: [offset_x_L, offset_y_L, offset_z_L, offset_x_R, offset_y_R, offset_z_R]
 """
 
 import rclpy
@@ -45,64 +42,133 @@ from datetime import datetime
 # CẤU HÌNH
 # ==============================================================================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-DT = 0.02                 # 50Hz control loop
-MAX_STEPS = 5000          # ~100 giây mỗi episode (50Hz * 100s)
+DT = 0.05                 # 20Hz control loop
+MAX_STEPS = 2000          # ~100 giây mỗi episode (20Hz * 100s)
 MAX_LEG_LENGTH = 0.2204
 SAFE_LIMIT = MAX_LEG_LENGTH * 0.98
 
-STD_Z = 0.185             # Chiều cao thấp hơn (khụy gối nhiều hơn) để hạ trọng tâm, giúp khớp yếu bám trụ tốt hơn
+STD_Z = 0.185             # Chiều cao Nominal
 STD_Y = 0.01              # Khoảng cách Y chuẩn mỗi chân
-LIFT_H = 0.04             # Nhấc chân cao hơn (4cm) để tránh vấp móng
+LIFT_H = 0.04             # Nhấc chân cao hơn
 
-ACTION_DIM = 4
-STATE_DIM = 7
-ACTION_STD_INIT = 0.2     # Giảm biên độ random ban đầu để robot đỡ giật cục (vì khớp đang yếu)
-ACTION_STD_MIN = 0.05
-DECAY_FACTOR = 0.995
-DECAY_INTERVAL_EP = 20
-
-# Ngưỡng cân bằng
-TILT_THRESHOLD = 0.1     # >0.05 rad (~2.8°) → Nhạy cảm hơn, kích hoạt bước sớm
-STABLE_THRESHOLD = 0.08   # <0.02 rad (~1.1°) → coi là ổn định, thu chân về
-STABLE_COUNT_NEEDED = 30  # Ổn định liên tục lâu hơn mới thu chân
+ACTION_DIM = 6
+STATE_DIM = 18            # Expanded: roll, pitch, d_roll, d_pitch, 6_offsets, 6_prev_actions, angular_vel_mag, yaw
+TILT_THRESHOLD = 0.1     # >0.05 rad (~2.8°) → Nhạy cảm hơn
+STABLE_THRESHOLD = 0.08   # <0.02 rad (~1.1°) → coi là ổn định
+STABLE_COUNT_NEEDED = 30  # Ổn định liên tục lâu hơn
 
 # Lực đẩy
-PUSH_FORCE_MIN = 600.0
-PUSH_FORCE_MAX = 900.0
+PUSH_FORCE_MIN = 300.0
+PUSH_FORCE_MAX = 500.0
 PUSH_INTERVAL_MIN = 60    # Bước tối thiểu giữa các lần đẩy
 PUSH_INTERVAL_MAX = 150
 
 # ==============================================================================
-# PPO NETWORK
+# TRỤ CỘT 1: INPUT DISCRETIZATION (Straight-Through Estimator)
+# ==============================================================================
+class SteFloor(torch.autograd.Function):
+    """Floor operation với gradient pass-through (STE).
+    Forward: floor(x)   |   Backward: grad truyền thẳng qua."""
+    @staticmethod
+    def forward(ctx, x):
+        return x.floor()
+
+    @staticmethod
+    def backward(ctx, grad):
+        return grad  # Straight-through: không triệt tiêu gradient
+
+
+class InputDiscretizer(nn.Module):
+    """Ép kiểu số nguyên roll/pitch trước khi vào mạng.
+    Độ phân giải 1° → scale = 180/π ≈ 57.29.
+    x_out = floor(x_in * scale) / scale"""
+    def __init__(self, scale=57.29):
+        super().__init__()
+        self.scale = scale
+
+    def forward(self, x):
+        return SteFloor.apply(x * self.scale) / self.scale
+
+
+# ==============================================================================
+# PPO NETWORK — 4 Trụ Cột Kỹ Thuật
 # ==============================================================================
 class ActorCritic(nn.Module):
-    def __init__(self, state_dim, action_dim, action_std_init):
+    """Actor-Critic với:
+    - InputDiscretizer trên roll/pitch (Trụ 1)
+    - Shared Extractor + Mean Head + Sigma Head (Trụ 2)
+    - Independent Critic (Trụ 3)
+    - Dropout + GroupNorm (Trụ 4)
+    """
+    def __init__(self, state_dim, action_dim):
         super(ActorCritic, self).__init__()
-        self.action_var = torch.full((action_dim,), action_std_init * action_std_init).to(DEVICE)
-        self.actor = nn.Sequential(
-            nn.Linear(state_dim, 256), nn.Tanh(),
-            nn.Linear(256, 256), nn.Tanh(),
-            nn.Linear(256, action_dim), nn.Tanh()
+
+        # --- Trụ 1: Input Discretization ---
+        self.imu_discretizer = InputDiscretizer(scale=57.29)
+
+        # --- Trụ 2: Actor (Shared Extractor + Mean/Sigma Heads) ---
+        self.actor_extractor = nn.Sequential(
+            nn.Linear(state_dim, 512),
+            nn.ELU(),
+            nn.GroupNorm(32, 512),       # Trụ 4: GroupNorm (ổn định với batch=1, STM32-friendly)
+            nn.Linear(512, 256),
+            nn.ELU(),
+            nn.Dropout(0.1),            # Trụ 4: Dropout
         )
+        self.mean_head = nn.Sequential(
+            nn.Linear(256, 128),
+            nn.ELU(),
+            nn.Linear(128, action_dim),
+            nn.Tanh(),
+        )
+        self.log_std_head = nn.Linear(256, action_dim)
+        nn.init.constant_(self.log_std_head.bias, -1.5)  # init std ≈ exp(-1.5) ≈ 0.22
+
+        # --- Trụ 3: Independent Critic ---
         self.critic = nn.Sequential(
-            nn.Linear(state_dim, 256), nn.Tanh(),
-            nn.Linear(256, 256), nn.Tanh(),
-            nn.Linear(256, 1)
+            nn.Linear(state_dim, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 256),
+            nn.ReLU(),
+            nn.Linear(256, 1),
         )
 
-    def set_action_std(self, new_action_std):
-        self.action_var = torch.full((ACTION_DIM,), new_action_std * new_action_std).to(DEVICE)
+    def _discretize_input(self, state):
+        """Áp dụng STE Floor lên 4 chiều IMU đầu (roll, pitch, d_roll, d_pitch)."""
+        s = state.clone()
+        if s.dim() == 1:
+            s[:4] = self.imu_discretizer(s[:4])
+        else:
+            s[:, :4] = self.imu_discretizer(s[:, :4])
+        return s
 
     def act(self, state):
-        action_mean = self.actor(state)
-        dist = Normal(action_mean, torch.sqrt(self.action_var))
+        """Inference: sample action từ Normal(mean, std)."""
+        s = self._discretize_input(state)
+        features = self.actor_extractor(s.unsqueeze(0) if s.dim() == 1 else s)
+        mean = self.mean_head(features)
+        log_std = torch.clamp(self.log_std_head(features), min=-2.0, max=0.5)
+        std = torch.exp(log_std)  # σ ∈ [0.13, 1.65]
+        dist = Normal(mean, std)
         action = dist.sample()
-        return action.detach(), dist.log_prob(action).sum(dim=-1).detach(), self.critic(state).detach()
+        log_prob = dist.log_prob(action).sum(dim=-1)
+        value = self.critic(s.unsqueeze(0) if s.dim() == 1 else s)
+        return action.squeeze(0).detach(), log_prob.squeeze(0).detach(), value.squeeze(0).detach()
 
     def evaluate(self, state, action):
-        action_mean = self.actor(state)
-        dist = Normal(action_mean, torch.sqrt(self.action_var.expand_as(action_mean)))
-        return dist.log_prob(action).sum(dim=-1), self.critic(state), dist.entropy().sum(dim=-1)
+        """Training: tính log_prob, value, entropy cho batch."""
+        s = self._discretize_input(state)
+        features = self.actor_extractor(s)
+        mean = self.mean_head(features)
+        log_std = torch.clamp(self.log_std_head(features), min=-2.0, max=0.5)
+        std = torch.exp(log_std)
+        dist = Normal(mean, std)
+        log_prob = dist.log_prob(action).sum(dim=-1)
+        value = self.critic(s)
+        entropy = dist.entropy().sum(dim=-1)
+        return log_prob, value, entropy
 
 
 class PPO:
@@ -110,19 +176,23 @@ class PPO:
         self.gamma, self.eps_clip, self.K_epochs = 0.99, 0.2, 20
         self.buffer_states, self.buffer_actions, self.buffer_logprobs = [], [], []
         self.buffer_rewards, self.buffer_is_terminals = [], []
-        self.policy = ActorCritic(state_dim, action_dim, ACTION_STD_INIT).to(DEVICE)
+        self.policy = ActorCritic(state_dim, action_dim).to(DEVICE)
         self.optimizer = torch.optim.Adam([
-            {'params': self.policy.actor.parameters(), 'lr': 3e-4},
+            {'params': list(self.policy.actor_extractor.parameters()) +
+                       list(self.policy.mean_head.parameters()) +
+                       [*self.policy.log_std_head.parameters()], 'lr': 3e-4},
             {'params': self.policy.critic.parameters(), 'lr': 1e-3}
         ])
-        self.policy_old = ActorCritic(state_dim, action_dim, ACTION_STD_INIT).to(DEVICE)
+        self.policy_old = ActorCritic(state_dim, action_dim).to(DEVICE)
         self.policy_old.load_state_dict(self.policy.state_dict())
         self.MseLoss = nn.MSELoss()
 
     def select_action(self, state):
         with torch.no_grad():
             state_t = torch.FloatTensor(state).to(DEVICE)
+            self.policy_old.eval()  # BatchNorm ở eval mode khi inference
             action, logprob, _ = self.policy_old.act(state_t)
+            self.policy_old.train()
         self.buffer_states.append(state_t)
         self.buffer_actions.append(action)
         self.buffer_logprobs.append(logprob)
@@ -145,16 +215,36 @@ class PPO:
         old_states = torch.stack(self.buffer_states[:min_size]).detach()
         old_actions = torch.stack(self.buffer_actions[:min_size]).detach()
         old_logprobs = torch.stack(self.buffer_logprobs[:min_size]).detach()
+        self.policy.train()  # Đảm bảo BatchNorm/Dropout hoạt động khi train
+        
+        # Check LayerNorm vs GroupNorm compatibility with batch size
+        if min_size < 32:
+            print(f"\033[1;33m[WARNING] Batch size {min_size} < 32 which may affect GroupNorm(32, 512). Consider lowering groups or using more data.\033[0m")
+            
         for _ in range(self.K_epochs):
             logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
             ratios = torch.exp(logprobs - old_logprobs)
             advantages = rewards_norm - state_values.squeeze().detach()
             surr1 = ratios * advantages
             surr2 = torch.clamp(ratios, 1 - self.eps_clip, 1 + self.eps_clip) * advantages
+            # Trụ 4: Entropy coefficient 0.01 ngăn sigma collapse
             loss = -torch.min(surr1, surr2) + 0.5 * self.MseLoss(state_values.squeeze(), rewards_norm) - 0.01 * dist_entropy
+            
+            # Khởi tạo loss optimization
             self.optimizer.zero_grad()
             loss.mean().backward()
+            torch.nn.utils.clip_grad_norm_(self.policy.parameters(), max_norm=0.5)
             self.optimizer.step()
+            
+            # KL divergence early stopping
+            with torch.no_grad():
+                logprobs_new, _, _ = self.policy.evaluate(old_states, old_actions)
+                # Approximation KL chuẩn trong PPO papers
+                approx_kl = ((logprobs_new - old_logprobs).exp() - 1 - (logprobs_new - old_logprobs)).mean().item()
+                if approx_kl > 0.015:
+                    print(f"      \033[1;33m[PPO] Early stopping at epoch {_} due to approx KL div {approx_kl:.4f}\033[0m")
+                    break
+        
         self.policy_old.load_state_dict(self.policy.state_dict())
         self.buffer_states.clear()
         self.buffer_actions.clear()
@@ -183,38 +273,44 @@ class ReactiveBalanceNode(Node):
         self.history_path = os.path.join(self.weights_dir, "training_history.csv")
 
         # --- Publishers ---
-        force_qos = QoSProfile(
-            reliability=ReliabilityPolicy.BEST_EFFORT,
-            durability=DurabilityPolicy.VOLATILE,
-            history=HistoryPolicy.KEEP_LAST, depth=1
-        )
-        self.force_pub = self.create_publisher(
-            Wrench, '/model/humanoid_robot/link/base_footprint/wrench', force_qos)
         self.action_pub = self.create_publisher(Float64MultiArray, '/rl/leg_command', 10)
         self.reset_pub = self.create_publisher(Bool, '/uvc_reset', 10)
 
         # --- Subscribers ---
-        # Subscribe thẳng /imu (sensor_msgs/Imu) với QoS BEST_EFFORT để match với Gazebo bridge
-        imu_qos = QoSProfile(reliability=ReliabilityPolicy.BEST_EFFORT, depth=10)
-        self.imu_sub = self.create_subscription(Imu, '/imu', self.imu_callback, imu_qos)
+        # Subscribe topic từ imu_process_node (geometry_msgs/Vector3)
+        self.imu_sub = self.create_subscription(Vector3, '/robot_orientation', self.imu_callback, 10)
         self.clock_sub = self.create_subscription(Clock, '/clock', self.clock_callback, 10)
 
         # --- Service Clients ---
         self.w_cli = self.create_client(ControlWorld, '/world/empty/control')
         self.p_cli = self.create_client(SetEntityPose, '/world/empty/set_pose')
 
+        # Array of publishers for all 17 joints to force loosening during reset
+        # Cố định Thân và Tay trên Gazebo Harmonic vì không nằm trong controller_config.yaml
+        self.upper_joint_pubs = {j: self.create_publisher(Float64, f'/model/humanoid_robot/joint/{j}_joint/cmd_pos', 10) for j in
+                           ['base_hip_middle',
+                            'hip_shoulder_left', 'shoulder_shoulder_left', 'shoulder_elbow_left',
+                            'hip_shoulder_right', 'shoulder_shoulder_right', 'shoulder_elbow_right']}
+        self.leg_joint_pubs = {j: self.create_publisher(Float64, f'/model/humanoid_robot/joint/{j}_joint/cmd_pos', 10) for j in
+                           ['base_hip_left', 'hip_hip_left', 'hip_knee_left', 'knee_ankle_left', 'ankle_ankle_left',
+                            'base_hip_right', 'hip_hip_right', 'hip_knee_right', 'knee_ankle_right', 'ankle_ankle_right']}
+
         # --- State ---
         self.roll = self.pitch = self.yaw = 0.0
         self.prev_roll = self.prev_pitch = 0.0
-        self.smooth_roll = self.smooth_pitch = 0.0
+        self.roll_offset = 0.0
+        self.pitch_offset = 0.0
         self.current_sim_time = 0.0
         self.prev_action = np.zeros(ACTION_DIM)
+        self.current_offset = np.zeros(ACTION_DIM)  # 10 cái bù đắp (Offsets cho Chân + Lưng + Tay)
 
-        # --- Trạng thái cân bằng ---
-        self.balance_state = "STANDING"  # STANDING → STEPPING → RECOVERING
-        self.stable_counter = 0
-        self.step_direction = 0          # +1: nghiêng trái, -1: nghiêng phải
-        self.stepping_foot = "none"      # "left" hoặc "right"
+        # --- Trạng thái cân bằng (Residual RL) ---
+        self.stable_count = 0          # Đếm số step liên tục ổn định (cho Recover reward)
+        # Ngưỡng gia tốc góc để phát hiện robot còn chao đảo sau push (rad/s)
+        self.ANGULAR_VEL_SETTLE_THRESH = 0.3  # ~17°/s
+        
+        # Thread safety lock cho state access
+        self.state_lock = threading.Lock()
 
         # --- Training state ---
         self.best_reward = -float('inf')
@@ -222,9 +318,9 @@ class ReactiveBalanceNode(Node):
         self.step_in_episode = 0
         self.pushes_survived = 0
         self.total_pushes = 0
+        self.total_pushes_global = 0 # Bộ đếm không bị reset bởi reset_simulation()
         self.imu_call_count = 0  # Đếm số lần imu_callback được gọi
 
-        self.current_std = ACTION_STD_INIT
         self.ppo = PPO(STATE_DIM, ACTION_DIM)
         self.load_training_state()
 
@@ -236,238 +332,153 @@ class ReactiveBalanceNode(Node):
                 ])
 
         self.get_logger().info("=" * 60)
-        self.get_logger().info("  REACTIVE BALANCE TRAINING")
-        self.get_logger().info(f"  STD_INIT={ACTION_STD_INIT} | LIFT_H={LIFT_H}m")
+        self.get_logger().info("  REACTIVE BALANCE TRAINING v7 — 4 Pillars + Clean PPO")
+        self.get_logger().info(f"  DT={DT}s ({1/DT:.0f}Hz) | LIFT_H={LIFT_H}m")
         self.get_logger().info(f"  TILT_THRESH={np.degrees(TILT_THRESHOLD):.1f}°")
         self.get_logger().info(f"  Push: {PUSH_FORCE_MIN}-{PUSH_FORCE_MAX}N (Y axis)")
+        self.get_logger().info(f"  Pillars: STE-Floor | Dynamic-Sigma | Deep-Critic | Dropout+BN")
         self.get_logger().info("=" * 60)
 
         threading.Thread(target=self.train_loop, daemon=True).start()
 
     # ---------- CALLBACKS ----------
     def imu_callback(self, msg):
-        """Convert quaternion IMU → roll/pitch/yaw (radians) trực tiếp."""
-        self.imu_call_count += 1
-        self.prev_roll, self.prev_pitch = self.smooth_roll, self.smooth_pitch
-        # Quaternion → Euler
-        q = msg.orientation
-        x, y, z, w = q.x, q.y, q.z, q.w
-        # Roll
-        sinr_cosp = 2.0 * (w * x + y * z)
-        cosr_cosp = 1.0 - 2.0 * (x * x + y * y)
-        self.roll = np.arctan2(sinr_cosp, cosr_cosp)
-        # Pitch
-        sinp = 2.0 * (w * y - z * x)
-        self.pitch = np.copysign(np.pi / 2, sinp) if abs(sinp) >= 1 else np.arcsin(sinp)
-        # Yaw
-        siny_cosp = 2.0 * (w * z + x * y)
-        cosy_cosp = 1.0 - 2.0 * (y * y + z * z)
-        self.yaw = np.arctan2(siny_cosp, cosy_cosp)
-        # Smooth
-        self.smooth_roll = 0.3 * self.smooth_roll + 0.7 * self.roll
-        self.smooth_pitch = 0.3 * self.smooth_pitch + 0.7 * self.pitch
+        """Dữ liệu từ imu_process_node: Vector3(x=roll, y=pitch, z=yaw) dạng ĐỘ."""
+        
+        # Calculate true radians first
+        true_roll = np.radians(msg.y)
+        true_pitch = np.radians(msg.x)
+        
+        # Apply offset so the resting position is mathematically 0.0
+        with self.state_lock:
+            self.imu_call_count += 1
+            self.roll = true_roll - self.roll_offset
+            self.pitch = true_pitch - self.pitch_offset
+            self.yaw = np.radians(msg.z)
+
+        # Trực tiếp cố định các khớp tay và eo ở 0 để tay không rũ xuống
+        if hasattr(self, 'upper_joint_pubs'):
+            for pub in self.upper_joint_pubs.values():
+                pub.publish(Float64(data=0.0))
 
     def clock_callback(self, msg):
         self.current_sim_time = msg.clock.sec + msg.clock.nanosec * 1e-9
 
     def sim_sleep(self, duration):
         """Chờ thời gian mô phỏng (sys_time) trôi qua một khoảng duration.
-        Cách này không block Python thread theo clock thật, cho phép Fast-Forward."""
+        Cách này không block Python thread theo clock thật, cho phép Fast-Forward.
+        Thêm safety timeout để tránh busy loop."""
         start = self.current_sim_time
+        deadline = time.time() + duration * 10
         while self.current_sim_time - start < duration:
+            if time.time() > deadline:
+                break
             # Ngủ 1ms thật để nhường CPU cho thread spin nhận clock
             time.sleep(0.001)
 
     # ---------- OBSERVATION ----------
     def get_observation(self):
-        d_roll = (self.smooth_roll - self.prev_roll) / DT
-        d_pitch = (self.smooth_pitch - self.prev_pitch) / DT
-        # Phase dựa trên sim_time, dùng cho timing cơ bản
-        phase = (self.current_sim_time % 1.5) * (2 * np.pi / 1.5)
+        # Đảm bảo d_roll và d_pitch được tính từ giá trị đã lọc (Filtered)
+        with self.state_lock:
+            roll = self.roll
+            pitch = self.pitch
+            yaw = self.yaw
+            prev_roll = self.prev_roll    # Cùng chung một lock
+            prev_pitch = self.prev_pitch
+            
+        d_roll = (roll - prev_roll) / DT
+        d_pitch = (pitch - prev_pitch) / DT
+        angular_vel_mag = np.sqrt(d_roll**2 + d_pitch**2)
+        
         return np.array([
-            self.smooth_roll, self.smooth_pitch,
+            roll, pitch,
             d_roll, d_pitch,
-            self.yaw,
-            np.sin(phase), np.cos(phase)
+            self.current_offset[0], self.current_offset[1], self.current_offset[2],
+            self.current_offset[3], self.current_offset[4], self.current_offset[5],
+            self.prev_action[0], self.prev_action[1], self.prev_action[2],
+            self.prev_action[3], self.prev_action[4], self.prev_action[5],
+            angular_vel_mag,                       # index 16
+            yaw                                    # index 17 (Total: 18 elements)
         ])
 
     # ---------- REACTIVE BALANCE LOGIC ----------
     def compute_leg_command(self, action):
         """
-        Logic cân bằng phản ứng (Asymmetric Stepping):
-        - STANDING: 2 chân đứng thẳng.
-        - STEPPING: Chân Trụ (Stance) đứng im dồn trọng tâm, Chân Lăng (Swing) vung ra đỡ thân.
-        - RECOVERING: Thu chân lăng về.
+        Logic cân bằng phản ứng theo Residual Reinforcement Learning.
+        PPO Action (6 chiều): offset_x_L, offset_y_L, offset_z_L, offset_x_R, offset_y_R, offset_z_R
         """
-        # Smooth action
-        smooth_act = 0.7 * self.prev_action + 0.3 * action
-        self.prev_action = smooth_act
-
-        # Giải mã action: Biên độ lớn hơn hẵn để phản ứng triệt để
-        dy_shift = smooth_act[0] * 0.03    # Dịch trọng tâm chân trụ (max ±4cm)
-        dz = smooth_act[1] * 0.02          # Điều chỉnh Z (max ±2cm)
-        step_y = smooth_act[2] * 0.05      # Lăng ngang cực đại (max ±12cm)
-        step_x = smooth_act[3] * 0.05      # Lăng dọc cực đại (max ±12cm)
-
-        tilt_magnitude = np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2)
-
-        # Mặc định: đứng yên
-        if self.balance_state == "STANDING":
-            # Triệt tiêu hoàn toàn RL noise khi đang đứng yên để servo không co giật
-            tz = STD_Z
-            dy_shift = 0.0
-            step_x = 0.0
-            step_y = 0.0
-        else:
-            tz = STD_Z + dz
-
-        lx, ly, lz, l_lift = 0.0, STD_Y, tz, 0.0
-        rx, ry, rz, r_lift = 0.0, -STD_Y, tz, 0.0
-
-        # --- Cập nhật trạng thái cân bằng ---
-        if self.balance_state == "STANDING":
-            if tilt_magnitude > TILT_THRESHOLD:
-                self.balance_state = "STEPPING"
-                self.stable_counter = 0
-                
-                # --- Xác định Chân Lăng (Swing Leg) ---
-                # Phân tích khuynh hướng ngã
-                if abs(self.smooth_roll) > abs(self.smooth_pitch) * 0.5:
-                    # Ngã vật ngang ưu tiên
-                    if self.smooth_roll > 0:
-                        self.stepping_foot = "left"   # Ngã trái, tung chân trái đỡ
-                    else:
-                        self.stepping_foot = "right"  # Ngã phải, tung chân phải đỡ
-                else:
-                    # Ngã sấp ngửa ưu tiên
-                    if self.smooth_pitch > 0:
-                        self.stepping_foot = "right"  # Ngã ra sau, tung chân phải (fix)
-                    else:
-                        self.stepping_foot = "left"   # Ngã tới trước, tung chân trái (fix)
-
-        elif self.balance_state == "STEPPING":
-            if tilt_magnitude < STABLE_THRESHOLD:
-                self.stable_counter += 1
-                if self.stable_counter >= STABLE_COUNT_NEEDED:
-                    self.balance_state = "RECOVERING"
-                    self.stable_counter = 0
-            else:
-                self.stable_counter = 0
-
-        elif self.balance_state == "RECOVERING":
-            if tilt_magnitude > TILT_THRESHOLD:
-                self.balance_state = "STEPPING"
-                self.stable_counter = 0
-            elif self.stable_counter >= STABLE_COUNT_NEEDED:
-                self.balance_state = "STANDING"
-                self.stepping_foot = "none"
-                self.stable_counter = 0
-            else:
-                self.stable_counter += 1
-
-        # --- Trạng thái Bước Chân Cụ Thể ---
-        # Tính toán reflex cơ sở (baseline) dựa trên góc nghiêng
-        # X: bước tới/lui (pitch). Y: bước ngang (roll)
-        base_step_x = 0.0
-        base_step_y = 0.0
+        # Giả sử action từ [-1, 1], scale sang max offset
+        # X, Y max = 0.08m, Z max = 0.04m
+        scale_factors = np.array([0.08, 0.08, 0.04, 0.08, 0.08, 0.04])
+        target_offset = action * scale_factors
         
-        # Hàm sigmoid hoặc tỉ lệ để quyết định độ dài bước cơ bản
-        if self.stepping_foot != "none":
-            # Hệ số tỉ lệ (tùy chỉnh)
-            k_pitch = 0.5  # rad -> mét
-            k_roll = 0.5   # rad -> mét
-            
-            # Cắt tín hiệu để tránh bước quá dài
-            base_step_x = np.clip(self.smooth_pitch * k_pitch, -0.15, 0.15)
-            base_step_y = np.clip(self.smooth_roll * k_roll, -0.15, 0.15)
+        # Mô phỏng độ trễ của Servo MG996R
+        VMAX_CARTESIAN = 0.40
+        max_delta = VMAX_CARTESIAN * DT  # 0.005m/step
+        
+        # Rate-limit ĐỐI XỨNG cho tất cả các trục (bao gồm Z)
+        delta = np.clip(target_offset - self.current_offset, -max_delta, max_delta)
+        self.current_offset = self.current_offset + delta
+        
+        # --- BẢO VỆ SÀN: Z-offset chỉ được phép ≤ 0 ---
+        self.current_offset[2] = min(self.current_offset[2], 0.0)
+        self.current_offset[5] = min(self.current_offset[5], 0.0)
+        
+        # Lưu lại action cho step sau
+        self.prev_action = action.copy()
 
-        # --- Áp dụng action theo trạng thái ---
-        if self.balance_state == "STEPPING":
-            # Determine if it's primarily a pitch or roll disturbance
-            is_pitch_dominant = abs(self.smooth_pitch) > abs(self.smooth_roll)
-
-            if self.stepping_foot == "left":
-                if is_pitch_dominant:
-                    # Ngã tới/lui: Chân trái bước tới/lui (CHỈ THEO X)
-                    ly = STD_Y + dy_shift # Giữ nguyên chiều rộng chuẩn + xê dịch nhẹ trọng tâm
-                    lx = base_step_x + step_x
-                else:
-                    # Ngã ngang: Chân trái bước chéo (CHÉO THEO X VÀ Y)
-                    ly = STD_Y + abs(base_step_y) + abs(step_y) if self.smooth_roll > 0 else STD_Y - abs(base_step_y) - abs(step_y)
-                    lx = base_step_x + step_x
-
-                l_lift = LIFT_H                # Nhấc chân lên
-                
-                # Chân phải làm TRỤ
-                ry = -STD_Y - dy_shift         
-                rx = 0.0
-                r_lift = -0.01  # Nén chân trụ một chút bám đất
-                
-            else: # stepping_foot == "right"
-                if is_pitch_dominant:
-                    # Ngã tới/lui: Chân phải bước tới/lui (CHỈ THEO X)
-                    ry = -STD_Y - dy_shift
-                    rx = base_step_x + step_x
-                else:
-                    # Ngã ngang: Chân phải bước chéo (CHÉO THEO X VÀ Y)
-                    ry = -STD_Y - abs(base_step_y) - abs(step_y) if self.smooth_roll < 0 else -STD_Y + abs(base_step_y) + abs(step_y)
-                    rx = base_step_x + step_x
-
-                r_lift = LIFT_H
-                
-                # Chân trái làm TRỤ
-                ly = STD_Y + dy_shift
-                lx = 0.0
-                l_lift = -0.01
-
-        elif self.balance_state == "RECOVERING":
-            # Thu chân lăng DẦN VỀ vị trí chuẩn (smooth return)
-            recover_rate = 0.02  # Tăng tốc độ thu chân (2% -> nhanh hơn xíu)
-            if self.stepping_foot == "left":
-                ly = STD_Y * (1 - recover_rate) + ly * recover_rate
-                lx = lx * recover_rate
-            else:
-                ry = -STD_Y * (1 - recover_rate) + ry * recover_rate
-                rx = rx * recover_rate
+        # Vị trí cuối cùng = Nominal Pose + Offset
+        lx = 0.0 + self.current_offset[0]
+        ly = STD_Y + self.current_offset[1]
+        lz = STD_Z + self.current_offset[2]
+        
+        rx = 0.0 + self.current_offset[3]
+        ry = -STD_Y + self.current_offset[4]
+        rz = STD_Z + self.current_offset[5]
+        
+        # --- HEURISTIC SWING: Tự động nhấc chân khi XY dịch chuyển nhanh ---
+        # Tránh ma sát sàn khi quẹt chân (Sliding vs Stepping)
+        xy_vel_l = np.linalg.norm(delta[0:2]) / DT
+        xy_vel_r = np.linalg.norm(delta[3:5]) / DT
+        l_lift = LIFT_H if xy_vel_l > 0.05 else 0.0
+        r_lift = LIFT_H if xy_vel_r > 0.05 else 0.0
 
         # --- Safety check ---
+        pen = 0.0
         if (np.linalg.norm([lx, ly, lz]) > SAFE_LIMIT or
                 np.linalg.norm([rx, ry, rz]) > SAFE_LIMIT):
-            return None, -10.0
+            pen = -10.0
 
         msg = Float64MultiArray()
         msg.data = [lx, ly, lz, l_lift, rx, ry, rz, r_lift, DT]
-        return msg, 0.0
+        return msg, pen
 
     # ---------- FORCE PUSH ----------
-    def apply_push(self, episode):
-        """Đẩy robot theo trục Y với lực ngẫu nhiên"""
-        max_f = min(PUSH_FORCE_MAX, PUSH_FORCE_MIN + (episode // 30) * 15.0)
+    def apply_push(self, max_f):
+        """Đẩy robot theo trục Y với lực max_f nhận từ curriculum."""
         threading.Thread(target=self._push_worker, args=(max_f,), daemon=True).start()
         self.total_pushes += 1
+        self.total_pushes_global += 1
 
     def _push_worker(self, max_f):
         """
-        Áp dụng lực đúng cách trong Gazebo Harmonic:
-        Topic: /world/empty/wrench
-        Type:  gz.msgs.EntityWrench
-        
-        Cú pháp từ tài liệu chính thức gz-sim8:
-          gz topic -t "/world/apply_link_wrench/wrench" -m gz.msgs.EntityWrench
-            -p "entity: {name: 'model::link', type: LINK}, wrench: {force: {y: 1000}}"
+        Áp dụng lực đúng cách trong Gazebo Harmonic.
+        Không sửa push_cooldown ở đây — cooldown được quản lý bởi main loop.
         """
-        import subprocess
         f_val = np.random.uniform(0.6 * max_f, max_f) * np.random.choice([-1, 1])
-        # Random axis: Y = sang ngang (roll), X = trước/sau (pitch)
-        axis = np.random.choice(['y', 'x'])
-        
-        # Tên entity: dùng MODEL type → tự tìm canonical link
+        axis = np.random.choice(['x', 'y', 'xy'])
         model_name = "humanoid_robot"
 
+        force_str = ""
         if axis == 'y':
             force_str = f"{{y: {f_val:.1f}}}"
-        else:
+        elif axis == 'x':
             force_str = f"{{x: {f_val:.1f}}}"
+        else:
+            # Cross axis push
+            f_val_x = f_val * 0.707
+            f_val_y = f_val * 0.707 * np.random.choice([-1, 1])
+            force_str = f"{{x: {f_val_x:.1f}, y: {f_val_y:.1f}}}"
 
         msg_str = (
             f"entity: {{name: '{model_name}', type: MODEL}}, "
@@ -489,46 +500,53 @@ class ReactiveBalanceNode(Node):
         subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     # ---------- REWARD ----------
-    def compute_reward(self, action, t, pen):
-        tilt = np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2)
+    def compute_reward(self, action, prev_action_snapshot, t, pen, angular_vel_mag):
+        with self.state_lock:
+            roll = self.roll
+            pitch = self.pitch
+            yaw = self.yaw
+            
+        tilt = np.sqrt(roll**2 + pitch**2)
 
-        # Thưởng sống sót
+        # 1. Thưởng sống sót và cân bằng (Tách riêng Pitch và Roll)
         r_alive = 2.0
+        r_pitch = 8.0 * np.exp(-25.0 * abs(pitch))
+        r_roll = 5.0 * np.exp(-15.0 * abs(roll))
 
-        # Thưởng cân bằng (càng thẳng càng tốt)
-        r_balance = 6.0 * np.exp(-15.0 * tilt)
+        # 2. Phạt nặng nếu Action thay đổi quá đột ngột (tính với snapshot trước khi leg_command chạy)
+        r_action_diff = -3.0 * np.sum(np.square(action - prev_action_snapshot))
 
-        # Phạt yaw (xoay robot)
-        r_yaw = -2.0 * max(0.0, abs(self.yaw) - 0.1)
+        # 3. Phạt nếu Offset quá lớn (giới hạn an toàn của XY)
+        r_limit = -0.5 * np.sum(np.maximum(0, np.abs(self.current_offset[[0,1,3,4]]) - 0.08))
 
-        # Phạt action quá lớn (tiết kiệm năng lượng)
-        r_energy = -0.3 * np.sum(np.square(action))
+        # 4. Z-Control Penalty: Phạt bình phương offset Z, TĂNG tỉ lệ để z-penalty có sức ảnh hưởng thực tế
+        r_z_pen = -100.0 * np.sum(np.square(self.current_offset[[2, 5]]))
 
-        # Thưởng thêm khi ở trạng thái STANDING (đứng yên ổn định)
-        r_standing = 2.0 if self.balance_state == "STANDING" else 0.0
+        # 5. Logic thu chân tự nhiên: dùng Threshold động 
+        is_settling = angular_vel_mag > self.ANGULAR_VEL_SETTLE_THRESH  # Robot còn chao đảo
+        
+        r_recover = 0.0
+        if is_settling or tilt >= 0.05:
+            self.stable_count = 0       # Reset nếu còn chao đảo hoặc nghiêng
+        else:
+            self.stable_count += 1
+        
+        # Chỉ thưởng thu chân khi đã ổn định liên tục ≥ STABLE_COUNT_NEEDED steps (~1.5s ở 20Hz)
+        if self.stable_count >= STABLE_COUNT_NEEDED:
+            r_recover = 8.0 * np.exp(-10.0 * np.sum(np.abs(self.current_offset)))
 
-        # Thưởng phục hồi thành công (STEPPING → RECOVERING → STANDING)
-        r_recovery = 3.0 if self.balance_state == "RECOVERING" else 0.0
+        r_yaw = -1.0 * max(0.0, abs(yaw) - 0.1)
 
-        return r_alive + r_balance + r_yaw + r_energy + r_standing + r_recovery + pen
+        return r_alive + r_pitch + r_roll + r_action_diff + r_limit + r_z_pen + r_recover + r_yaw + pen
 
     # ---------- SIMULATION CONTROL ----------
-    def stabilize_robot(self):
-        """Gửi lệnh đứng thẳng liên tục và đợi robot ổn định."""
-        msg = Float64MultiArray()
-        msg.data = [0.0, STD_Y, STD_Z, 0.0, 0.0, -STD_Y, STD_Z, 0.0, 1.0]
-        for _ in range(30):
-            self.action_pub.publish(msg)
-            time.sleep(0.1)
-        time.sleep(0.5)
-
     def reset_simulation(self):
-        """Reset robot — copy exact logic từ ft_force.py (đã hoạt động)."""
-        print("\033[93m>>> RESETTING SIMULATION...\033[0m")
+        """Reset robot — Mềm mại (Soft Landing)."""
+        print("\033[93m>>> RESETTING SIMULATION (SOFT LANDING)...\033[0m")
 
         # 1. Báo LLC node dừng xử lý
         self.reset_pub.publish(Bool(data=True))
-        time.sleep(0.5)
+        time.sleep(0.3)
 
         # 2. Pause physics
         subprocess.Popen([
@@ -537,79 +555,74 @@ class ReactiveBalanceNode(Node):
             "--req", "pause: true"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
         
-        # 3. Dịch chuyển bằng native gz
+        # 3. Teleport robot vừa chạm đất với chân hơi cong
         subprocess.Popen([
             "gz", "service", "-s", "/world/empty/set_pose",
             "--reqtype", "gz.msgs.Pose", "--reptype", "gz.msgs.Boolean",
-            "--req", "name: 'humanoid_robot', position: {x: 0.0, y: 0.0, z: 0.255}, orientation: {w: 1.0, x: 0.00, y: 0.0, z: 0.0}"
+            "--req", "name: 'humanoid_robot', position: {x: 0.0, y: 0.0, z: 0.254}, orientation: {w: 1.0, x: 0.01, y: 0.0, z: 0.0}"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
-        time.sleep(0.5)
 
-        # 4. Chuẩn bị tư thế: Bật lại LLC và nạp tư thế đứng thẳng TRƯỚC KHI rớt xuống
-        self.reset_pub.publish(Bool(data=False))
-        # Gửi lệnh nhún về tiêu chuẩn
-        msg = Float64MultiArray()
-        msg.data = [0.0, STD_Y, STD_Z, 0.0, 0.0, -STD_Y, STD_Z, 0.0, 1.0]
-        for _ in range(2):
-            self.action_pub.publish(msg)
-            time.sleep(0.01)
+        # Zero offset & prev_action (trước khi unpause)
+        with self.state_lock:
+            self.current_offset = np.zeros(ACTION_DIM)
+            self.prev_action = np.zeros(ACTION_DIM)
+            
+            # Khởi tạo lại IMU state trước khi dịch chuyển
+            self.roll = self.pitch = self.yaw = 0.0
+            self.prev_roll = self.prev_pitch = 0.0
 
-        # 5. Unpause physics
+        # 3.5. Trực tiếp reset các khớp chân về 0.0 (chân thẳng) khi còn đang pause
+        # Điều này giúp xoá bỏ những lệnh gây rối trước đó. Với độ cao 0.235 thì chân vừa sát đất.
+        if hasattr(self, 'leg_joint_pubs'):
+            for pub in self.leg_joint_pubs.values():
+                pub.publish(Float64(data=0.0))
+        time.sleep(0.1)
+
+        # 4. Unpause physics TRƯỚC
         subprocess.Popen([
             "gz", "service", "-s", "/world/empty/control",
             "--reqtype", "gz.msgs.WorldControl", "--reptype", "gz.msgs.Boolean",
             "--req", "pause: false"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
 
-        # 6. Đợi sim clock chạy lại
+        # 5. Mởi bật lại LLC và gửi Nominal Pose Full Body (16 array length)
+        self.reset_pub.publish(Bool(data=False))
+        msg = Float64MultiArray()
+        msg.data = [0.0, STD_Y, STD_Z, 0.0, 0.0, -STD_Y, STD_Z, 0.0, 1.0]
+        for _ in range(15):
+            self.action_pub.publish(msg)
+            time.sleep(0.05)  # ~0.75s tổng thể để LLC bắt kịp
+
+        # 6. Đợi 1.5s để robot đứng vững và bộ lọc IMU hội tụ trước khi bắt đầu
+        print("    \033[90mĐang đợi robot tĩnh sau khi hạ cánh (3.0s)...\033[0m")
         sc = self.current_sim_time
         timeout = 0
-        while self.current_sim_time - sc < 0.2:
+        while self.current_sim_time - sc < 3.0:
             time.sleep(0.01)
             timeout += 1
-            if timeout > 500:  # 5 giây timeout
+            if timeout > 500:
                 print("\033[91m>>> Clock timeout! Forcing continue.\033[0m")
                 break
 
-        # 7. Vòng lặp chờ robot ổn định hoàn toàn
-        print("    \033[90mĐang đợi robot ổn định...\033[0m")
-        stable_frames = 0
-        max_wait_time = 4.0  # Chờ tối đa 4 giây mô phỏng
-        wait_start = self.current_sim_time
-        
-        while rclpy.ok():
-            # Điều kiện ổn định: nghiêng rất ít và ít dao động
-            tilt_now = np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2)
-            d_roll_now = abs(self.smooth_roll - self.prev_roll) / DT
-            d_pitch_now = abs(self.smooth_pitch - self.prev_pitch) / DT
+        # 7. CHUẨN HOÁ IMU: Lấy góc hiện tại làm offset thay vì gán cứng 0.0
+        with self.state_lock:
+            raw_roll = self.roll + self.roll_offset
+            raw_pitch = self.pitch + self.pitch_offset
             
-            is_stable = (tilt_now < 0.05) and (d_roll_now < 0.1) and (d_pitch_now < 0.1)
-
-            if is_stable:
-                stable_frames += 1
-            else:
-                stable_frames = 0
-                
-            if stable_frames >= 20: # Ổn định liên tục ~0.4s
-                break
-                
-            if (self.current_sim_time - wait_start) > max_wait_time:
-                print("\033[93m>>> Cảnh báo: Robot không thể ổn định hoàn toàn trong giới hạn thời gian.\033[0m")
-                break
-                
-            self.sim_sleep(DT)
-
-        # 8. Cập nhật state (KHÔNG gán 0 cho IMU, nếu gán 0 sẽ làm d_roll nhảy lên max vì mâu thuẫn IMU thật)
+            self.roll_offset = raw_roll
+            self.pitch_offset = raw_pitch
+            
+            self.roll = 0.0
+            self.pitch = 0.0
+            self.yaw = 0.0
+            self.prev_roll = 0.0
+            self.prev_pitch = 0.0
+            
         self.step_in_episode = 0
-        self.prev_action = np.zeros(ACTION_DIM)
-        self.balance_state = "STANDING"
-        self.stepping_foot = "none"
-        self.stable_counter = 0
+        self.stable_count = 0
         self.pushes_survived = 0
         self.total_pushes = 0
-
-        # 8. Stabilize
-        self.stabilize_robot()
+        
         print("\033[92m>>> RESET DONE. Training starts.\033[0m")
 
     # ---------- SAVE/LOAD ----------
@@ -623,8 +636,7 @@ class ReactiveBalanceNode(Node):
             self.ppo.policy.load_state_dict(
                 torch.load(self.latest_model_path, map_location=DEVICE))
             self.ppo.policy_old.load_state_dict(self.ppo.policy.state_dict())
-            self.current_std = torch.sqrt(self.ppo.policy.action_var[0]).item()
-            self.get_logger().info(f"Loaded weights. STD={self.current_std:.4f}")
+            self.get_logger().info("Loaded weights (v7 — Dynamic Sigma).")
 
     def save_state(self, ep, reward, is_best=False):
         data = {"best_reward": float(self.best_reward), "current_episode": int(ep)}
@@ -641,21 +653,38 @@ class ReactiveBalanceNode(Node):
             time.sleep(0.1)
         ep = self.start_episode
         next_push_step = np.random.randint(PUSH_INTERVAL_MIN, PUSH_INTERVAL_MAX)
+        prev_survival_rate = 0.0  # Lưu stat của episode trước
 
         while rclpy.ok():
             print("\033[94m>>> Bắt đầu Episode mới\033[0m")
+            
+            # Curriculum learning: Tăng lực dựa trên Survival Rate Cached từ episode CŨ
+            max_f_scale = min(1.0, ep / 200.0) # Grow over 200 episodes max
+            # Giảm nếu fail nhiều, tăng nếu win nhiều
+            if prev_survival_rate < 0.2 and self.total_pushes_global > 5:
+                # Phạt lùi
+                max_f_scale = max(0.1, max_f_scale - 0.2)
+                
+            curriculum_f = PUSH_FORCE_MIN + max_f_scale * (PUSH_FORCE_MAX - PUSH_FORCE_MIN)
+
+            # LƯU STATS LẠI TRƯỚC KHI BỊ XÓA BỞI RESET
+            prev_survival_rate = self.pushes_survived / max(1, self.total_pushes)
+            
             self.reset_simulation()
             
-            # Kiểm tra trạng thái ngay sau khi reset
-            initial_tilt = np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2)
+            # Kiểm tra trạng thái vật lý thực sự ngay sau khi reset
+            with self.state_lock:
+                raw_roll = self.roll + self.roll_offset
+                raw_pitch = self.pitch + self.pitch_offset
+            initial_tilt = np.sqrt(raw_roll**2 + raw_pitch**2)
             if initial_tilt > 0.5: # ~28 độ
-                print("\033[91m>>> Lỗi rớt ngay sau reset! Thử lại...\033[0m")
+                print(f"\033[91m>>> Lỗi rớt (Nghiêng {np.degrees(initial_tilt):.1f} độ) ngay sau reset! Thử lại...\033[0m")
                 continue # Skip this episode and try reset again
             
             ep_reward = 0.0
-            failed_at_start = False
             reason = "TIME_LIMIT"
             was_tilted_before_push = False
+            reset_lag = False
 
             for t in range(MAX_STEPS):
                 self.step_in_episode = t
@@ -663,21 +692,31 @@ class ReactiveBalanceNode(Node):
                 # --- Đẩy robot ngẫu nhiên ---
                 if t == next_push_step:
                     # Ghi nhận trạng thái trước khi đẩy
-                    was_tilted_before_push = (
-                        np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2) > TILT_THRESHOLD
-                    )
-                    self.apply_push(ep)
+                    with self.state_lock:
+                        was_tilted_before_push = (
+                            np.sqrt(self.roll**2 + self.pitch**2) > TILT_THRESHOLD
+                        )
+                    self.apply_push(curriculum_f)  # Pass adjusted force, not episode
                     next_push_step = t + np.random.randint(PUSH_INTERVAL_MIN, PUSH_INTERVAL_MAX)
 
                 # --- Observation & Action ---
                 state = self.get_observation()
                 action = self.ppo.select_action(state)
+                
+                # Lưu lại cái cũ TRƯỚC khi compute_leg_command update self.prev_action
+                prev_action_snapshot = self.prev_action.copy()
                 msg, pen = self.compute_leg_command(action)
 
                 if msg is None:
                     self.ppo.buffer_rewards.append(-50.0)
                     self.ppo.buffer_is_terminals.append(True)
                     reason = "IK_FAIL"
+                    
+                    # Force joints to 0.0 so the robot goes limp and physically falls
+                    if hasattr(self, 'joint_pubs'):
+                        for pub in self.joint_pubs.values():
+                            pub.publish(Float64(data=0.0))
+                    
                     break
 
                 self.action_pub.publish(msg)
@@ -686,83 +725,106 @@ class ReactiveBalanceNode(Node):
                 self.sim_sleep(DT)
 
                 # --- Debug IMU mỗi 50 step ---
+                # --- Debug IMU mỗi 50 step ---
+                with self.state_lock:
+                    roll_rad = self.roll
+                    pitch_rad = self.pitch
+                    yaw_rad = self.yaw
                 if t % 50 == 0:
                     print(
-                        f"  [t={t:4d}] roll={np.degrees(self.smooth_roll):+6.1f}deg "
-                        f"pitch={np.degrees(self.smooth_pitch):+6.1f}deg "
-                        f"yaw={np.degrees(self.yaw):+6.1f}deg "
-                        f"state={self.balance_state} imu_calls={self.imu_call_count}"
+                        f"  [t={t:4d}] roll={np.degrees(roll_rad):+6.1f}deg "
+                        f"pitch={np.degrees(pitch_rad):+6.1f}deg "
+                        f"yaw={np.degrees(yaw_rad):+6.1f}deg "
+                        f"imu_calls={self.imu_call_count}"
                     )
     
-                # --- Check nga (45 do = 0.785 rad) ---
-                done = abs(self.smooth_roll) > 0.785 or abs(self.smooth_pitch) > 0.785
+                # --- Nhất quán logic bằng Radian, 0.785 rad ≈ 45 độ ---
+                tilt_now_rad = np.sqrt(roll_rad**2 + pitch_rad**2)
+                done = tilt_now_rad > 0.785
                 if done:
                     print(
-                        f"  \033[91m[FALL t={t}] roll={np.degrees(self.smooth_roll):+.1f}deg "
-                        f"pitch={np.degrees(self.smooth_pitch):+.1f}deg\033[0m"
+                        f"  \033[91m[FALL t={t}] roll={np.degrees(roll_rad):+.1f}deg "
+                        f"pitch={np.degrees(pitch_rad):+.1f}deg\033[0m"
                     )
+                    if t == 0:
+                        print("\033[91m⚠️ Reset Lag Fall. Skipping episode.\033[0m")
+                        reset_lag = True
+                        break
 
                 # --- Kiểm tra sống sót sau push ---
-                tilt_now = np.sqrt(self.smooth_roll**2 + self.smooth_pitch**2)
                 # Ensure it only counts as survived if it actually got pushed and then stabilized
-                if self.total_pushes > 0 and tilt_now < STABLE_THRESHOLD and was_tilted_before_push:
+                if self.total_pushes > 0 and tilt_now_rad < STABLE_THRESHOLD and was_tilted_before_push:
                     self.pushes_survived = self.total_pushes
                     was_tilted_before_push = False # Đã hoàn thành phục hồi cho lần đẩy này
 
                 # --- Reward ---
-                reward = self.compute_reward(action, t, pen)
                 if done:
                     reward = -100.0
-
-                if t == 0 and done:
-                    failed_at_start = True
-                    break
+                    self.stable_count = 0
+                else:
+                    # state[16] is angular_vel_mag from STATE_DIM=18
+                    reward = self.compute_reward(action, prev_action_snapshot, t, pen, state[16])
+                
+                # Cập nhật góc cũ TẠI ĐÂY (luồng đồng bộ 20Hz) để vi phân chính xác
+                with self.state_lock:
+                    self.prev_roll = self.roll
+                    self.prev_pitch = self.pitch
 
                 self.ppo.buffer_rewards.append(reward)
                 self.ppo.buffer_is_terminals.append(done)
                 ep_reward += reward
 
-                # --- PPO Update mỗi 4000 steps ---
-                if len(self.ppo.buffer_states) >= 4000:
-                    self.ppo.update()
-
                 if done:
                     reason = "FALL"
                     break
 
+            # --- Handle Reset Lag Jump ---
+            if reset_lag:
+                self.ppo.buffer_states.clear()
+                self.ppo.buffer_actions.clear()
+                self.ppo.buffer_logprobs.clear()
+                self.ppo.buffer_rewards.clear()
+                self.ppo.buffer_is_terminals.clear()
+                continue
+
             # --- End of Episode ---
-            if not failed_at_start:
-                # STD Decay
-                if ep > 0 and ep % DECAY_INTERVAL_EP == 0:
-                    self.current_std = max(ACTION_STD_MIN, self.current_std * DECAY_FACTOR)
-                    self.ppo.policy.set_action_std(self.current_std)
-                    self.ppo.policy_old.set_action_std(self.current_std)
-
-                # Save
-                if ep_reward > self.best_reward:
-                    self.best_reward = ep_reward
-                    self.save_state(ep, ep_reward, True)
-                else:
-                    self.save_state(ep, ep_reward, False)
-
-                # Log
-                with open(self.history_path, 'a', newline='') as f:
-                    csv.writer(f).writerow([
-                        ep, f"{ep_reward:.2f}", t,
-                        self.pushes_survived, self.total_pushes,
-                        reason, f"{self.current_std:.4f}",
-                        datetime.now().strftime("%H:%M:%S")
-                    ])
-
-                print(
-                    f"RB-Ep {ep} | R: {ep_reward:.2f} | Best: {self.best_reward:.2f} | "
-                    f"Steps: {t} | Push: {self.pushes_survived}/{self.total_pushes} | "
-                    f"STD: {self.current_std:.4f} | {reason}"
-                )
-                ep += 1
-                next_push_step = np.random.randint(PUSH_INTERVAL_MIN, PUSH_INTERVAL_MAX)
+            # Save
+            if ep_reward > self.best_reward:
+                self.best_reward = ep_reward
+                self.save_state(ep, ep_reward, True)
             else:
-                print("\033[91m⚠️ Reset Lag. Skipping.\033[0m")
+                self.save_state(ep, ep_reward, False)
+
+            # Log
+            with open(self.history_path, 'a', newline='') as f:
+                csv.writer(f).writerow([
+                    ep, f"{ep_reward:.2f}", t + 1,
+                    self.pushes_survived, self.total_pushes,
+                    reason, "dynamic",
+                    datetime.now().strftime("%H:%M:%S")
+                ])
+
+            print(
+                f"RB-Ep {ep} | R: {ep_reward:.2f} | Best: {self.best_reward:.2f} | "
+                f"Steps: {t + 1} | Push: {self.pushes_survived}/{self.total_pushes} | "
+                f"Sigma: dynamic | {reason}"
+            )
+
+            # --- PPO MỖI EPISODE ---
+            # PPO bắt buộc cập nhật xong phải xóa buffer để đảm bảo On-Policy
+            MIN_BATCH = 32 # Đủ để GroupNorm(32, 512) không warning
+            if len(self.ppo.buffer_states) >= MIN_BATCH:
+                self.ppo.update()
+            else:
+                # Clear buffer cross-contamination
+                self.ppo.buffer_states.clear()
+                self.ppo.buffer_actions.clear()
+                self.ppo.buffer_logprobs.clear()
+                self.ppo.buffer_rewards.clear()
+                self.ppo.buffer_is_terminals.clear()
+
+            ep += 1
+            next_push_step = np.random.randint(PUSH_INTERVAL_MIN, PUSH_INTERVAL_MAX)
 
 
 def main():

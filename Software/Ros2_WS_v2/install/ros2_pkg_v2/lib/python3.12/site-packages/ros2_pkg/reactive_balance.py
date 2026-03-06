@@ -122,7 +122,7 @@ class ActorCritic(nn.Module):
             nn.Tanh(),
         )
         self.log_std_head = nn.Linear(256, action_dim)
-        nn.init.constant_(self.log_std_head.bias, -1.5)  # init std ≈ exp(-1.5) ≈ 0.22
+        nn.init.constant_(self.log_std_head.bias, -0.5)  # init std ≈ exp(-0.5) ≈ 0.60
 
         # --- Trụ 3: Independent Critic ---
         self.critic = nn.Sequential(
@@ -152,7 +152,11 @@ class ActorCritic(nn.Module):
         log_std = torch.clamp(self.log_std_head(features), min=-2.0, max=0.5)
         std = torch.exp(log_std)  # σ ∈ [0.13, 1.65]
         dist = Normal(mean, std)
+        
+        # TRỤ 1: KHÔNG torch.clamp lên sample(). 
+        # Việc kẹp cứng hành động ở đây làm méo mó Gradient của PPO.
         action = dist.sample()
+        
         log_prob = dist.log_prob(action).sum(dim=-1)
         value = self.critic(s.unsqueeze(0) if s.dim() == 1 else s)
         return action.squeeze(0).detach(), log_prob.squeeze(0).detach(), value.squeeze(0).detach()
@@ -186,6 +190,9 @@ class PPO:
         self.policy_old = ActorCritic(state_dim, action_dim).to(DEVICE)
         self.policy_old.load_state_dict(self.policy.state_dict())
         self.MseLoss = nn.MSELoss()
+        
+        # LR Scheduler: Giảm dần LR để ổn định chính sách sau khi đã thoát vùng cục bộ
+        self.scheduler = torch.optim.lr_scheduler.StepLR(self.optimizer, step_size=1, gamma=0.999)
 
     def select_action(self, state):
         with torch.no_grad():
@@ -251,7 +258,11 @@ class PPO:
         self.buffer_logprobs.clear()
         self.buffer_rewards.clear()
         self.buffer_is_terminals.clear()
-        print("\033[1;32m[PPO UPDATE] >>> Thành công!\033[0m\n")
+        
+        # Update LR
+        self.scheduler.step()
+        current_lr = self.optimizer.param_groups[0]['lr']
+        print(f"\033[1;32m[PPO UPDATE] >>> Thành công! Current LR: {current_lr:.6f}\033[0m\n")
 
 
 # ==============================================================================
@@ -343,7 +354,7 @@ class ReactiveBalanceNode(Node):
 
     # ---------- CALLBACKS ----------
     def imu_callback(self, msg):
-        """Dữ liệu từ imu_process_node: Vector3(x=roll, y=pitch, z=yaw) dạng ĐỘ."""
+        """Dữ liệu từ imu_process_node: Vector3(y=roll, x=pitch, z=yaw) dạng ĐỘ."""
         
         # Calculate true radians first
         true_roll = np.radians(msg.y)
@@ -413,8 +424,8 @@ class ReactiveBalanceNode(Node):
         target_offset = action * scale_factors
         
         # Mô phỏng độ trễ của Servo MG996R
-        VMAX_CARTESIAN = 0.40
-        max_delta = VMAX_CARTESIAN * DT  # 0.005m/step
+        VMAX_CARTESIAN = 0.20
+        max_delta = VMAX_CARTESIAN * DT  # 0.020m/step
         
         # Rate-limit ĐỐI XỨNG cho tất cả các trục (bao gồm Z)
         delta = np.clip(target_offset - self.current_offset, -max_delta, max_delta)
@@ -508,19 +519,19 @@ class ReactiveBalanceNode(Node):
             
         tilt = np.sqrt(roll**2 + pitch**2)
 
-        # 1. Thưởng sống sót và cân bằng (Tách riêng Pitch và Roll)
-        r_alive = 2.0
+        # 1. Thưởng sống sót và cân bằng (Tăng r_alive)
+        r_alive = 5.0
         r_pitch = 8.0 * np.exp(-25.0 * abs(pitch))
         r_roll = 5.0 * np.exp(-15.0 * abs(roll))
 
-        # 2. Phạt nặng nếu Action thay đổi quá đột ngột (tính với snapshot trước khi leg_command chạy)
-        r_action_diff = -3.0 * np.sum(np.square(action - prev_action_snapshot))
+        # 2. Phạt Action thay đổi (Giảm từ -3.0 xuống -0.5)
+        r_action_diff = -0.5 * np.sum(np.square(action - prev_action_snapshot))
 
-        # 3. Phạt nếu Offset quá lớn (giới hạn an toàn của XY)
+        # 3. Phạt nếu Offset quá lớn (giữ nguyên)
         r_limit = -0.5 * np.sum(np.maximum(0, np.abs(self.current_offset[[0,1,3,4]]) - 0.08))
 
-        # 4. Z-Control Penalty: Phạt bình phương offset Z, TĂNG tỉ lệ để z-penalty có sức ảnh hưởng thực tế
-        r_z_pen = -100.0 * np.sum(np.square(self.current_offset[[2, 5]]))
+        # 4. Z-Control Penalty: Phạt bình phương offset Z (Giảm từ -100 xuống -15.0)
+        r_z_pen = -15.0 * np.sum(np.square(self.current_offset[[2, 5]]))
 
         # 5. Logic thu chân tự nhiên: dùng Threshold động 
         is_settling = angular_vel_mag > self.ANGULAR_VEL_SETTLE_THRESH  # Robot còn chao đảo
@@ -544,79 +555,76 @@ class ReactiveBalanceNode(Node):
         """Reset robot — Mềm mại (Soft Landing)."""
         print("\033[93m>>> RESETTING SIMULATION (SOFT LANDING)...\033[0m")
 
-        # 1. Báo LLC node dừng xử lý
         self.reset_pub.publish(Bool(data=True))
-        time.sleep(0.3)
+        time.sleep(0.1)
 
-        # 2. Pause physics
         subprocess.Popen([
             "gz", "service", "-s", "/world/empty/control",
             "--reqtype", "gz.msgs.WorldControl", "--reptype", "gz.msgs.Boolean",
             "--req", "pause: true"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
         
-        # 3. Teleport robot vừa chạm đất với chân hơi cong
+        # Hạ thấp xuống z=0.25 (sát đất hơn) và hơi cúi người nhẹ (pitch = 0.05) để chống ngửa ra sau
         subprocess.Popen([
             "gz", "service", "-s", "/world/empty/set_pose",
             "--reqtype", "gz.msgs.Pose", "--reptype", "gz.msgs.Boolean",
-            "--req", "name: 'humanoid_robot', position: {x: 0.0, y: 0.0, z: 0.254}, orientation: {w: 1.0, x: 0.01, y: 0.0, z: 0.0}"
+            "--req", "name: 'humanoid_robot', position: {x: 0.0, y: 0.0, z: 0.26}, orientation: {w: 0.999, x: 0.0, y: 0.0, z: 0.0}"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
 
-        # Zero offset & prev_action (trước khi unpause)
         with self.state_lock:
-            self.current_offset = np.zeros(ACTION_DIM)
-            self.prev_action = np.zeros(ACTION_DIM)
-            
-            # Khởi tạo lại IMU state trước khi dịch chuyển
+            # STATE DESYNC FIX: Mảng prev_action và current_offset phải 
+            # ĐỒNG BỘ hoàn toàn với drop pose (-0.025 ở X)
+            self.current_offset = np.array([-0.025, 0.0, 0.0, -0.025, 0.0, 0.0])
+            self.prev_action = np.array([-0.025, 0.0, 0.0, -0.025, 0.0, 0.0])
             self.roll = self.pitch = self.yaw = 0.0
             self.prev_roll = self.prev_pitch = 0.0
 
-        # 3.5. Trực tiếp reset các khớp chân về 0.0 (chân thẳng) khi còn đang pause
-        # Điều này giúp xoá bỏ những lệnh gây rối trước đó. Với độ cao 0.235 thì chân vừa sát đất.
-        if hasattr(self, 'leg_joint_pubs'):
-            for pub in self.leg_joint_pubs.values():
-                pub.publish(Float64(data=0.0))
-        time.sleep(0.1)
+        # ĐÃ XÓA ĐOẠN ÉP KHỚP VỀ 0.0 Ở ĐÂY! (Không làm chân thẳng tắp nữa)
 
-        # 4. Unpause physics TRƯỚC
         subprocess.Popen([
             "gz", "service", "-s", "/world/empty/control",
             "--reqtype", "gz.msgs.WorldControl", "--reptype", "gz.msgs.Boolean",
             "--req", "pause: false"
         ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
 
-        # 5. Mởi bật lại LLC và gửi Nominal Pose Full Body (16 array length)
+        # Mở bật lại LLC
         self.reset_pub.publish(Bool(data=False))
         msg = Float64MultiArray()
-        msg.data = [0.0, STD_Y, STD_Z, 0.0, 0.0, -STD_Y, STD_Z, 0.0, 1.0]
-        for _ in range(15):
+        
+        # -------------------------------------------------------------------------
+        # TRẠNG THÁI ĐỨNG BAN ĐẦU: Chân đưa lùi về sau (-0.025m, nghiêng trọng tâm)
+        # -------------------------------------------------------------------------
+        msg.data = [-0.025, STD_Y, STD_Z, 0.0, -0.025, -STD_Y, STD_Z, 0.0, DT]
+        
+        drop_start = self.current_sim_time
+        # Bắn lệnh trong 1.0s để robot kịp chạm đất bám trụ
+        while self.current_sim_time - drop_start < 1.0:
             self.action_pub.publish(msg)
-            time.sleep(0.05)  # ~0.75s tổng thể để LLC bắt kịp
+            time.sleep(0.05) 
 
-        # 6. Đợi 1.5s để robot đứng vững và bộ lọc IMU hội tụ trước khi bắt đầu
-        print("    \033[90mĐang đợi robot tĩnh sau khi hạ cánh (3.0s)...\033[0m")
+        # Đợi tĩnh lại — PHẢI dùng sim_time thuần, không dùng timeout thực
+        # PHẢI tiếp tục publish Nominal Pose để giữ chân robot cố định
+        print("    \033[90mĐang đợi robot tĩnh sau khi hạ cánh (3.0s sim)...\033[0m")
         sc = self.current_sim_time
-        timeout = 0
         while self.current_sim_time - sc < 3.0:
-            time.sleep(0.01)
-            timeout += 1
-            if timeout > 500:
-                print("\033[91m>>> Clock timeout! Forcing continue.\033[0m")
-                break
+            self.action_pub.publish(msg)
+            time.sleep(0.05)
 
-        # 7. CHUẨN HOÁ IMU: Lấy góc hiện tại làm offset thay vì gán cứng 0.0
+        # CHUẨN HOÁ IMU: Lấy góc HIỆN TẠI làm mốc 0 sau khi robot đã hoàn toàn tĩnh
         with self.state_lock:
             raw_roll = self.roll + self.roll_offset
             raw_pitch = self.pitch + self.pitch_offset
-            
             self.roll_offset = raw_roll
             self.pitch_offset = raw_pitch
-            
-            self.roll = 0.0
-            self.pitch = 0.0
-            self.yaw = 0.0
-            self.prev_roll = 0.0
-            self.prev_pitch = 0.0
+            self.roll = self.pitch = self.yaw = 0.0
+            self.prev_roll = self.prev_pitch = 0.0
+        
+        # Đợi thêm 0.1s sim để imu_callback kịp chạy 1 lần với offset mới
+        # Đảm bảo self.roll đã thực sự ≈ 0.0 trước khi train_loop đọc nó
+        extra_start = self.current_sim_time
+        while self.current_sim_time - extra_start < 0.1:
+            self.action_pub.publish(msg)
+            time.sleep(0.05)
             
         self.step_in_episode = 0
         self.stable_count = 0
@@ -660,8 +668,8 @@ class ReactiveBalanceNode(Node):
             
             # Curriculum learning: Tăng lực dựa trên Survival Rate Cached từ episode CŨ
             max_f_scale = min(1.0, ep / 200.0) # Grow over 200 episodes max
-            # Giảm nếu fail nhiều, tăng nếu win nhiều
-            if prev_survival_rate < 0.2 and self.total_pushes_global > 5:
+            # Giảm nếu fail nhiều, tăng nếu win nhiều (chỉ tính nếu tập trước CÓ bị đẩy)
+            if self.total_pushes > 0 and prev_survival_rate < 0.2 and self.total_pushes_global > 5:
                 # Phạt lùi
                 max_f_scale = max(0.1, max_f_scale - 0.2)
                 
@@ -787,15 +795,27 @@ class ReactiveBalanceNode(Node):
                 self.ppo.buffer_is_terminals.clear()
                 continue
 
-            # --- End of Episode ---
-            # Save
-            if ep_reward > self.best_reward:
-                self.best_reward = ep_reward
-                self.save_state(ep, ep_reward, True)
-            else:
-                self.save_state(ep, ep_reward, False)
+            # =========================================================
+            # ĐÚNG LOGIC: UPDATE TRƯỚC, LƯU SAU
+            # =========================================================
+            
+            # 1. PPO UPDATE (Cho não học kinh nghiệm mới)
+            if len(self.ppo.buffer_states) >= 1024:
+                self.ppo.update()
 
-            # Log
+            # 2. TÍNH ĐIỂM BEST CÓ XÉT HỆ SỐ KHÓ (Curriculum Scaling)
+            # Tập lực mạnh (500N) phải được nhân hệ số để đấu lại điểm số của tập lực yếu (300N)
+            difficulty_multiplier = curriculum_f / PUSH_FORCE_MIN  # Chạy từ 1.0 đến 1.66
+            adjusted_score = ep_reward * difficulty_multiplier
+
+            # 3. LƯU TRẠNG THÁI (Lưu bộ não ĐÃ ĐƯỢC UPDATE)
+            if adjusted_score > self.best_reward:
+                self.best_reward = adjusted_score
+                self.save_state(ep, adjusted_score, True)
+            else:
+                self.save_state(ep, adjusted_score, False)
+
+            # Log CSV (Vẫn ghi ep_reward thật để dễ xem biểu đồ)
             with open(self.history_path, 'a', newline='') as f:
                 csv.writer(f).writerow([
                     ep, f"{ep_reward:.2f}", t + 1,
@@ -805,23 +825,10 @@ class ReactiveBalanceNode(Node):
                 ])
 
             print(
-                f"RB-Ep {ep} | R: {ep_reward:.2f} | Best: {self.best_reward:.2f} | "
-                f"Steps: {t + 1} | Push: {self.pushes_survived}/{self.total_pushes} | "
-                f"Sigma: dynamic | {reason}"
+                f"RB-Ep {ep} | R: {ep_reward:.2f} (Adj: {adjusted_score:.2f}) | "
+                f"Best: {self.best_reward:.2f} | Steps: {t + 1} | "
+                f"Push: {self.pushes_survived}/{self.total_pushes} | {reason}"
             )
-
-            # --- PPO MỖI EPISODE ---
-            # PPO bắt buộc cập nhật xong phải xóa buffer để đảm bảo On-Policy
-            MIN_BATCH = 32 # Đủ để GroupNorm(32, 512) không warning
-            if len(self.ppo.buffer_states) >= MIN_BATCH:
-                self.ppo.update()
-            else:
-                # Clear buffer cross-contamination
-                self.ppo.buffer_states.clear()
-                self.ppo.buffer_actions.clear()
-                self.ppo.buffer_logprobs.clear()
-                self.ppo.buffer_rewards.clear()
-                self.ppo.buffer_is_terminals.clear()
 
             ep += 1
             next_push_step = np.random.randint(PUSH_INTERVAL_MIN, PUSH_INTERVAL_MAX)

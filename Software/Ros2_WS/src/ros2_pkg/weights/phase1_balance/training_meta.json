@@ -1,0 +1,6 @@
+{
+    "best_reward": -102.01433187673837,
+    "current_episode": 22,
+    "action_std": 0.4,
+    "w_restore": 0.0
+}

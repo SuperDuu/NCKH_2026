@@ -47,17 +47,19 @@ gz_ros2_control:
   ros__parameters:
     pid_gains:
       # Thông số Kp giảm một nửa theo yêu cầu, làm khớp mềm (compliant) và giống MG996R thực tế hơn
-      base_hip_left_joint:    {kp: 50.0, ki: 2.0, kd: 0.05}
-      hip_hip_left_joint:     {kp: 50.0, ki: 2.5, kd: 0.05}
-      hip_knee_left_joint:    {kp: 50.0, ki: 2.5, kd: 0.05}
-      knee_ankle_left_joint:  {kp: 50.0, ki: 2.0, kd: 0.05}
-      ankle_ankle_left_joint: {kp: 50.0, ki: 1.5, kd: 0.05}
+      # --- CHÂN TRÁI ---
+      base_hip_left_joint:    {kp: 60.0,  ki: 0.0, kd: 1.0}
+      hip_hip_left_joint:     {kp: 80.0,  ki: 0.0, kd: 1.5}
+      hip_knee_left_joint:    {kp: 120.0, ki: 0.0, kd: 2.5}  
+      knee_ankle_left_joint:  {kp: 80.0,  ki: 0.0, kd: 1.5}
+      ankle_ankle_left_joint: {kp: 60.0,  ki: 0.0, kd: 1.0}
       
-      base_hip_right_joint:   {kp: 50.0, ki: 2.0, kd: 0.05}
-      hip_hip_right_joint:    {kp: 50.0, ki: 2.5, kd: 0.05}
-      hip_knee_right_joint:   {kp: 50.0, ki: 2.5, kd: 0.05}
-      knee_ankle_right_joint: {kp: 50.0, ki: 2.0, kd: 0.05}
-      ankle_ankle_right_joint: {kp: 50.0, ki: 1.5, kd: 0.05}
+      # --- CHÂN PHẢI ---
+      base_hip_right_joint:   {kp: 60.0,  ki: 0.0, kd: 1.0}
+      hip_hip_right_joint:    {kp: 80.0,  ki: 0.0, kd: 1.5}
+      hip_knee_right_joint:   {kp: 120.0, ki: 0.0, kd: 2.5}  
+      knee_ankle_right_joint: {kp: 80.0,  ki: 0.0, kd: 1.5}
+      ankle_ankle_right_joint: {kp: 60.0,  ki: 0.0, kd: 1.0}
       
       base_hip_middle_joint:    {kp: 40.0, ki: 1.0, kd: 0.05}
       

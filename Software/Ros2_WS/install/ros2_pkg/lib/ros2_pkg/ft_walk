@@ -23,24 +23,24 @@ import csv
 from datetime import datetime
 
 # ==============================================================================
-# CẤU HÌNH HỆ THỐNG & VẬT LÝ - GIỮ NGUYÊN
+# CẤU HÌNH TỐI ƯU CHO ROBOT 30CM & SERVO MG996R
 # ==============================================================================
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DT = 0.05 
 MAX_STEPS = 9999 
 MAX_LEG_LENGTH = 0.2204
 SAFE_LIMIT = MAX_LEG_LENGTH * 0.98
-STD_Z, STD_Y, LIFT_H = 0.195, 0.01, 0.05 
+STD_Z, STD_Y = 0.195, 0.01
+LIFT_H = 0.035  # Hạ thấp độ nhấc chân để phù hợp robot 30cm
 ACTION_DIM, STATE_DIM, STEPS_PER_PHASE = 4, 7, 15 
 
-# --- THÔNG SỐ STD DECAY ---
 ACTION_STD_INIT = 0.05      
 ACTION_STD_MIN = 0.01       
 DECAY_FACTOR = 0.99         
 DECAY_INTERVAL_EP = 30      
 
 # ==============================================================================
-# MẠNG NEURAL (PPO) - ĐÃ FIX LỖI ATTRIBUTEERROR
+# MẠNG NEURAL (PPO) - FIX LỖI ATTRIBUTEERROR & BỔ SUNG LOG UPDATE
 # ==============================================================================
 class ActorCritic(nn.Module):
     def __init__(self, state_dim, action_dim, action_std_init):
@@ -57,7 +57,7 @@ class ActorCritic(nn.Module):
             nn.Linear(256, 1)
         )
     def set_action_std(self, new_action_std):
-        # FIX: Trỏ trực tiếp vào action_dim thay vì lấy từ lớp Tanh cuối cùng
+        # FIX: Trỏ trực tiếp vào ACTION_DIM thay vì truy cập lớp Tanh
         self.action_var = torch.full((ACTION_DIM,), new_action_std * new_action_std).to(DEVICE)
         
     def act(self, state):
@@ -88,10 +88,7 @@ class PPO:
     def update(self):
         min_size = min(len(self.buffer_states), len(self.buffer_rewards))
         if min_size == 0: return 
-        
-        # LOG IN RA KHI UPDATE [Yêu cầu bổ sung]
-        print(f"\n\033[1;32m[PPO UPDATE] >>> Đang tối ưu hóa Policy với {min_size} bước dữ liệu...\033[0m")
-        
+        print(f"\n\033[1;32m[PPO UPDATE] >>> Đang huấn luyện với {min_size} steps...\033[0m")
         rewards, discounted_reward = [], 0
         for reward, is_terminal in zip(reversed(self.buffer_rewards[:min_size]), reversed(self.buffer_is_terminals[:min_size])):
             if is_terminal: discounted_reward = 0
@@ -100,7 +97,7 @@ class PPO:
         rew_t = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
         rewards = (rew_t - rew_t.mean()) / (rew_t.std() + 1e-7)
         old_states, old_actions, old_logprobs = torch.stack(self.buffer_states[:min_size]).detach(), torch.stack(self.buffer_actions[:min_size]).detach(), torch.stack(self.buffer_logprobs[:min_size]).detach()
-        for i in range(self.K_epochs):
+        for _ in range(self.K_epochs):
             logprobs, state_values, dist_entropy = self.policy.evaluate(old_states, old_actions)
             ratios = torch.exp(logprobs - old_logprobs)
             advantages = rewards - state_values.squeeze().detach()
@@ -109,7 +106,7 @@ class PPO:
             self.optimizer.zero_grad(); loss.mean().backward(); self.optimizer.step()
         self.policy_old.load_state_dict(self.policy.state_dict())
         self.buffer_states.clear(); self.buffer_actions.clear(); self.buffer_logprobs.clear(); self.buffer_rewards.clear(); self.buffer_is_terminals.clear()
-        print("\033[1;32m[PPO UPDATE] >>> Thành công. Hệ thống sẵn sàng cho chu kỳ mới.\033[0m\n")
+        print("\033[1;32m[PPO UPDATE] >>> Thành công. Trọng số mới đã được áp dụng.\033[0m\n")
 
 # ==============================================================================
 # MAIN NODE - WALKING FINE-TUNING
@@ -147,7 +144,9 @@ class HumanoidWalkNode(Node):
         self.is_left_support = True; self.current_sim_time = 0.0
         self.best_reward = -float('inf'); self.start_episode = 0; self.step_in_episode = 0
         
-        self.target_v_x = 0.4 
+        # MỤC TIÊU VẬN TỐC THỰC TẾ CHO ROBOT 30CM 
+        self.target_v_x = 0.05 
+        
         self.current_std = ACTION_STD_INIT
         self.ppo = PPO(STATE_DIM, ACTION_DIM)
         self.load_training_state()
@@ -156,7 +155,7 @@ class HumanoidWalkNode(Node):
             with open(self.history_path, 'w', newline='') as f: 
                 csv.writer(f).writerow(["Episode", "Reward", "Steps", "Vx_Avg", "Time"])
 
-        print(f"\033[94m>>> Node Ready. WALKING Fine-tuning. Target: {self.target_v_x} m/s\033[0m")
+        print(f"\033[94m>>> Node Ready. WALK Fine-tuning. Target: {self.target_v_x} m/s\033[0m")
         threading.Thread(target=self.train_loop, daemon=True).start()
 
     def odom_callback(self, msg):
@@ -199,7 +198,7 @@ class HumanoidWalkNode(Node):
     def check_safety_and_prepare_cmd(self, action):
         smooth_act = 0.7 * self.prev_action + 0.3 * action
         self.prev_action = smooth_act
-        dx_s, dy_s, dz_s, dst_s = smooth_act[0]*0.10, smooth_act[1]*0.02, smooth_act[2]*0.02, smooth_act[3]*0.02
+        dx_s, dy_s, dz_s, dst_s = smooth_act[0]*0.08, smooth_act[1]*0.02, smooth_act[2]*0.02, smooth_act[3]*0.02
         tz = STD_Z + dz_s
         progress = (self.step_in_episode % (STEPS_PER_PHASE*2)) / (STEPS_PER_PHASE*2)
         weight_shift = np.sin(progress * 2 * np.pi)
@@ -250,22 +249,22 @@ class HumanoidWalkNode(Node):
                 action = self.ppo.select_action(state)
                 ok, msg, pen = self.check_safety_and_prepare_cmd(action)
                 if not ok: 
-                    self.ppo.buffer_rewards.append(-100.0); self.ppo.buffer_is_terminals.append(True); break
+                    self.ppo.buffer_rewards.append(-50.0); self.ppo.buffer_is_terminals.append(True); break
                 self.action_pub.publish(msg); time.sleep(DT)
                 
-                # --- REWARD ĐI BỘ CHỐNG HỌC VẸT ---
-                done = abs(self.smooth_roll) > 0.6 or abs(self.smooth_pitch) > 0.6
+                # --- REWARD ĐI BỘ THỰC TẾ ---
+                done = abs(self.smooth_roll) > 0.65 or abs(self.smooth_pitch) > 0.65
                 
-                if self.vx > 0.05:
-                    r_alive = 2.0
-                    r_balance = 5.0 * np.exp(-10.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
-                    r_vel = 15.0 * np.exp(-5.0 * abs(self.vx - self.target_v_x))
+                if self.vx > 0.01: # Robot bắt đầu nhích
+                    r_alive = 4.0
+                    r_balance = 8.0 * np.exp(-12.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
+                    r_vel = 12.0 * np.exp(-5.0 * abs(self.vx - self.target_v_x))
                 else:
-                    r_alive = 0.0 
-                    r_balance = 2.0 * np.exp(-10.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
-                    r_vel = -5.0 
+                    r_alive = 1.0 # Ép di chuyển mới có thưởng sống sót cao [cite: 25]
+                    r_balance = 3.0 * np.exp(-10.0 * np.sqrt(self.smooth_pitch**2 + self.smooth_roll**2))
+                    r_vel = -2.0 # Giảm mức phạt đứng im để tránh sụp đổ sớm [cite: 38]
                 
-                r_yaw = -2.0 * max(0.0, abs(self.yaw) - 0.1) 
+                r_yaw = -2.5 * max(0.0, abs(self.yaw) - 0.15) 
                 r_action = -0.3 * np.sum(np.square(action))
                 reward = r_alive + r_balance + r_vel + r_yaw + r_action + pen
 
@@ -274,7 +273,6 @@ class HumanoidWalkNode(Node):
                 self.ppo.buffer_rewards.append(reward); self.ppo.buffer_is_terminals.append(done); ep_reward += reward
                 ep_vx.append(self.vx)
 
-                # Update mỗi 4000 steps [Yêu cầu bổ sung]
                 if len(self.ppo.buffer_states) >= 4000: self.ppo.update()
                 
                 self.is_left_support = (np.sin((t % (STEPS_PER_PHASE*2)) / (STEPS_PER_PHASE*2) * 2 * np.pi) > 0)
@@ -293,10 +291,9 @@ class HumanoidWalkNode(Node):
                 with open(self.history_path, 'a', newline='') as f:
                     csv.writer(f).writerow([ep, f"{ep_reward:.2f}", t, f"{avg_vx:.3f}", datetime.now().strftime("%H:%M:%S")])
                 
-                # LOG CHI TIẾT KÈM BEST REWARD [Yêu cầu bổ sung]
                 print(f"WALK-Ep {ep} | R: {ep_reward:.2f} | Best: {self.best_reward:.2f} | Steps: {t} | Vx_Avg: {avg_vx:.3f} | STD: {self.current_std:.4f}")
                 ep += 1
-            else: print("\033[91m⚠️ Reset Lag Detected. Skipping.\033[0m")
+            else: print("\033[91m⚠️ Reset Lag Detected. Skipping Episode.\033[0m")
 
 def main(): rclpy.init(); rclpy.spin(HumanoidWalkNode())
 if __name__ == '__main__': main()

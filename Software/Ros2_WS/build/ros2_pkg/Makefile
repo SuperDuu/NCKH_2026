@@ -211,6 +211,19 @@ imu_process_node/fast:
 .PHONY : imu_process_node/fast
 
 #=============================================================================
+# Target rules for targets named imu_process_node_v2
+
+# Build rule for target.
+imu_process_node_v2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 imu_process_node_v2
+.PHONY : imu_process_node_v2
+
+# fast build rule for target.
+imu_process_node_v2/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v2.dir/build.make CMakeFiles/imu_process_node_v2.dir/build
+.PHONY : imu_process_node_v2/fast
+
+#=============================================================================
 # Target rules for targets named uvc_node
 
 # Build rule for target.
@@ -250,17 +263,30 @@ humanoid_llc_node/fast:
 .PHONY : humanoid_llc_node/fast
 
 #=============================================================================
-# Target rules for targets named ament_cmake_python_copy_ros2_pkg
+# Target rules for targets named humanoid_llc_node_v2
 
 # Build rule for target.
-ament_cmake_python_copy_ros2_pkg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_copy_ros2_pkg
-.PHONY : ament_cmake_python_copy_ros2_pkg
+humanoid_llc_node_v2: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 humanoid_llc_node_v2
+.PHONY : humanoid_llc_node_v2
 
 # fast build rule for target.
-ament_cmake_python_copy_ros2_pkg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build
-.PHONY : ament_cmake_python_copy_ros2_pkg/fast
+humanoid_llc_node_v2/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v2.dir/build.make CMakeFiles/humanoid_llc_node_v2.dir/build
+.PHONY : humanoid_llc_node_v2/fast
+
+#=============================================================================
+# Target rules for targets named ament_cmake_python_symlink_ros2_pkg
+
+# Build rule for target.
+ament_cmake_python_symlink_ros2_pkg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_symlink_ros2_pkg
+.PHONY : ament_cmake_python_symlink_ros2_pkg
+
+# fast build rule for target.
+ament_cmake_python_symlink_ros2_pkg/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
+.PHONY : ament_cmake_python_symlink_ros2_pkg/fast
 
 #=============================================================================
 # Target rules for targets named ament_cmake_python_build_ros2_pkg_egg
@@ -299,6 +325,30 @@ src/humanoid_llc_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node.dir/build.make CMakeFiles/humanoid_llc_node.dir/src/humanoid_llc_node.cpp.s
 .PHONY : src/humanoid_llc_node.cpp.s
 
+src/humanoid_llc_node_v2.o: src/humanoid_llc_node_v2.cpp.o
+.PHONY : src/humanoid_llc_node_v2.o
+
+# target to build an object file
+src/humanoid_llc_node_v2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v2.dir/build.make CMakeFiles/humanoid_llc_node_v2.dir/src/humanoid_llc_node_v2.cpp.o
+.PHONY : src/humanoid_llc_node_v2.cpp.o
+
+src/humanoid_llc_node_v2.i: src/humanoid_llc_node_v2.cpp.i
+.PHONY : src/humanoid_llc_node_v2.i
+
+# target to preprocess a source file
+src/humanoid_llc_node_v2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v2.dir/build.make CMakeFiles/humanoid_llc_node_v2.dir/src/humanoid_llc_node_v2.cpp.i
+.PHONY : src/humanoid_llc_node_v2.cpp.i
+
+src/humanoid_llc_node_v2.s: src/humanoid_llc_node_v2.cpp.s
+.PHONY : src/humanoid_llc_node_v2.s
+
+# target to generate assembly for a file
+src/humanoid_llc_node_v2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v2.dir/build.make CMakeFiles/humanoid_llc_node_v2.dir/src/humanoid_llc_node_v2.cpp.s
+.PHONY : src/humanoid_llc_node_v2.cpp.s
+
 src/imu_process_node.o: src/imu_process_node.cpp.o
 .PHONY : src/imu_process_node.o
 
@@ -322,6 +372,30 @@ src/imu_process_node.s: src/imu_process_node.cpp.s
 src/imu_process_node.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node.dir/build.make CMakeFiles/imu_process_node.dir/src/imu_process_node.cpp.s
 .PHONY : src/imu_process_node.cpp.s
+
+src/imu_process_node_v2.o: src/imu_process_node_v2.cpp.o
+.PHONY : src/imu_process_node_v2.o
+
+# target to build an object file
+src/imu_process_node_v2.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v2.dir/build.make CMakeFiles/imu_process_node_v2.dir/src/imu_process_node_v2.cpp.o
+.PHONY : src/imu_process_node_v2.cpp.o
+
+src/imu_process_node_v2.i: src/imu_process_node_v2.cpp.i
+.PHONY : src/imu_process_node_v2.i
+
+# target to preprocess a source file
+src/imu_process_node_v2.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v2.dir/build.make CMakeFiles/imu_process_node_v2.dir/src/imu_process_node_v2.cpp.i
+.PHONY : src/imu_process_node_v2.cpp.i
+
+src/imu_process_node_v2.s: src/imu_process_node_v2.cpp.s
+.PHONY : src/imu_process_node_v2.s
+
+# target to generate assembly for a file
+src/imu_process_node_v2.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v2.dir/build.make CMakeFiles/imu_process_node_v2.dir/src/imu_process_node_v2.cpp.s
+.PHONY : src/imu_process_node_v2.cpp.s
 
 src/task_space_controller.o: src/task_space_controller.cpp.o
 .PHONY : src/task_space_controller.o
@@ -385,19 +459,27 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ament_cmake_python_build_ros2_pkg_egg"
-	@echo "... ament_cmake_python_copy_ros2_pkg"
+	@echo "... ament_cmake_python_symlink_ros2_pkg"
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... humanoid_llc_node"
+	@echo "... humanoid_llc_node_v2"
 	@echo "... imu_process_node"
+	@echo "... imu_process_node_v2"
 	@echo "... task_space_controller"
 	@echo "... uvc_node"
 	@echo "... src/humanoid_llc_node.o"
 	@echo "... src/humanoid_llc_node.i"
 	@echo "... src/humanoid_llc_node.s"
+	@echo "... src/humanoid_llc_node_v2.o"
+	@echo "... src/humanoid_llc_node_v2.i"
+	@echo "... src/humanoid_llc_node_v2.s"
 	@echo "... src/imu_process_node.o"
 	@echo "... src/imu_process_node.i"
 	@echo "... src/imu_process_node.s"
+	@echo "... src/imu_process_node_v2.o"
+	@echo "... src/imu_process_node_v2.i"
+	@echo "... src/imu_process_node_v2.s"
 	@echo "... src/task_space_controller.o"
 	@echo "... src/task_space_controller.i"
 	@echo "... src/task_space_controller.s"

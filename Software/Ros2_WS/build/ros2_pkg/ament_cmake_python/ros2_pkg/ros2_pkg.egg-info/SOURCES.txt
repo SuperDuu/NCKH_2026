@@ -2,8 +2,10 @@ setup.py
 ros2_pkg/__init__.py
 ros2_pkg/export_onnx.py
 ros2_pkg/ft_force.py
+ros2_pkg/ft_force_v2.py
 ros2_pkg/ft_walk.py
 ros2_pkg/ft_yaw.py
+ros2_pkg/ppo_balance_sim_20hz.py
 ros2_pkg/rl_ppo_training.py
 ros2_pkg/train_balance_ppo.py
 ros2_pkg/visual.py

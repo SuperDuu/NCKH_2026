@@ -22,6 +22,9 @@ find_package(std_msgs REQUIRED)
 add_executable(imu_process_node src/imu_process_node.cpp)
 ament_target_dependencies(imu_process_node rclcpp sensor_msgs)
 
+add_executable(imu_process_node_v2 src/imu_process_node_v2.cpp)
+ament_target_dependencies(imu_process_node_v2 rclcpp sensor_msgs)
+
 add_executable(uvc_node src/uvc_node.cpp)
 ament_target_dependencies(uvc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
@@ -31,22 +34,27 @@ ament_target_dependencies(task_space_controller rclcpp sensor_msgs trajectory_ms
 add_executable(humanoid_llc_node src/humanoid_llc_node.cpp)
 ament_target_dependencies(humanoid_llc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
+add_executable(humanoid_llc_node_v2 src/humanoid_llc_node_v2.cpp)
+ament_target_dependencies(humanoid_llc_node_v2 rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 # --- PHẦN PYTHON ---
 # Giả sử bạn để file py trong thư mục cùng tên package: ros2_pkg/
 ament_python_install_package(${PROJECT_NAME})
 
 # --- INSTALLATION ---
-install(TARGETS imu_process_node uvc_node task_space_controller humanoid_llc_node
+install(TARGETS imu_process_node imu_process_node_v2 uvc_node task_space_controller humanoid_llc_node humanoid_llc_node_v2
   DESTINATION lib/${PROJECT_NAME})
+
 
 
 install(PROGRAMS ros2_pkg/train_balance_ppo.py DESTINATION lib/${PROJECT_NAME} RENAME train_balance_ppo)
 install(PROGRAMS ros2_pkg/rl_ppo_training.py DESTINATION lib/${PROJECT_NAME} RENAME rl_ppo_training)
-install(PROGRAMS ros2_pkg/export_onnx.py DE STINATION lib/${PROJECT_NAME} RENAME export_onnx)
+install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
 install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
 install(PROGRAMS ros2_pkg/ft_yaw.py DESTINATION lib/${PROJECT_NAME} RENAME ft_yaw)
 install(PROGRAMS ros2_pkg/ft_force.py DESTINATION lib/${PROJECT_NAME} RENAME ft_force)
+install(PROGRAMS ros2_pkg/ft_force_v2.py DESTINATION lib/${PROJECT_NAME} RENAME ft_force_v2)
 install(PROGRAMS ros2_pkg/ft_walk.py DESTINATION lib/${PROJECT_NAME} RENAME ft_walk)
+install(PROGRAMS ros2_pkg/ppo_balance_sim_20hz.py DESTINATION lib/${PROJECT_NAME} RENAME ppo_balance_sim_20hz)
 
 install(DIRECTORY launch urdf rviz worlds
   DESTINATION share/${PROJECT_NAME})

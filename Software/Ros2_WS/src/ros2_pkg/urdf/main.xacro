@@ -19,13 +19,13 @@
   <xacro:setup_link link_name="hip_hip_left_link" />
   <xacro:setup_link link_name="hip_knee_left_link" />
   <xacro:setup_link link_name="knee_ankle_left_link" />
-  <xacro:setup_link link_name="ankle_ankle_left_link" />
+  <!-- ankle_ankle_left_link: friction đặt riêng trong humanoid_physics.xacro -->
 
   <xacro:setup_link link_name="base_hip_right_link" />
   <xacro:setup_link link_name="hip_hip_right_link" />
   <xacro:setup_link link_name="hip_knee_right_link" />
   <xacro:setup_link link_name="knee_ankle_right_link" />
-  <xacro:setup_link link_name="ankle_ankle_right_link" />
+  <!-- ankle_ankle_right_link: friction đặt riêng trong humanoid_physics.xacro -->
 
   <xacro:setup_link link_name="hip_shoulder_left_link" />
   <xacro:setup_link link_name="shoulder_shoulder_left_link" />

@@ -42,6 +42,7 @@ from datetime import datetime
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 DT = 0.05                      # 20Hz control loop
+MOVE_DURATION = 0.15            # 150ms — LLC có 15 iterations để nội suy mượt
 MAX_STEPS = 9999
 
 # --- Thông số IK (LLC V2: L3=0.08, L4=0.15, L5=0.065) ---
@@ -68,14 +69,14 @@ BUFFER_SIZE = 2000
 
 # --- Action scaling (ĐÃ GIẢM để tránh IK reject ở cực trị) ---
 # Worst-case: sqrt(0.04² + 0.03² + 0.285²) ≈ 0.290 < SAFE_LIMIT 0.2927 ✓
-SCALE_DX = 0.04                 # ±4cm (giảm từ 6cm)
+SCALE_DX = 0.025                # ±2.5cm (giảm từ 4cm để giảm phản lực xoay)
 SCALE_DY = 0.02                 # ±2cm (giảm từ 3cm)
 SCALE_DZ = 0.02                 # ±2cm
 
 # --- EMA Action Smoothing ---
 # α=0.85: tăng từ 0.65 để bù đắp lọc kép với LLC (α=0.6).
 # Effective response qua 2 tầng lọc: 0.85 * 0.6^(5 iterations) ≈ nhanh hơn.
-EMA_ALPHA = 0.85
+EMA_ALPHA = 0.7                 # Giảm từ 0.85 → smoothing mạnh hơn, giảm trượt
 
 # --- Exploration STD decay ---
 ACTION_STD_INIT = 0.4
@@ -278,7 +279,10 @@ class PPOBalanceNode(Node):
                 'base_hip_left', 'hip_hip_left', 'hip_knee_left',
                 'knee_ankle_left', 'ankle_ankle_left',
                 'base_hip_right', 'hip_hip_right', 'hip_knee_right',
-                'knee_ankle_right', 'ankle_ankle_right']}
+                'knee_ankle_right', 'ankle_ankle_right',
+                'base_hip_middle', 'hip_shoulder_left', 'shoulder_shoulder_left',
+                'shoulder_elbow_left', 'hip_shoulder_right', 'shoulder_shoulder_right',
+                'shoulder_elbow_right']}
 
         # --- Subscribers ---
         self.imu_sub = self.create_subscription(Imu, '/imu/data', self.imu_callback, 10)
@@ -404,6 +408,7 @@ class PPOBalanceNode(Node):
         """
         R_balance = exp(-10 * (pitch² + roll²))     — Gaussian, max 1.0
         R_jitter  = -1.5 * sum((a - a_prev)²)       — giảm từ -5.0 tránh collapse
+        R_yaw     = -3.0 * wz²                      — phạt xoay quanh trục Z
         R_restore = exp(-||ω||²) * exp(-2*||a||²)   — curriculum w_restore
         """
         qw, qx, qy, qz = self.quat
@@ -416,6 +421,10 @@ class PPOBalanceNode(Node):
             pitch = math.copysign(math.pi / 2.0, sinp)
         else:
             pitch = math.asin(sinp)
+            
+        siny_cosp = 2.0 * (qw * qz + qx * qy)
+        cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz)
+        yaw = math.atan2(siny_cosp, cosy_cosp)
 
         # R_balance: Gaussian — gradient mạnh gần gốc, thúc đẩy chính xác cao
         r_balance = math.exp(-10.0 * (pitch * pitch + roll * roll))
@@ -425,12 +434,16 @@ class PPOBalanceNode(Node):
         action_diff = action - self.prev_raw_action
         r_jitter = -1.5 * float(np.sum(action_diff ** 2))
 
+        # R_yaw: phạt vận tốc góc quanh trục Z (gyro[2] = wz) VÀ phạt độ lệch yaw
+        wz = float(self.gyro[2])
+        r_yaw = -3.0 * wz * wz - 2.0 * abs(yaw)
+
         # R_restore: thưởng đứng yên (curriculum tăng dần)
         omega_sq = float(np.sum(self.gyro ** 2))
         action_sq = float(np.sum(action ** 2))
         r_restore = math.exp(-1.0 * omega_sq) * math.exp(-2.0 * action_sq)
 
-        total_reward = r_balance + r_jitter + self.w_restore * r_restore
+        total_reward = r_balance + r_jitter + r_yaw + self.w_restore * r_restore
         return total_reward, roll, pitch
 
     # =========================================================================
@@ -466,7 +479,7 @@ class PPOBalanceNode(Node):
 
         msg = Float64MultiArray()
         msg.data = [tx_l, target_y_l, tz, lift_l,
-                    tx_r, target_y_r, tz, lift_r, DT]
+                    tx_r, target_y_r, tz, lift_r, MOVE_DURATION]
         return True, msg, tz
 
     # =========================================================================
@@ -542,22 +555,22 @@ class PPOBalanceNode(Node):
         req_s = SetEntityPose.Request()
         req_s.entity = Entity(name="humanoid_robot")
         req_s.pose = Pose()
-        req_s.pose.position.z = 0.28
+        req_s.pose.position.z = 0.29
         req_s.pose.orientation.w = 1.0
         self.p_cli.call_async(req_s)
-        time.sleep(0.5)
+        time.sleep(1)
         # 4. Zero tất cả khớp
         for pub in self.joint_pubs.values():
             pub.publish(Float64(data=0.0))
-        time.sleep(0.5)
+        # time.sleep(0.5)
         # 5. Unpause physics
         req_u = ControlWorld.Request()
         req_u.world_control = WorldControl(pause=False)
         self.w_cli.call_async(req_u)
         # 6. Chờ sim clock chạy lại (giống ft_force.py)
         sc = self.current_sim_time
-        while self.current_sim_time - sc < 0.05:
-            time.sleep(0.01)
+        while self.current_sim_time - sc < 0.01:
+            time.sleep(0.001)
         # 7. Báo LLC bắt đầu nhận lệnh lại
         self.reset_pub.publish(Bool(data=False))
 

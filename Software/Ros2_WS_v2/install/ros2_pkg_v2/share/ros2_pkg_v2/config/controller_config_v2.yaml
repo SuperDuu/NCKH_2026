@@ -1,0 +1,70 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 1000  # Tần số 1kHz để điều khiển MG996R mịn màng
+    use_sim_time: true
+
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+
+    joint_trajectory_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_trajectory_controller:
+  ros__parameters:
+    joints:
+      - base_hip_left_joint
+      - hip_hip_left_joint
+      - hip_knee_left_joint
+      - knee_ankle_left_joint
+      - ankle_ankle_left_joint
+      - base_hip_right_joint
+      - hip_hip_right_joint
+      - hip_knee_right_joint
+      - knee_ankle_right_joint
+      - ankle_ankle_right_joint
+      - base_hip_middle_joint
+      - hip_shoulder_left_joint
+      - shoulder_shoulder_left_joint
+      - shoulder_elbow_left_joint
+      - hip_shoulder_right_joint
+      - shoulder_shoulder_right_joint
+      - shoulder_elbow_right_joint
+
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+
+    # Ràng buộc vận tốc linh hoạt hơn cho phép PPO giật chân cứu ngã
+    constraints:
+      stopped_velocity_tolerance: 0.05
+      goal_time: 0.0
+
+gz_ros2_control:
+  ros__parameters:
+    pid_gains:
+      # --- CHÂN TRÁI (TĂNG ĐỘ CỨNG ĐỂ KHÔNG BỊ KHUỴU KHI CHỊU TẢI) ---
+      base_hip_left_joint:    {kp: 250.0,  ki: 5.0, kd: 5.0} # Roll hông
+      hip_hip_left_joint:     {kp: 300.0,  ki: 5.0, kd: 5.0} # Pitch hông
+      hip_knee_left_joint:    {kp: 450.0,  ki: 8.0, kd: 8.0} # Gối (Chịu tải lớn nhất)
+      knee_ankle_left_joint:  {kp: 300.0,  ki: 5.0, kd: 5.0} # Pitch cổ chân
+      ankle_ankle_left_joint: {kp: 250.0,  ki: 5.0, kd: 5.0} # Roll cổ chân
+      
+      # --- CHÂN PHẢI (TĂNG ĐỘ CỨNG) ---
+      base_hip_right_joint:   {kp: 250.0,  ki: 5.0, kd: 5.0}
+      hip_hip_right_joint:    {kp: 300.0,  ki: 5.0, kd: 5.0}
+      hip_knee_right_joint:   {kp: 450.0,  ki: 8.0, kd: 8.0} 
+      knee_ankle_right_joint: {kp: 300.0,  ki: 5.0, kd: 5.0}
+      ankle_ankle_right_joint: {kp: 250.0,  ki: 5.0, kd: 5.0}
+      
+      # Thân và Tay: Giữ nguyên
+      base_hip_middle_joint:  {kp: 80.0, ki: 1.0, kd: 1.0}
+      
+      hip_shoulder_left_joint:  {kp: 40.0, ki: 1.0, kd: 0.5}
+      shoulder_shoulder_left_joint: {kp: 40.0, ki: 1.0, kd: 0.5}
+      shoulder_elbow_left_joint: {kp: 40.0, ki: 1.0, kd: 0.5}
+
+      hip_shoulder_right_joint: {kp: 40.0, ki: 1.0, kd: 0.5}
+      shoulder_shoulder_right_joint: {kp: 40.0, ki: 1.0, kd: 0.5}
+      shoulder_elbow_right_joint: {kp: 40.0, ki: 1.0, kd: 0.5}

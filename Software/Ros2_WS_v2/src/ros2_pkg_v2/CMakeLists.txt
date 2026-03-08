@@ -23,16 +23,23 @@ ament_target_dependencies(imu_process_node rclcpp sensor_msgs)
 add_executable(humanoid_llc_node src/humanoid_llc_node.cpp)
 ament_target_dependencies(humanoid_llc_node rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
+add_executable(imu_process_node_v2 src/imu_process_node_v2.cpp)
+ament_target_dependencies(imu_process_node_v2 rclcpp sensor_msgs)
+
+add_executable(humanoid_llc_node_v2 src/humanoid_llc_node_v2.cpp)
+ament_target_dependencies(humanoid_llc_node_v2 rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
+
 # --- PHẦN PYTHON ---
 ament_python_install_package(ros2_pkg)
 
-install(TARGETS imu_process_node humanoid_llc_node DESTINATION lib/${PROJECT_NAME})
+install(TARGETS imu_process_node humanoid_llc_node humanoid_llc_node_v2 imu_process_node_v2 DESTINATION lib/${PROJECT_NAME})
 
 
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
 install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visual)
 install(PROGRAMS ros2_pkg/stand_test.py DESTINATION lib/${PROJECT_NAME} RENAME stand_test)
 install(PROGRAMS ros2_pkg/reactive_balance.py DESTINATION lib/${PROJECT_NAME} RENAME reactive_balance)
+install(PROGRAMS ros2_pkg/ppo_balance_sim_20hz.py DESTINATION lib/${PROJECT_NAME} RENAME ppo_balance_sim_20hz)
 
 install(DIRECTORY launch urdf config worlds
   DESTINATION share/${PROJECT_NAME})

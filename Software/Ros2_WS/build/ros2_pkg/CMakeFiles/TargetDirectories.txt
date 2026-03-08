@@ -6,7 +6,7 @@
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/task_space_controller.dir
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/humanoid_llc_node.dir
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/humanoid_llc_node_v2.dir
-/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir
+/home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/ament_cmake_python_build_ros2_pkg_egg.dir
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/test.dir
 /home/du/Desktop/NCKH_2026/Software/Ros2_WS/build/ros2_pkg/CMakeFiles/edit_cache.dir

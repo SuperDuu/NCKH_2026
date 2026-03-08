@@ -147,7 +147,7 @@
 
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(find ros2_pkg_v2)/config/controller_config.yaml</parameters>
+      <parameters>$(find ros2_pkg_v2)/config/controller_config_v2.yaml</parameters>
       <hold_joints>true</hold_joints>
     </plugin>
   </gazebo>

@@ -276,17 +276,17 @@ humanoid_llc_node_v2/fast:
 .PHONY : humanoid_llc_node_v2/fast
 
 #=============================================================================
-# Target rules for targets named ament_cmake_python_symlink_ros2_pkg
+# Target rules for targets named ament_cmake_python_copy_ros2_pkg
 
 # Build rule for target.
-ament_cmake_python_symlink_ros2_pkg: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_symlink_ros2_pkg
-.PHONY : ament_cmake_python_symlink_ros2_pkg
+ament_cmake_python_copy_ros2_pkg: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ament_cmake_python_copy_ros2_pkg
+.PHONY : ament_cmake_python_copy_ros2_pkg
 
 # fast build rule for target.
-ament_cmake_python_symlink_ros2_pkg/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_symlink_ros2_pkg.dir/build
-.PHONY : ament_cmake_python_symlink_ros2_pkg/fast
+ament_cmake_python_copy_ros2_pkg/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build.make CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build
+.PHONY : ament_cmake_python_copy_ros2_pkg/fast
 
 #=============================================================================
 # Target rules for targets named ament_cmake_python_build_ros2_pkg_egg
@@ -459,7 +459,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... test"
 	@echo "... ament_cmake_python_build_ros2_pkg_egg"
-	@echo "... ament_cmake_python_symlink_ros2_pkg"
+	@echo "... ament_cmake_python_copy_ros2_pkg"
 	@echo "... ros2_pkg_uninstall"
 	@echo "... uninstall"
 	@echo "... humanoid_llc_node"

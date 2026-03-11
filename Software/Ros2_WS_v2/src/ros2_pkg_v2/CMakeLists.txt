@@ -29,10 +29,16 @@ ament_target_dependencies(imu_process_node_v2 rclcpp sensor_msgs)
 add_executable(humanoid_llc_node_v2 src/humanoid_llc_node_v2.cpp)
 ament_target_dependencies(humanoid_llc_node_v2 rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
 
+add_executable(imu_process_node_v3 src/imu_process_node_v3.cpp)
+ament_target_dependencies(imu_process_node_v3 rclcpp sensor_msgs)
+
+add_executable(humanoid_llc_node_v3 src/humanoid_llc_node_v3.cpp)
+ament_target_dependencies(humanoid_llc_node_v3 rclcpp sensor_msgs trajectory_msgs geometry_msgs std_msgs)
+
 # --- PHẦN PYTHON ---
 ament_python_install_package(ros2_pkg)
 
-install(TARGETS imu_process_node humanoid_llc_node humanoid_llc_node_v2 imu_process_node_v2 DESTINATION lib/${PROJECT_NAME})
+install(TARGETS imu_process_node humanoid_llc_node humanoid_llc_node_v2 imu_process_node_v2 humanoid_llc_node_v3 imu_process_node_v3 DESTINATION lib/${PROJECT_NAME})
 
 
 install(PROGRAMS ros2_pkg/export_onnx.py DESTINATION lib/${PROJECT_NAME} RENAME export_onnx)
@@ -40,6 +46,8 @@ install(PROGRAMS ros2_pkg/visual.py DESTINATION lib/${PROJECT_NAME} RENAME visua
 install(PROGRAMS ros2_pkg/stand_test.py DESTINATION lib/${PROJECT_NAME} RENAME stand_test)
 install(PROGRAMS ros2_pkg/reactive_balance.py DESTINATION lib/${PROJECT_NAME} RENAME reactive_balance)
 install(PROGRAMS ros2_pkg/ppo_balance_sim_20hz.py DESTINATION lib/${PROJECT_NAME} RENAME ppo_balance_sim_20hz)
+install(PROGRAMS ros2_pkg/ppo_balance_sim_20hz_phase2.py DESTINATION lib/${PROJECT_NAME} RENAME ppo_balance_sim_20hz_phase2)
+install(PROGRAMS ros2_pkg/cpg_phase_1.py DESTINATION lib/${PROJECT_NAME} RENAME cpg_phase_1)
 
 install(DIRECTORY launch urdf config worlds
   DESTINATION share/${PROJECT_NAME})

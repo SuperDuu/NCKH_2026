@@ -1,1 +1,1 @@
-geometry_msgs:rclcpp:rclpy:ros_gz_interfaces:ros_gz_sim:sensor_msgs:std_msgs:trajectory_msgs
+geometry_msgs:gz_ros2_control:rclcpp:rclpy:ros_gz_interfaces:ros_gz_sim:sensor_msgs:std_msgs:trajectory_msgs

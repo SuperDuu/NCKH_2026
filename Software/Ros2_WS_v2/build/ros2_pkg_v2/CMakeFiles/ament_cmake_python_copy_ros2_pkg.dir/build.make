@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
+CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
+CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
 
 # Utility rule file for ament_cmake_python_copy_ros2_pkg.
 
@@ -67,7 +67,7 @@ include CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/compiler_depend.make
 include CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/progress.make
 
 CMakeFiles/ament_cmake_python_copy_ros2_pkg:
-	/usr/bin/cmake -E copy_directory /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_python/ros2_pkg/ros2_pkg
+	/usr/bin/cmake -E copy_directory /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_python/ros2_pkg/ros2_pkg
 
 ament_cmake_python_copy_ros2_pkg: CMakeFiles/ament_cmake_python_copy_ros2_pkg
 ament_cmake_python_copy_ros2_pkg: CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/clean:
 .PHONY : CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/clean
 
 CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/depend:
-	cd /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ament_cmake_python_copy_ros2_pkg.dir/depend
 

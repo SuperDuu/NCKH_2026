@@ -175,7 +175,7 @@ private:
             point.positions.push_back(filter_joint("hip_hip_right_joint", r_a[1]));
             point.positions.push_back(filter_joint("hip_knee_right_joint", r_a[2]));
             point.positions.push_back(filter_joint("knee_ankle_right_joint", r_a[3]));
-            point.positions.push_back(filter_joint("ankle_ankle_right_joint", r_a[4]));
+            point.positions.push_back(filter_joint("ankle_ankle_right_joint", -r_a[4]));
 
             // Thân và Tay: nội suy ở mức 0.0 để giữ nguyên tư thế thẳng, không rũ
             point.positions.push_back(filter_joint("base_hip_middle_joint", 0.0));

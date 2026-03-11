@@ -57,10 +57,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
+CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
+CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -142,9 +142,9 @@ install/strip/fast: preinstall/fast
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2//CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2//CMakeFiles/progress.marks
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -250,6 +250,32 @@ humanoid_llc_node_v2/fast:
 .PHONY : humanoid_llc_node_v2/fast
 
 #=============================================================================
+# Target rules for targets named imu_process_node_v3
+
+# Build rule for target.
+imu_process_node_v3: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 imu_process_node_v3
+.PHONY : imu_process_node_v3
+
+# fast build rule for target.
+imu_process_node_v3/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v3.dir/build.make CMakeFiles/imu_process_node_v3.dir/build
+.PHONY : imu_process_node_v3/fast
+
+#=============================================================================
+# Target rules for targets named humanoid_llc_node_v3
+
+# Build rule for target.
+humanoid_llc_node_v3: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 humanoid_llc_node_v3
+.PHONY : humanoid_llc_node_v3
+
+# fast build rule for target.
+humanoid_llc_node_v3/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v3.dir/build.make CMakeFiles/humanoid_llc_node_v3.dir/build
+.PHONY : humanoid_llc_node_v3/fast
+
+#=============================================================================
 # Target rules for targets named ament_cmake_python_copy_ros2_pkg
 
 # Build rule for target.
@@ -323,6 +349,30 @@ src/humanoid_llc_node_v2.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v2.dir/build.make CMakeFiles/humanoid_llc_node_v2.dir/src/humanoid_llc_node_v2.cpp.s
 .PHONY : src/humanoid_llc_node_v2.cpp.s
 
+src/humanoid_llc_node_v3.o: src/humanoid_llc_node_v3.cpp.o
+.PHONY : src/humanoid_llc_node_v3.o
+
+# target to build an object file
+src/humanoid_llc_node_v3.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v3.dir/build.make CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o
+.PHONY : src/humanoid_llc_node_v3.cpp.o
+
+src/humanoid_llc_node_v3.i: src/humanoid_llc_node_v3.cpp.i
+.PHONY : src/humanoid_llc_node_v3.i
+
+# target to preprocess a source file
+src/humanoid_llc_node_v3.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v3.dir/build.make CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.i
+.PHONY : src/humanoid_llc_node_v3.cpp.i
+
+src/humanoid_llc_node_v3.s: src/humanoid_llc_node_v3.cpp.s
+.PHONY : src/humanoid_llc_node_v3.s
+
+# target to generate assembly for a file
+src/humanoid_llc_node_v3.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/humanoid_llc_node_v3.dir/build.make CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.s
+.PHONY : src/humanoid_llc_node_v3.cpp.s
+
 src/imu_process_node.o: src/imu_process_node.cpp.o
 .PHONY : src/imu_process_node.o
 
@@ -371,6 +421,30 @@ src/imu_process_node_v2.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v2.dir/build.make CMakeFiles/imu_process_node_v2.dir/src/imu_process_node_v2.cpp.s
 .PHONY : src/imu_process_node_v2.cpp.s
 
+src/imu_process_node_v3.o: src/imu_process_node_v3.cpp.o
+.PHONY : src/imu_process_node_v3.o
+
+# target to build an object file
+src/imu_process_node_v3.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v3.dir/build.make CMakeFiles/imu_process_node_v3.dir/src/imu_process_node_v3.cpp.o
+.PHONY : src/imu_process_node_v3.cpp.o
+
+src/imu_process_node_v3.i: src/imu_process_node_v3.cpp.i
+.PHONY : src/imu_process_node_v3.i
+
+# target to preprocess a source file
+src/imu_process_node_v3.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v3.dir/build.make CMakeFiles/imu_process_node_v3.dir/src/imu_process_node_v3.cpp.i
+.PHONY : src/imu_process_node_v3.cpp.i
+
+src/imu_process_node_v3.s: src/imu_process_node_v3.cpp.s
+.PHONY : src/imu_process_node_v3.s
+
+# target to generate assembly for a file
+src/imu_process_node_v3.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/imu_process_node_v3.dir/build.make CMakeFiles/imu_process_node_v3.dir/src/imu_process_node_v3.cpp.s
+.PHONY : src/imu_process_node_v3.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -390,20 +464,28 @@ help:
 	@echo "... uninstall"
 	@echo "... humanoid_llc_node"
 	@echo "... humanoid_llc_node_v2"
+	@echo "... humanoid_llc_node_v3"
 	@echo "... imu_process_node"
 	@echo "... imu_process_node_v2"
+	@echo "... imu_process_node_v3"
 	@echo "... src/humanoid_llc_node.o"
 	@echo "... src/humanoid_llc_node.i"
 	@echo "... src/humanoid_llc_node.s"
 	@echo "... src/humanoid_llc_node_v2.o"
 	@echo "... src/humanoid_llc_node_v2.i"
 	@echo "... src/humanoid_llc_node_v2.s"
+	@echo "... src/humanoid_llc_node_v3.o"
+	@echo "... src/humanoid_llc_node_v3.i"
+	@echo "... src/humanoid_llc_node_v3.s"
 	@echo "... src/imu_process_node.o"
 	@echo "... src/imu_process_node.i"
 	@echo "... src/imu_process_node.s"
 	@echo "... src/imu_process_node_v2.o"
 	@echo "... src/imu_process_node_v2.i"
 	@echo "... src/imu_process_node_v2.s"
+	@echo "... src/imu_process_node_v3.o"
+	@echo "... src/imu_process_node_v3.i"
+	@echo "... src/imu_process_node_v3.s"
 .PHONY : help
 
 

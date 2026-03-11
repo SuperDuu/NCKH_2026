@@ -65,14 +65,15 @@ K_EPOCHS = 5
 LR_ACTOR = 3e-4
 LR_CRITIC = 1e-3
 ENTROPY_COEFF = 0.01
-BUFFER_SIZE = 8000
+MIN_UPDATE_STEPS = 1000
+MAX_UPDATE_STEPS = 9999
 
 # --- Action scaling (Đã TĂNG TỐI ĐA để đỡ đẩy mạnh) ---
 # Worst-case IK check: sqrt(0.05² + 0.03² + 0.285²) = 0.2909 < SAFE_LIMIT 0.2927 ✓
 # --- Action scaling (TĂNG ĐỂ SẢI BƯỚC MẠNH MẼ HƠN) ---
-SCALE_DX = 0.08                 # ±8.0cm (Mở rộng để bước phục hồi xa hơn)
-SCALE_DY = 0.05                 # ±5.0cm (Mở rộng chân bám trụ sang hai bên)
-SCALE_DZ = 0.03                 # ±3.0cm (Dịch chuyển Z linh hoạt hơn)
+SCALE_DX = 0.06                 # ±8.0cm (Mở rộng để bước phục hồi xa hơn)
+SCALE_DY = 0.03                 # ±5.0cm (Mở rộng chân bám trụ sang hai bên)
+SCALE_DZ = 0.015                 # ÉP KHÓA LẠI ĐỂ CHỐNG NHÚN!
 
 # --- EMA Action Smoothing ---
 # α=0.85: tăng từ 0.65 để bù đắp lọc kép với LLC (α=0.6).
@@ -80,9 +81,9 @@ SCALE_DZ = 0.03                 # ±3.0cm (Dịch chuyển Z linh hoạt hơn)
 EMA_ALPHA = 0.7                 # Giảm từ 0.85 → smoothing mạnh hơn, giảm trượt
 
 # --- Exploration STD decay ---
-ACTION_STD_INIT = 0.4          # HẠ TỪ 0.4 XUỐNG 0.15 (Chống rung lắc như lật đật)
-ACTION_STD_MIN = 0.001             # Cho độ ổn định tối đa ở cuối khóa học
-DECAY_FACTOR = 0.99
+ACTION_STD_INIT = 0.5          # SỬA ĐÚNG SỐ 0.15
+ACTION_STD_MIN = 0.02           # Nâng lên chút cho an toàn
+DECAY_FACTOR = 0.98
 DECAY_INTERVAL_EP = 20
 
 # --- Fall detection ---
@@ -90,15 +91,15 @@ FALL_ROLL_THRESHOLD = 0.6       # rad (~34°)
 FALL_PITCH_THRESHOLD = 0.6
 
 # --- Push force curriculum ---
-PUSH_START_EPISODE = 5
-PUSH_INTERVAL_STEPS = (80, 150)
-PUSH_BASE_FORCE = 300.0
-PUSH_MAX_FORCE = 450.0
-PUSH_FORCE_INCREMENT = 10.0
-PUSH_DURATION_SIM = 0.08
+PUSH_START_EPISODE = 1
+PUSH_INTERVAL_STEPS = (150, 180)  # Khoảng ngẫu nhiên giữa 5-9s (20Hz → 100-180 steps)
+PUSH_BASE_FORCE = 200.0
+PUSH_MAX_FORCE = 550.0
+PUSH_FORCE_INCREMENT = 5.0
+PUSH_DURATION_SIM = 2.0  # Thời gian đẩy trên Gazebo (thực tế sẽ ngắn hơn do hình sin)
 
 # --- Curriculum Reward ---
-CURRICULUM_THRESHOLD = -50.0
+CURRICULUM_THRESHOLD = 400.0
 W_RESTORE_MAX = 0.8
 W_RESTORE_INCREMENT = 0.05
 
@@ -206,7 +207,8 @@ class PPO:
 
     def update(self):
         min_size = min(len(self.buffer_states), len(self.buffer_rewards))
-        if min_size < 64:
+        if min_size < 1:
+            self.clear_buffer()
             return
         print(f"\n\033[1;32m[PPO UPDATE] >>> {min_size} steps, K={K_EPOCHS}\033[0m")
         rewards = []
@@ -219,7 +221,11 @@ class PPO:
             discounted_reward = reward + GAMMA * discounted_reward
             rewards.insert(0, discounted_reward)
         rewards_t = torch.tensor(rewards, dtype=torch.float32).to(DEVICE)
-        rewards_t = (rewards_t - rewards_t.mean()) / (rewards_t.std() + 1e-7)
+        std = rewards_t.std()
+        if std > 1e-6:
+            rewards_t = (rewards_t - rewards_t.mean()) / (std + 1e-7)
+        else:
+            rewards_t = rewards_t - rewards_t.mean()
         old_states = torch.stack(self.buffer_states[:min_size]).detach()
         old_actions = torch.stack(self.buffer_actions[:min_size]).detach()
         old_logprobs = torch.stack(self.buffer_logprobs[:min_size]).detach()
@@ -255,7 +261,7 @@ class PPOBalanceNode(Node):
         super().__init__('ppo_balance_node')
 
         # --- Paths ---
-        self.base_dir = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights"
+        self.base_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights"
         self.weight_dir = os.path.join(self.base_dir, "phase1_balance")
         os.makedirs(self.weight_dir, exist_ok=True)
         self.latest_model_path = os.path.join(self.weight_dir, "latest_model.pth")
@@ -284,8 +290,8 @@ class PPOBalanceNode(Node):
                             'base_hip_right', 'hip_hip_right', 'hip_knee_right', 'knee_ankle_right', 'ankle_ankle_right']}
 
         # --- Subscribers ---
-        self.imu_sub = self.create_subscription(Imu, '/imu/data', self.imu_callback, 10)
-        self.clock_sub = self.create_subscription(Clock, '/clock', self.clock_callback, 10)
+        self.imu_sub = self.create_subscription(Imu, '/imu/data', self.imu_callback, force_qos)
+        self.clock_sub = self.create_subscription(Clock, '/clock', self.clock_callback, force_qos)
 
         # --- Service clients ---
         self.w_cli = self.create_client(ControlWorld, '/world/empty/control')
@@ -325,8 +331,14 @@ class PPOBalanceNode(Node):
         self.episode_reason = "TIME_LIMIT"
         self.current_std = ACTION_STD_INIT
         self.next_push_step = -1
-        self.push_off_at_step = -1
-        self.push_off_msg = ""
+        
+        # --- BIẾN TRẠNG THÁI CHO BÀN TAY ĐẨY TỪ TỪ ---
+        self.is_pushing = False
+        self.push_current_step = 0
+        self.push_total_steps = 0
+        self.push_max_f = 0.0
+        self.push_axis = 'y'
+        self.push_dir = 1
 
         # --- PPO ---
         self.ppo = PPO(STATE_DIM, ACTION_DIM)
@@ -377,11 +389,12 @@ class PPOBalanceNode(Node):
         Tạo frame 10D, chuẩn hóa gyro, lọc NaN, push vào buffer.
         Nếu IMU stale > 0.1s → WARN và KHÔNG push frame mới (giữ frame cũ).
         """
-        # --- IMU Watchdog ---
-        if time.time() - self.last_imu_time > IMU_TIMEOUT and not self.imu_stale:
-            self.get_logger().warn(
-                f"⚠️ IMU STALE! Không nhận data > {IMU_TIMEOUT}s. Giữ frame cũ.")
-            self.imu_stale = True
+        is_timeout = time.time() - self.last_imu_time > IMU_TIMEOUT
+        if is_timeout or self.imu_stale:
+            if not self.imu_stale:
+                self.get_logger().warn(
+                    f"⚠️ IMU STALE! Không nhận data > {IMU_TIMEOUT}s. Giữ frame cũ.")
+                self.imu_stale = True
             # Không push frame mới → buffer giữ nguyên frame cuối cùng hợp lệ
             return self.history_buffer.get_observation()
 
@@ -412,14 +425,17 @@ class PPOBalanceNode(Node):
     # =========================================================================
     # REWARD: Gaussian + Curriculum (R_jitter GIẢM xuống -1.5)
     # =========================================================================
-    def compute_reward(self, action):
+    def compute_reward(self, action, prev_smoothed):
         """
         R_balance = exp(-10 * (pitch² + roll²))     — Gaussian, max 1.0
         R_jitter  = -1.5 * sum((a - a_prev)²)       — giảm từ -5.0 tránh collapse
         R_yaw     = -3.0 * wz²                      — phạt xoay quanh trục Z
         R_restore = exp(-||ω||²) * exp(-2*||a||²)   — curriculum w_restore
         """
-        qw, qx, qy, qz = self.quat
+        with self.state_lock:
+            qw, qx, qy, qz = self.quat.copy()
+            gyro_copy = self.gyro.copy()
+            
         sinr_cosp = 2.0 * (qw * qx + qy * qz)
         cosr_cosp = 1.0 - 2.0 * (qx * qx + qy * qy)
         raw_roll = math.atan2(sinr_cosp, cosr_cosp)
@@ -434,28 +450,32 @@ class PPOBalanceNode(Node):
         cosy_cosp = 1.0 - 2.0 * (qy * qy + qz * qz)
         yaw = math.atan2(siny_cosp, cosy_cosp)
         
+        # Áp dụng IMU offset cho pitch và roll
+        roll = raw_roll - self.roll_offset
+        pitch = raw_pitch - self.pitch_offset
+        
         # UW TIÊN SỐ 1: Thưởng sống sót cố định mỗi khung hình. 
-        # Cứ hễ không ngã là được cộng 5 điểm, mặc kệ dáng đứng có cong vẹo hay không.
-        r_alive = 5.0
+        # Cứ hễ không ngã là được cộng 2 điểm.
+        r_alive = 2.0
 
-        # R_balance: BỎ QUA - Không phạt tư thế nữa để tối đa hoá khả năng sống sót
-        r_balance = 0.0
+        # R_balance: Phạt tư thế nhạy hơn với weight 3.0
+        r_balance = 3.0 * math.exp(-20.0 * (pitch**2 + roll**2))
 
-        # R_jitter: Giảm nhẹ hình phạt thay đổi hành động để chống rung chân lật đật
-        action_diff = action - self.prev_raw_action
-        r_jitter = 0.0 * float(np.sum(action_diff ** 2))
+        # R_jitter: Sử dụng smoothed - prev_smoothed để đồng nhất thông tin chiều
+        action_diff = self.smoothed_action - prev_smoothed
+        r_jitter = -2.5 * float(np.sum(action_diff ** 2))
 
         # R_yaw: BỎ QUA - Không phạt vặn mình
         r_yaw = 0.0
 
         # R_restore: Thưởng khích lệ đứng yên khi đã vào phom
-        omega_sq = float(np.sum(self.gyro ** 2))
+        omega_sq = float(np.sum(gyro_copy ** 2))
         action_sq = float(np.sum(action ** 2))
         r_restore = math.exp(-1.0 * omega_sq) * math.exp(-2.0 * action_sq)
 
         # Tổng điểm cộng dồn r_alive làm nòng cốt
         total_reward = r_alive + r_balance + r_jitter + r_yaw + self.w_restore * r_restore
-        return total_reward, raw_roll, raw_pitch
+        return total_reward, roll, pitch
 
     # =========================================================================
     # CHECK SAFETY & PREPARE IK COMMAND
@@ -477,21 +497,11 @@ class PPOBalanceNode(Node):
         tx_l = dx
         tx_r = dx
         target_y_l = STD_Y + dy + stance
-        target_y_r = -STD_Y - dy - stance
+        target_y_r = -STD_Y + dy - stance
         
-        # === HEURISTIC FOOT LIFT (CHỐNG TRƯỢT SÀN) ===
-        # Thay vì tịnh tiến chân là lê lết trên mặt đất, ta tính toán tốc độ di chuyển XY
-        # Nếu AI quyết định dịch chuyển chân quá nhanh -> Tự động nhấc gót lên LIFT_H
-        action_diff = self.smoothed_action - self.prev_raw_action
-        xy_vel = np.linalg.norm(action_diff[0:2]) / DT
-        
-        # Ngưỡng vận tốc 0.2 m/s để bắt đầu nhấc nhẹ chân (Step thay vì Slide)
-        if xy_vel > 0.2:
-            lift_l = LIFT_H * min(1.0, xy_vel / 1.0) # Nhấc tối đa 7cm
-            lift_r = LIFT_H * min(1.0, xy_vel / 1.0)
-        else:
-            lift_l = 0.0
-            lift_r = 0.0
+        # === BỎ KHỐI LIFT CHÂN ĐI, ÉP CỨNG BẰNG 0 ===
+        lift_l = 0.0
+        lift_r = 0.0
 
         # IK limits check (GIỮ NGUYÊN)
         len_l = np.linalg.norm([tx_l, target_y_l, tz])
@@ -508,7 +518,9 @@ class PPOBalanceNode(Node):
     # FALL DETECTION
     # =========================================================================
     def is_fallen(self):
-        qw, qx, qy, qz = self.quat
+        with self.state_lock:
+            qw, qx, qy, qz = self.quat.copy()
+            
         sinr_cosp = 2.0 * (qw * qx + qy * qz)
         cosr_cosp = 1.0 - 2.0 * (qx * qx + qy * qy)
         raw_roll = math.atan2(sinr_cosp, cosr_cosp)
@@ -516,10 +528,9 @@ class PPOBalanceNode(Node):
         sinp = 2.0 * (qw * qy - qz * qx)
         raw_pitch = math.asin(max(-1.0, min(1.0, sinp)))
         
-        # So sánh DỰA TRÊN GÓC ABSOLUTE thay vì Relative (Tare)
-        # Để đảm bảo ngã là ngã, không có trường hợp nghiêng 90 độ nhưng vẫn tưởng đang thẳng do Tare lỗi.
-        roll = raw_roll
-        pitch = raw_pitch
+        # So sánh theo ngưỡng hiệu dụng: Dùng góc raw trừ đi offset
+        roll = raw_roll - self.roll_offset
+        pitch = raw_pitch - self.pitch_offset
         
         # Lấy tz hiện tại từ smoothed action để check kịch trần
         tz = STD_Z + float(self.smoothed_action[2]) * SCALE_DZ
@@ -527,41 +538,64 @@ class PPOBalanceNode(Node):
         return abs(roll) > FALL_ROLL_THRESHOLD or abs(pitch) > FALL_PITCH_THRESHOLD or tz > 0.288
 
     # =========================================================================
-    # PUSH FORCE (GIỮ NGUYÊN)
+    # PUSH FORCE (ĐÃ NÂNG CẤP: BÀN TAY NGƯỜI ĐẨY TỪ TỪ - HALF-SINE WAVE)
     # =========================================================================
-    def apply_random_force(self):
-        max_f = min(PUSH_MAX_FORCE,
-                    PUSH_BASE_FORCE + (self.current_episode // 40) * PUSH_FORCE_INCREMENT)
-        f_val = np.random.uniform(0.6 * max_f, max_f) * np.random.choice([-1, 1])
-        axis = np.random.choice(['x', 'y', 'xy'])
+    def trigger_push_event(self):
+        """Hàm này chỉ khởi tạo kịch bản đẩy, chưa bắn lực ngay"""
+        min_f = PUSH_BASE_FORCE
+        max_f = min(PUSH_MAX_FORCE, PUSH_BASE_FORCE + (self.current_episode // 40) * PUSH_FORCE_INCREMENT)
+
+        self.push_max_f = np.random.uniform(min_f, max_f)
+        self.push_dir = np.random.choice([-1, 1])
+        self.push_axis = np.random.choice(['y', 'x', 'xy'], p=[0.7, 0.1, 0.2])
+        
+        self.is_pushing = True
+        self.push_current_step = 0
+        # Số frame cần thiết để đẩy xong (VD: 1.0s / 0.05s = 20 frames)
+        self.push_total_steps = max(1, int(PUSH_DURATION_SIM / DT))
+        
+        self.get_logger().info(f"🖐️ BẮT ĐẦU ĐẨY TỪ TỪ: Max {self.push_max_f:.0f}N theo trục {self.push_axis.upper()} trong {PUSH_DURATION_SIM}s")
+
+    def process_continuous_push(self):
+        """Hàm này được gọi mỗi 50ms để bơm lực theo hình Sin"""
+        if not self.is_pushing:
+            return
+
+        # Tính tỷ lệ phần trăm chu kỳ đẩy (từ 0.0 đến 1.0)
+        progress = self.push_current_step / float(self.push_total_steps)
+        # Hệ số Sine tạo sự êm ái: bắt đầu 0 -> đỉnh 1 -> kết thúc 0
+        sine_multiplier = math.sin(math.pi * progress)
+        
+        # Lực tịnh tiến tại mili-giây hiện tại
+        current_f = self.push_max_f * sine_multiplier * self.push_dir
+        
         model_name = "humanoid_robot"
-        if axis == 'y':
-            force_str = f"{{y: {f_val:.1f}}}"
-        elif axis == 'x':
-            force_str = f"{{x: {f_val:.1f}}}"
+        if self.push_axis == 'y':
+            force_str = f"{{y: {current_f:.1f}}}"
+        elif self.push_axis == 'x':
+            force_str = f"{{x: {current_f:.1f}}}"
         else:
-            f_val_x = f_val * 0.707
-            f_val_y = f_val * 0.707 * np.random.choice([-1, 1])
+            f_val_x = current_f * 0.707
+            f_val_y = current_f * 0.707 * np.random.choice([-1, 1])
             force_str = f"{{x: {f_val_x:.1f}, y: {f_val_y:.1f}}}"
-        msg_str = (f"entity: {{name: '{model_name}', type: MODEL}}, "
-                   f"wrench: {{force: {force_str}}}")
-        msg_zero = (f"entity: {{name: '{model_name}', type: MODEL}}, "
-                    f"wrench: {{force: {{x: 0, y: 0, z: 0}}}}")
-        self.get_logger().info(f"💥 PUSH: {f_val:.0f}N {axis.upper()}")
+
+        msg_str = (f"entity: {{name: '{model_name}', type: MODEL}}, wrench: {{force: {force_str}}}")
+
+        # Bắn lệnh cập nhật lực liên tục xuống Gazebo
         cmd_on = ["gz", "topic", "-t", "/world/empty/wrench",
                   "-m", "gz.msgs.EntityWrench", "-p", msg_str]
         subprocess.Popen(cmd_on, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        self.push_off_at_step = self.step_in_episode + max(1, int(PUSH_DURATION_SIM / DT))
-        self.push_off_msg = msg_zero
 
-    def maybe_clear_push_force(self):
-        if (self.push_off_at_step > 0 and
-                self.step_in_episode >= self.push_off_at_step and self.push_off_msg):
+        self.push_current_step += 1
+
+        # Nếu đã hoàn thành chu kỳ đẩy -> Buông tay
+        if self.push_current_step > self.push_total_steps:
+            self.is_pushing = False
+            msg_zero = (f"entity: {{name: '{model_name}', type: MODEL}}, wrench: {{force: {{x: 0, y: 0, z: 0}}}}")
             cmd_off = ["gz", "topic", "-t", "/world/empty/wrench",
-                      "-m", "gz.msgs.EntityWrench", "-p", self.push_off_msg]
+                      "-m", "gz.msgs.EntityWrench", "-p", msg_zero]
             subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            self.push_off_at_step = -1
-            self.push_off_msg = ""
+            self.get_logger().info("🛑 BUÔNG TAY (Kết thúc lực đẩy)")
 
     # =========================================================================
     # SIM SLEEP & RESET (GIỮ NGUYÊN logic)
@@ -577,17 +611,12 @@ class PPOBalanceNode(Node):
         # === DỌN DẸP LỰC ĐẨY CŨ TRƯỚC ===
         # Nếu robot ngã ngay trong lúc bị đẩy, lực đẩy vẫn còn tồn tại mãi trong Gazebo
         # Ta phải xóa (zero) lực đẩy này ngay lập tức.
-        if hasattr(self, 'push_off_msg') and self.push_off_msg:
-            cmd_off = ["gz", "topic", "-t", "/world/empty/wrench",
-                       "-m", "gz.msgs.EntityWrench", "-p", self.push_off_msg]
-            subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            self.push_off_msg = ""
-        else:
-            # Gửi dự phòng một lệnh zero wrench để chắc chắn
-            msg_zero = "entity: {name: 'humanoid_robot', type: MODEL}, wrench: {force: {x: 0, y: 0, z: 0}}"
-            cmd_off = ["gz", "topic", "-t", "/world/empty/wrench",
-                       "-m", "gz.msgs.EntityWrench", "-p", msg_zero]
-            subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        msg_zero = "entity: {name: 'humanoid_robot', type: MODEL}, wrench: {force: {x: 0, y: 0, z: 0}}"
+        cmd_off = ["gz", "topic", "-t", "/world/empty/wrench",
+                   "-m", "gz.msgs.EntityWrench", "-p", msg_zero]
+        subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        if hasattr(self, 'is_pushing'):
+            self.is_pushing = False
 
         # === RESET FLOW CẬP NHẬT THEO YÊU CẦU MỚI ===
         # Robot ngã -> Nằm dưới sân -> Thu chân về vị trí thẳng -> Chờ rụt xong -> Teleport
@@ -653,17 +682,15 @@ class PPOBalanceNode(Node):
         self.step_in_episode = 0
         self.ep_reward = 0.0
         self.episode_reason = "TIME_LIMIT"
-        self.push_off_at_step = -1
-        self.push_off_msg = ""
+        self.is_pushing = False
         if self.current_episode >= PUSH_START_EPISODE:
             self.next_push_step = np.random.randint(*PUSH_INTERVAL_STEPS)
         else:
             self.next_push_step = -1
-        self.stabilize_robot()
+        return self.stabilize_robot()
 
     def stabilize_robot(self):
-        """Stabilize giống ft_force.py: dùng time.sleep (real-time) thay vì
-        sim_sleep để tránh treo khi sim clock bị stall sau reset."""
+        """Stabilize giống ft_force.py: dùng gyro để xác định trạng thái tĩnh thay vì chờ thời gian cứng."""
         self.get_logger().info(">>> Stabilizing...")
         msg = Float64MultiArray()
         msg.data = [0.0, STD_Y, STD_Z, 0.0, 0.0, -STD_Y, STD_Z, 0.0, 1.0]
@@ -671,21 +698,48 @@ class PPOBalanceNode(Node):
         for _ in range(3):
             self.action_pub.publish(msg)
             time.sleep(0.1)
-        # Chờ robot ổn định (real-time, không phụ thuộc sim clock)
-        time.sleep(2.0)
-        
-        # CHUẨN HOÁ IMU: Ghi nhận tư thế tĩnh hiện tại làm mốc 0
-        with self.state_lock:
-            qw, qx, qy, qz = self.quat
-            sinr_cosp = 2.0 * (qw * qx + qy * qz)
-            cosr_cosp = 1.0 - 2.0 * (qx * qx + qy * qy)
-            self.roll_offset = math.atan2(sinr_cosp, cosr_cosp)
+
+        # BƯỚC 1: Chờ ít nhất 1 frame IMU thật đến (kiên nhẫn chờ imu_stale = False)
+        deadline_imu = time.time() + 3.0
+        while self.imu_stale and time.time() < deadline_imu:
+            self.action_pub.publish(msg)
+            time.sleep(0.05)
+
+        # BƯỚC 2: Chờ gyro về gần 0 (dựa trên data IMU thật)
+        deadline = time.time() + 5.0   # Timeout tối đa 5s
+        while time.time() < deadline:
+            with self.state_lock:
+                gyro_mag = np.linalg.norm(self.gyro)
+            if gyro_mag < 0.05:
+                break
+            self.action_pub.publish(msg)
+            time.sleep(0.1)
             
-            sinp = 2.0 * (qw * qy - qz * qx)
-            self.pitch_offset = math.asin(max(-1.0, min(1.0, sinp)))
+        # BƯỚC 3: Lấy trung bình 10 frame IMU để tare chính xác hơn
+        samples = []
+        for _ in range(10):
+            with self.state_lock:
+                samples.append(self.quat.copy())
+            time.sleep(0.05)
+            
+        avg_quat = np.mean(samples, axis=0)
+        avg_quat /= np.linalg.norm(avg_quat)
+        qw, qx, qy, qz = avg_quat
+        
+        roll_offset = math.atan2(2.0 * (qw * qx + qy * qz), 1.0 - 2.0 * (qx * qx + qy * qy))
+        pitch_offset = math.asin(max(-1.0, min(1.0, 2.0 * (qw * qy - qz * qx))))
+        
+        # Ngăn chặn ảo tưởng sức mạnh: Nếu robot đang nằm trên sàn (góc quá lớn), không được phép lấy offset!
+        if abs(roll_offset) > 0.4 or abs(pitch_offset) > 0.4:
+            self.get_logger().warn(f"⚠️ Reset thất bại do robot đổ gục (roll={roll_offset:.2f}, pitch={pitch_offset:.2f}). Thử lại...")
+            return False
+            
+        self.roll_offset = roll_offset
+        self.pitch_offset = pitch_offset
             
         self.smoothed_action = np.zeros(ACTION_DIM)
         self.prev_raw_action = np.zeros(ACTION_DIM)
+        return True
 
     # =========================================================================
     # SAVE / LOAD (w_restore persist)
@@ -753,12 +807,17 @@ class PPOBalanceNode(Node):
             time.sleep(0.1)
 
         while rclpy.ok():
-            self.reset_simulation()
+            if not self.reset_simulation():
+                time.sleep(0.5)
+                continue
             ep = self.current_episode
 
             while rclpy.ok():
                 state = self.get_observation()
                 raw_action = self.ppo.select_action(state)
+
+                # Đầu inner loop, trước khi check_safety update smoothed_action
+                prev_smoothed_snapshot = self.smoothed_action.copy()
 
                 ok, msg, tz = self.check_safety_and_prepare_cmd(raw_action)
                 if not ok:
@@ -768,19 +827,24 @@ class PPOBalanceNode(Node):
                     break
 
                 self.action_pub.publish(msg)
-                self.maybe_clear_push_force()
+                
+                # --- THỰC THI LỰC ĐẨY TỪ TỪ NẾU ĐANG CÓ SỰ KIỆN ---
+                self.process_continuous_push()
 
+                # --- KÍCH HOẠT SỰ KIỆN ĐẨY MỚI ---
                 if (self.current_episode >= PUSH_START_EPISODE and
                         self.next_push_step > 0 and
-                        self.step_in_episode >= self.next_push_step):
-                    self.apply_random_force()
+                        self.step_in_episode >= self.next_push_step and 
+                        not self.is_pushing):  # Tránh đè sự kiện đẩy khi đang đẩy dở
+                    
+                    self.trigger_push_event()
                     self.next_push_step = (self.step_in_episode +
                                            np.random.randint(*PUSH_INTERVAL_STEPS))
 
                 self.sim_sleep(DT)
 
                 done = self.is_fallen()
-                reward, roll, pitch = self.compute_reward(raw_action)
+                reward, roll, pitch = self.compute_reward(raw_action, prev_smoothed_snapshot)
                 if done:
                     reward = -100.0
 
@@ -790,7 +854,8 @@ class PPOBalanceNode(Node):
                 self.prev_raw_action = raw_action.copy()
                 self.step_in_episode += 1
 
-                if len(self.ppo.buffer_states) >= BUFFER_SIZE:
+                # Mid-episode update nếu buffer quá lớn (tránh bloat memory và thay đổi policy quá gắt)
+                if len(self.ppo.buffer_states) >= MAX_UPDATE_STEPS:
                     self.ppo.update()
 
                 if done:
@@ -806,18 +871,14 @@ class PPOBalanceNode(Node):
             # do policy tệ. Nạp data này vào mạng sẽ dạy nó "luôn ngã" → collapse.
             # Xóa buffer entries của episode rác này ra khỏi PPO buffer.
             if self.step_in_episode <= 1:
-                # Pop các entries vừa thêm trong episode này
-                n_pop = min(self.step_in_episode + 1, len(self.ppo.buffer_states))
+                # Sửa lỗi: Chỉ pop đúng số lượng step đã chạy trong episode này
+                n_pop = self.step_in_episode
                 for _ in range(n_pop):
                     if self.ppo.buffer_states:
                         self.ppo.buffer_states.pop()
-                    if self.ppo.buffer_actions:
                         self.ppo.buffer_actions.pop()
-                    if self.ppo.buffer_logprobs:
                         self.ppo.buffer_logprobs.pop()
-                    if self.ppo.buffer_rewards:
                         self.ppo.buffer_rewards.pop()
-                    if self.ppo.buffer_is_terminals:
                         self.ppo.buffer_is_terminals.pop()
                 self.get_logger().warn(
                     f"🗑️ Ep {ep} SKIPPED (steps={self.step_in_episode}) — "
@@ -827,19 +888,28 @@ class PPOBalanceNode(Node):
                 self.current_episode += 1
                 continue  # Bỏ qua episode này hoàn toàn
 
-            if ep > 0 and ep % DECAY_INTERVAL_EP == 0:
-                self.current_std = max(ACTION_STD_MIN, self.current_std * DECAY_FACTOR)
-                self.ppo.policy.set_action_std(self.current_std)
-                self.ppo.policy_old.set_action_std(self.current_std)
-            if len(self.ppo.buffer_states) >= BUFFER_SIZE:
-                self.ppo.update()
-            self.reward_history_100.append(self.ep_reward)
-            self.update_curriculum()
-
             is_best = self.ep_reward > self.best_reward
             if is_best:
                 self.best_reward = self.ep_reward
                 self.get_logger().info(f"⭐ NEW BEST: {self.ep_reward:.2f}")
+
+            # Đảm bảo record reward vào history trước khi tính trung bình (mean_recent)
+            self.reward_history_100.append(self.ep_reward)
+            self.update_curriculum()
+
+            # Xử lý decay STD: Thay đổi dựa trên average reward thay vì chỉ khi có best
+            if ep > 0 and ep % DECAY_INTERVAL_EP == 0:
+                # mean_recent = np.mean(self.reward_history_100) if self.reward_history_100 else -999.0
+                # if mean_recent > CURRICULUM_THRESHOLD:
+                self.current_std = max(ACTION_STD_MIN, self.current_std * DECAY_FACTOR)
+                self.ppo.policy.set_action_std(self.current_std)
+                self.ppo.policy_old.set_action_std(self.current_std)
+
+            # Cập nhật network cuối episode (Chỉ khi tích đủ MIN data)
+            # Nếu chưa đủ MIN_UPDATE_STEPS, giữ nguyên buffer để tích lũy sang các episode ngắn tiếp theo.
+            if len(self.ppo.buffer_states) >= MIN_UPDATE_STEPS:
+                self.ppo.update()
+
             self.save_state(ep, self.ep_reward, is_best)
             self.log_episode(ep, self.ep_reward, self.step_in_episode, self.episode_reason)
             self.get_logger().info(

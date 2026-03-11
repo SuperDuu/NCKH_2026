@@ -70,7 +70,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 35,
+				"line" : 41,
 				"parent" : 0
 			},
 			{
@@ -677,7 +677,7 @@
 		],
 		"prefix" : 
 		{
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2"
+			"path" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2"
 		}
 	},
 	"link" : 

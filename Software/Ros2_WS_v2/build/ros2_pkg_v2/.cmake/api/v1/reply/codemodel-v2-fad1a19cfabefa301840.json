@@ -7,7 +7,7 @@
 				{
 					"build" : ".",
 					"hasInstallRule" : true,
-					"jsonFile" : "directory-.-fbd0ff9258de637c7672.json",
+					"jsonFile" : "directory-.-1988898c93446277e86a.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.15"
@@ -23,7 +23,9 @@
 						4,
 						5,
 						6,
-						7
+						7,
+						8,
+						9
 					]
 				}
 			],
@@ -45,7 +47,9 @@
 						4,
 						5,
 						6,
-						7
+						7,
+						8,
+						9
 					]
 				}
 			],
@@ -54,49 +58,63 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ament_cmake_python_build_ros2_pkg_egg::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ament_cmake_python_build_ros2_pkg_egg-c17ac273052a900dbb52.json",
+					"jsonFile" : "target-ament_cmake_python_build_ros2_pkg_egg-de412d5534e0e8f60bd3.json",
 					"name" : "ament_cmake_python_build_ros2_pkg_egg",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "ament_cmake_python_copy_ros2_pkg::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ament_cmake_python_copy_ros2_pkg-363dfb30a48b124b9a71.json",
+					"jsonFile" : "target-ament_cmake_python_copy_ros2_pkg-111bcaa46df04e70ea22.json",
 					"name" : "ament_cmake_python_copy_ros2_pkg",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "humanoid_llc_node::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-humanoid_llc_node-969ba790ce91be649c0a.json",
+					"jsonFile" : "target-humanoid_llc_node-9550d9bcd092c0ab95fb.json",
 					"name" : "humanoid_llc_node",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "humanoid_llc_node_v2::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-humanoid_llc_node_v2-d6a441eff2dd653a23e2.json",
+					"jsonFile" : "target-humanoid_llc_node_v2-37dae569957b33326f6f.json",
 					"name" : "humanoid_llc_node_v2",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
+					"id" : "humanoid_llc_node_v3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-humanoid_llc_node_v3-64c2e466c7be3a147f48.json",
+					"name" : "humanoid_llc_node_v3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "imu_process_node::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-imu_process_node-51bfb6957a12dcb028fc.json",
+					"jsonFile" : "target-imu_process_node-0ffc22f0c4de7fb06d38.json",
 					"name" : "imu_process_node",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
 					"id" : "imu_process_node_v2::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-imu_process_node_v2-494b66b822a9977330e0.json",
+					"jsonFile" : "target-imu_process_node_v2-baf43d6ddc6b608e1737.json",
 					"name" : "imu_process_node_v2",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 0,
+					"id" : "imu_process_node_v3::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imu_process_node_v3-e9d33d9e4ec2706a8f27.json",
+					"name" : "imu_process_node_v3",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
 					"id" : "ros2_pkg_v2_uninstall::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ros2_pkg_v2_uninstall-1af24ef30555bf49fab1.json",
+					"jsonFile" : "target-ros2_pkg_v2_uninstall-dcfe3f8c24a662be68c8.json",
 					"name" : "ros2_pkg_v2_uninstall",
 					"projectIndex" : 0
 				},
@@ -113,8 +131,8 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2",
-		"source" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2"
+		"build" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2",
+		"source" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2"
 	},
 	"version" : 
 	{

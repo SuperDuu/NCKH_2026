@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
+CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
+CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
 
 # Utility rule file for ros2_pkg_v2_uninstall.
 
@@ -67,7 +67,7 @@ include CMakeFiles/ros2_pkg_v2_uninstall.dir/compiler_depend.make
 include CMakeFiles/ros2_pkg_v2_uninstall.dir/progress.make
 
 CMakeFiles/ros2_pkg_v2_uninstall:
-	/usr/bin/cmake -P /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
+	/usr/bin/cmake -P /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_uninstall_target/ament_cmake_uninstall_target.cmake
 
 ros2_pkg_v2_uninstall: CMakeFiles/ros2_pkg_v2_uninstall
 ros2_pkg_v2_uninstall: CMakeFiles/ros2_pkg_v2_uninstall.dir/build.make
@@ -82,6 +82,6 @@ CMakeFiles/ros2_pkg_v2_uninstall.dir/clean:
 .PHONY : CMakeFiles/ros2_pkg_v2_uninstall.dir/clean
 
 CMakeFiles/ros2_pkg_v2_uninstall.dir/depend:
-	cd /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ros2_pkg_v2_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ros2_pkg_v2_uninstall.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/ros2_pkg_v2_uninstall.dir/depend
 

@@ -1,5 +1,5 @@
 CMakeFiles/imu_process_node_v2.dir/src/imu_process_node_v2.cpp.o: \
- /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/imu_process_node_v2.cpp \
+ /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/imu_process_node_v2.cpp \
  /usr/include/stdc-predef.h \
  /opt/ros/jazzy/include/rclcpp/rclcpp/rclcpp.hpp \
  /usr/include/c++/13/csignal \

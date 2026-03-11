@@ -21,7 +21,7 @@
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 33,
+				"line" : 39,
 				"parent" : 0
 			},
 			{
@@ -67,13 +67,13 @@
 		{
 			"backtrace" : 3,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg",
+			"path" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg",
 			"sourceGroupIndex" : 0
 		},
 		{
 			"backtrace" : 0,
 			"isGenerated" : true,
-			"path" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg.rule",
+			"path" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/ament_cmake_python_copy_ros2_pkg.rule",
 			"sourceGroupIndex" : 1
 		}
 	],

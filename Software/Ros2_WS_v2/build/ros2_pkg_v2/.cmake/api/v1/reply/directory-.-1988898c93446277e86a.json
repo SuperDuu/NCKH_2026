@@ -41,7 +41,7 @@
 			{
 				"command" : 3,
 				"file" : 3,
-				"line" : 33,
+				"line" : 39,
 				"parent" : 0
 			},
 			{
@@ -95,37 +95,7 @@
 			{
 				"command" : 0,
 				"file" : 3,
-				"line" : 35,
-				"parent" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 3,
-				"line" : 38,
-				"parent" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 3,
-				"line" : 39,
-				"parent" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 3,
-				"line" : 40,
-				"parent" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 3,
 				"line" : 41,
-				"parent" : 0
-			},
-			{
-				"command" : 0,
-				"file" : 3,
-				"line" : 42,
 				"parent" : 0
 			},
 			{
@@ -137,194 +107,236 @@
 			{
 				"command" : 0,
 				"file" : 3,
+				"line" : 45,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 46,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
 				"line" : 48,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 49,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 50,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 52,
+				"parent" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 3,
+				"line" : 56,
 				"parent" : 0
 			},
 			{
 				"command" : 9,
 				"file" : 3,
-				"line" : 64,
+				"line" : 72,
 				"parent" : 0
 			},
 			{
 				"command" : 8,
 				"file" : 7,
 				"line" : 66,
-				"parent" : 18
+				"parent" : 20
 			},
 			{
 				"command" : 7,
 				"file" : 6,
 				"line" : 48,
-				"parent" : 19
+				"parent" : 21
 			},
 			{
 				"file" : 5,
-				"parent" : 20
+				"parent" : 22
 			},
 			{
 				"command" : 6,
 				"file" : 5,
 				"line" : 47,
-				"parent" : 21
+				"parent" : 23
 			},
 			{
 				"command" : 5,
 				"file" : 5,
 				"line" : 29,
-				"parent" : 22
+				"parent" : 24
 			},
 			{
 				"command" : 0,
 				"file" : 4,
 				"line" : 105,
-				"parent" : 23
+				"parent" : 25
 			},
 			{
 				"command" : 10,
 				"file" : 5,
 				"line" : 48,
-				"parent" : 21
+				"parent" : 23
 			},
 			{
 				"command" : 5,
 				"file" : 5,
 				"line" : 43,
-				"parent" : 25
+				"parent" : 27
 			},
 			{
 				"command" : 0,
 				"file" : 4,
 				"line" : 105,
-				"parent" : 26
+				"parent" : 28
 			},
 			{
 				"command" : 7,
 				"file" : 6,
 				"line" : 48,
-				"parent" : 19
+				"parent" : 21
 			},
 			{
 				"file" : 8,
-				"parent" : 28
+				"parent" : 30
 			},
 			{
 				"command" : 1,
 				"file" : 8,
 				"line" : 20,
-				"parent" : 29
+				"parent" : 31
 			},
 			{
 				"command" : 0,
 				"file" : 0,
 				"line" : 70,
-				"parent" : 30
+				"parent" : 32
 			},
 			{
 				"command" : 0,
 				"file" : 0,
 				"line" : 87,
-				"parent" : 30
+				"parent" : 32
 			},
 			{
 				"command" : 0,
 				"file" : 0,
 				"line" : 70,
-				"parent" : 30
+				"parent" : 32
 			},
 			{
 				"command" : 0,
 				"file" : 0,
 				"line" : 87,
-				"parent" : 30
+				"parent" : 32
 			},
 			{
 				"command" : 11,
 				"file" : 8,
 				"line" : 26,
-				"parent" : 29
+				"parent" : 31
 			},
 			{
 				"command" : 0,
 				"file" : 9,
 				"line" : 91,
-				"parent" : 35
+				"parent" : 37
 			},
 			{
 				"command" : 0,
 				"file" : 9,
 				"line" : 91,
-				"parent" : 35
+				"parent" : 37
 			},
 			{
 				"command" : 0,
 				"file" : 9,
 				"line" : 91,
-				"parent" : 35
+				"parent" : 37
 			},
 			{
 				"command" : 0,
 				"file" : 9,
 				"line" : 107,
-				"parent" : 35
+				"parent" : 37
 			},
 			{
 				"command" : 0,
 				"file" : 9,
 				"line" : 120,
-				"parent" : 35
+				"parent" : 37
 			},
 			{
 				"command" : 7,
 				"file" : 6,
 				"line" : 48,
-				"parent" : 19
+				"parent" : 21
 			},
 			{
 				"file" : 11,
-				"parent" : 41
+				"parent" : 43
 			},
 			{
 				"command" : 12,
 				"file" : 11,
 				"line" : 16,
-				"parent" : 42
+				"parent" : 44
 			},
 			{
 				"command" : 5,
 				"file" : 10,
 				"line" : 29,
-				"parent" : 43
+				"parent" : 45
 			},
 			{
 				"command" : 0,
 				"file" : 4,
 				"line" : 105,
-				"parent" : 44
+				"parent" : 46
 			},
 			{
 				"command" : 13,
 				"file" : 7,
 				"line" : 68,
-				"parent" : 18
+				"parent" : 20
 			},
 			{
 				"command" : 0,
 				"file" : 7,
 				"line" : 122,
-				"parent" : 46
+				"parent" : 48
 			},
 			{
 				"command" : 0,
 				"file" : 7,
 				"line" : 150,
-				"parent" : 46
+				"parent" : 48
 			},
 			{
 				"command" : 0,
 				"file" : 7,
 				"line" : 157,
-				"parent" : 46
+				"parent" : 48
 			}
 		]
 	},
@@ -336,7 +348,7 @@
 			"destination" : "share/ros2_pkg_v2/environment",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/pythonpath.sh"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/pythonpath.sh"
 			],
 			"type" : "file"
 		},
@@ -346,7 +358,7 @@
 			"destination" : "share/ros2_pkg_v2/environment",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/pythonpath.dsv"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/pythonpath.dsv"
 			],
 			"type" : "file"
 		},
@@ -357,7 +369,7 @@
 			"paths" : 
 			[
 				{
-					"from" : "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_python/ros2_pkg/ros2_pkg.egg-info",
+					"from" : "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_python/ros2_pkg/ros2_pkg.egg-info",
 					"to" : "."
 				}
 			],
@@ -390,7 +402,7 @@
 				"imu_process_node"
 			],
 			"targetId" : "imu_process_node::@6890427a1f51a3e7e1df",
-			"targetIndex" : 4,
+			"targetIndex" : 5,
 			"type" : "target"
 		},
 		{
@@ -399,7 +411,7 @@
 			"cxxModuleBmiTarget" : 
 			{
 				"id" : "imu_process_node::@6890427a1f51a3e7e1df",
-				"index" : 4
+				"index" : 5
 			},
 			"destination" : "lib/ros2_pkg_v2",
 			"type" : "cxxModuleBmi"
@@ -459,7 +471,7 @@
 				"imu_process_node_v2"
 			],
 			"targetId" : "imu_process_node_v2::@6890427a1f51a3e7e1df",
-			"targetIndex" : 5,
+			"targetIndex" : 6,
 			"type" : "target"
 		},
 		{
@@ -468,7 +480,53 @@
 			"cxxModuleBmiTarget" : 
 			{
 				"id" : "imu_process_node_v2::@6890427a1f51a3e7e1df",
-				"index" : 5
+				"index" : 6
+			},
+			"destination" : "lib/ros2_pkg_v2",
+			"type" : "cxxModuleBmi"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg_v2",
+			"paths" : 
+			[
+				"humanoid_llc_node_v3"
+			],
+			"targetId" : "humanoid_llc_node_v3::@6890427a1f51a3e7e1df",
+			"targetIndex" : 4,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"cxxModuleBmiTarget" : 
+			{
+				"id" : "humanoid_llc_node_v3::@6890427a1f51a3e7e1df",
+				"index" : 4
+			},
+			"destination" : "lib/ros2_pkg_v2",
+			"type" : "cxxModuleBmi"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg_v2",
+			"paths" : 
+			[
+				"imu_process_node_v3"
+			],
+			"targetId" : "imu_process_node_v3::@6890427a1f51a3e7e1df",
+			"targetIndex" : 7,
+			"type" : "target"
+		},
+		{
+			"backtrace" : 10,
+			"component" : "Unspecified",
+			"cxxModuleBmiTarget" : 
+			{
+				"id" : "imu_process_node_v3::@6890427a1f51a3e7e1df",
+				"index" : 7
 			},
 			"destination" : "lib/ros2_pkg_v2",
 			"type" : "cxxModuleBmi"
@@ -541,6 +599,32 @@
 		{
 			"backtrace" : 16,
 			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg_v2",
+			"paths" : 
+			[
+				{
+					"from" : "ros2_pkg/ppo_balance_sim_20hz_phase2.py",
+					"to" : "ppo_balance_sim_20hz_phase2"
+				}
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 17,
+			"component" : "Unspecified",
+			"destination" : "lib/ros2_pkg_v2",
+			"paths" : 
+			[
+				{
+					"from" : "ros2_pkg/cpg_phase_1.py",
+					"to" : "cpg_phase_1"
+				}
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 18,
+			"component" : "Unspecified",
 			"destination" : "share/ros2_pkg_v2",
 			"paths" : 
 			[
@@ -552,7 +636,7 @@
 			"type" : "directory"
 		},
 		{
-			"backtrace" : 17,
+			"backtrace" : 19,
 			"component" : "Unspecified",
 			"destination" : "share/ros2_pkg_v2/urdf",
 			"paths" : 
@@ -562,42 +646,22 @@
 			"type" : "directory"
 		},
 		{
-			"backtrace" : 24,
+			"backtrace" : 26,
 			"component" : "Unspecified",
 			"destination" : "share/ament_index/resource_index/package_run_dependencies",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg_v2"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/package_run_dependencies/ros2_pkg_v2"
 			],
 			"type" : "file"
 		},
 		{
-			"backtrace" : 27,
+			"backtrace" : 29,
 			"component" : "Unspecified",
 			"destination" : "share/ament_index/resource_index/parent_prefix_path",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/ros2_pkg_v2"
-			],
-			"type" : "file"
-		},
-		{
-			"backtrace" : 31,
-			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2/environment",
-			"paths" : 
-			[
-				"/opt/ros/jazzy/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh"
-			],
-			"type" : "file"
-		},
-		{
-			"backtrace" : 32,
-			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2/environment",
-			"paths" : 
-			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/ament_prefix_path.dsv"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/parent_prefix_path/ros2_pkg_v2"
 			],
 			"type" : "file"
 		},
@@ -607,7 +671,7 @@
 			"destination" : "share/ros2_pkg_v2/environment",
 			"paths" : 
 			[
-				"/opt/ros/jazzy/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh"
+				"/opt/ros/jazzy/share/ament_cmake_core/cmake/environment_hooks/environment/ament_prefix_path.sh"
 			],
 			"type" : "file"
 		},
@@ -617,27 +681,27 @@
 			"destination" : "share/ros2_pkg_v2/environment",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/path.dsv"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/ament_prefix_path.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 35,
+			"component" : "Unspecified",
+			"destination" : "share/ros2_pkg_v2/environment",
+			"paths" : 
+			[
+				"/opt/ros/jazzy/share/ament_cmake_core/cmake/environment_hooks/environment/path.sh"
 			],
 			"type" : "file"
 		},
 		{
 			"backtrace" : 36,
 			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2",
+			"destination" : "share/ros2_pkg_v2/environment",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.bash"
-			],
-			"type" : "file"
-		},
-		{
-			"backtrace" : 37,
-			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2",
-			"paths" : 
-			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.sh"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/path.dsv"
 			],
 			"type" : "file"
 		},
@@ -647,7 +711,7 @@
 			"destination" : "share/ros2_pkg_v2",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.zsh"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.bash"
 			],
 			"type" : "file"
 		},
@@ -657,7 +721,7 @@
 			"destination" : "share/ros2_pkg_v2",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.dsv"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.sh"
 			],
 			"type" : "file"
 		},
@@ -667,43 +731,63 @@
 			"destination" : "share/ros2_pkg_v2",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/package.dsv"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.zsh"
 			],
 			"type" : "file"
 		},
 		{
-			"backtrace" : 45,
+			"backtrace" : 41,
 			"component" : "Unspecified",
-			"destination" : "share/ament_index/resource_index/packages",
+			"destination" : "share/ros2_pkg_v2",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/packages/ros2_pkg_v2"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/local_setup.dsv"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 42,
+			"component" : "Unspecified",
+			"destination" : "share/ros2_pkg_v2",
+			"paths" : 
+			[
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_environment_hooks/package.dsv"
 			],
 			"type" : "file"
 		},
 		{
 			"backtrace" : 47,
 			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2/cmake",
+			"destination" : "share/ament_index/resource_index/packages",
 			"paths" : 
 			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake"
-			],
-			"type" : "file"
-		},
-		{
-			"backtrace" : 48,
-			"component" : "Unspecified",
-			"destination" : "share/ros2_pkg_v2/cmake",
-			"paths" : 
-			[
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_core/ros2_pkg_v2Config.cmake",
-				"/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_core/ros2_pkg_v2Config-version.cmake"
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_index/share/ament_index/resource_index/packages/ros2_pkg_v2"
 			],
 			"type" : "file"
 		},
 		{
 			"backtrace" : 49,
+			"component" : "Unspecified",
+			"destination" : "share/ros2_pkg_v2/cmake",
+			"paths" : 
+			[
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_export_dependencies/ament_cmake_export_dependencies-extras.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 50,
+			"component" : "Unspecified",
+			"destination" : "share/ros2_pkg_v2/cmake",
+			"paths" : 
+			[
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_core/ros2_pkg_v2Config.cmake",
+				"/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/ament_cmake_core/ros2_pkg_v2Config-version.cmake"
+			],
+			"type" : "file"
+		},
+		{
+			"backtrace" : 51,
 			"component" : "Unspecified",
 			"destination" : "share/ros2_pkg_v2",
 			"paths" : 

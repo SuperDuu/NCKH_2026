@@ -1,7 +1,9 @@
 setup.py
 ros2_pkg/__init__.py
+ros2_pkg/cpg_phase_1.py
 ros2_pkg/export_onnx.py
 ros2_pkg/ppo_balance_sim_20hz.py
+ros2_pkg/ppo_balance_sim_20hz_phase2.py
 ros2_pkg/reactive_balance.py
 ros2_pkg/stand_test.py
 ros2_pkg/visual.py

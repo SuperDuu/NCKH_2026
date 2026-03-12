@@ -4,7 +4,7 @@
   <!-- ============================================================
        VẬT LIỆU PETG: Dùng cho tất cả link NGOẠI TRỪ bàn chân
        ============================================================ -->
-  <xacro:property name="petg_mu" value="0.7" />
+  <xacro:property name="petg_mu" value="0.99" />
   <xacro:property name="petg_kp" value="100000.0" />
   <xacro:property name="petg_kd" value="10.0" />
 

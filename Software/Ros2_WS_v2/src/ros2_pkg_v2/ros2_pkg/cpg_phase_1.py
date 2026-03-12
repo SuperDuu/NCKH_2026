@@ -50,7 +50,7 @@ STATE_DIM      = 126   # 7 frames × 18
 ACTION_DIM     = 6     # [res_dx_l, res_dx_r, res_dy, res_dz, res_lift_l, res_lift_r]
 
 # ─── CPG ──────────────────────────────────────────────────────
-CPG_PERIOD     = 0.8   # giây — 1 chu kỳ bước
+CPG_PERIOD     = 1.0   # giây — 1 chu kỳ bước
 CPG_AMP_DX     = 0.04  # mét — biên độ bước chân trên trục X
 CPG_AMP_LIFT   = 0.03  # mét — độ nhấc chân
 CPG_AMP_DY     = 0.01  # mét — lắc hông nhẹ
@@ -120,9 +120,13 @@ class GaitCPG:
         phi = self.phase
 
         dx_l   =  CPG_AMP_DX   * math.sin(phi)
-        dx_r   =  CPG_AMP_DX   * math.sin(phi + math.pi)   # lệch pha 180° — đi bộ đúng
-        dy     =  CPG_AMP_DY   * math.cos(phi)              # lắc hông nhẹ
-        dz     =  0.0                                        # CPG không can thiệp chiều cao
+        dx_r   =  CPG_AMP_DX   * math.sin(phi + math.pi)   
+        
+        # ĐÃ SỬA: Đổi thành dấu DƯƠNG. 
+        # Cứ chân trái nhấc (sin > 0) thì dy > 0 (đẩy chân sang trái, người nghiêng sang phải)
+        dy     =  CPG_AMP_DY   * math.sin(phi)              
+        
+        dz     =  0.0                                        
         lift_l =  CPG_AMP_LIFT * max(0.0, math.sin(phi))
         lift_r =  CPG_AMP_LIFT * max(0.0, math.sin(phi + math.pi))
 
@@ -470,25 +474,33 @@ class PPOWalkingNode(Node):
 
     def train_loop_step(self, raw_ppo_action):
         """
-        Vòng lặp chuẩn — cpg.step() chỉ gọi ĐÚT 1 LẦN ở đây (trong train_loop)
-        Nhưng ta gọi nó ở ngay trước khi update action.
+        Tự động điều chỉnh Scale và CPG dựa trên TRAINING_PHASE
         """
-        # CPG tính refernce
-        cpg_ref = self.cpg_ref # Đã tính sẵn ở đầu vòng lặp
+        cpg_ref = self.cpg_ref 
 
-        # PPO residual - scale 1 lần duy nhất 
         if TRAINING_PHASE == 0:
+            # Giai đoạn đứng: CPG = 0, PPO học giữ thăng bằng (scale nhỏ 0.1)
             res = np.clip(raw_ppo_action, -1.0, 1.0) * 0.1 * self.scale_array
+            final_raw = res 
         elif TRAINING_PHASE == 1:
+            # CPG thuần: PPO bị khóa output về 0
             res = np.zeros(ACTION_DIM, dtype=np.float32)
-        else:
-            scale_fac = 0.1 if TRAINING_PHASE == 2 else RESIDUAL_SCALE
-            res = np.clip(raw_ppo_action, -1.0, 1.0) * scale_fac * self.scale_array
+            final_raw = cpg_ref
+        elif TRAINING_PHASE == 2:
+            # PPO nhẹ: Bắt đầu cho PPO can thiệp biên độ nhỏ (0.1)
+            res = np.clip(raw_ppo_action, -1.0, 1.0) * 0.1 * self.scale_array
+            final_raw = cpg_ref + res
+        else: # Phase 3
+            # Full PPO: Can thiệp tối đa theo RESIDUAL_SCALE (0.3)
+            res = np.clip(raw_ppo_action, -1.0, 1.0) * RESIDUAL_SCALE * self.scale_array
+            final_raw = cpg_ref + res
 
-        final_raw = cpg_ref + res
-
+        # Cập nhật hành động mượt (Smoothing)
         self.prev_smoothed = self.smoothed_action.copy()
-        ema = 0.5 if TRAINING_PHASE == 1 else EMA_ALPHA
+        
+        # Ở Phase 1, CPG đã mượt sẵn nên dùng ema=1.0 để xác thực gait chuẩn.
+        # Các phase có PPO cần EMA_ALPHA (0.15) để bảo vệ nhông servo MG996R.
+        ema = 1.0 if TRAINING_PHASE == 1 else EMA_ALPHA 
         self.smoothed_action = ema * final_raw + (1 - ema) * self.smoothed_action
 
         cmd = self._to_joint_angles(self.smoothed_action)
@@ -506,8 +518,9 @@ class PPOWalkingNode(Node):
         target_y_l = STD_Y + dy + stance
         target_y_r = -STD_Y + dy - stance
 
-        tz_left = max(0.15, min(0.285, tz))
-        tz_right = max(0.15, min(0.285, tz))
+        # FIX LỖI ĐẦU GỐI: Phải trừ đi lift để Inverse Kinematics gập đầu gối lại!
+        tz_left = max(0.12, min(0.285, tz - lift_l))
+        tz_right = max(0.12, min(0.285, tz - lift_r))
 
         len_l = np.linalg.norm([tx_l, target_y_l, tz_left])
         len_r = np.linalg.norm([tx_r, target_y_r, tz_right])
@@ -528,35 +541,34 @@ class PPOWalkingNode(Node):
         )
 
         r_alive = 1.0
-
         r_balance = -3.0 * (pitch**2 + roll**2)
+        
+        # Hình phạt rung lắc (Jitter) luôn bật để bảo vệ phần cứng
+        jerk = float(np.sum((self.smoothed_action - self.prev_smoothed)**2))
+        r_jitter = -0.1 * jerk
 
-        # Phase 0 không cần r_intent và r_physics
+        if TRAINING_PHASE == 0:
+            # Phase đứng chỉ cần sống sót và thăng bằng
+            return r_alive + r_balance + r_jitter
+
+        # Các Phase di chuyển (1, 2, 3)
         r_intent = 0.0
         r_physics = 0.0
         r_fly = 0.0
 
-        if TRAINING_PHASE >= 1:
-            if abs(cpg_ref[0]) > 1e-3:
-                r_intent = 0.4 * float(np.sign(cpg_ref[0]) == np.sign(real_vel_x))
-            else:
-                r_intent = 0.0
+        if abs(cpg_ref[0]) > 1e-3:
+            r_intent = 0.4 * float(np.sign(cpg_ref[0]) == np.sign(real_vel_x))
 
-            v_error = cmd_vel_x - real_vel_x
-            r_physics = 2.0 * math.exp(-5.0 * v_error**2)
+        v_error = cmd_vel_x - real_vel_x
+        r_physics = 2.0 * math.exp(-5.0 * v_error**2)
 
-            if contact_info['imu_flight'] and contact_info['cpg_flight']:
-                r_fly = -3.0
-            elif contact_info['imu_flight'] or contact_info['cpg_flight']:
-                r_fly = -1.5
-            else:
-                r_fly = 0.0
+        # Hình phạt "bay" (cả 2 chân rời đất)
+        if contact_info['imu_flight'] and contact_info['cpg_flight']:
+            r_fly = -3.0
+        elif contact_info['imu_flight'] or contact_info['cpg_flight']:
+            r_fly = -1.5
 
-        jerk = float(np.sum((self.smoothed_action - self.prev_smoothed)**2))
-        r_jitter = -0.1 * jerk
-
-        total = r_alive + r_balance + r_intent + r_physics + r_fly + r_jitter
-        return total
+        return r_alive + r_balance + r_intent + r_physics + r_fly + r_jitter
 
     def is_fallen(self):
         with self.state_lock:
@@ -690,6 +702,15 @@ class PPOWalkingNode(Node):
             if name in new_state:
                 if param.shape == new_state[name].shape:
                     new_state[name].copy_(param)
+                else:
+                    self.get_logger().info(f"Phẫu thuật cắt ghép layer: {name}")
+                    # Kế thừa các action cũ, random các action mới bị dư ra
+                    if len(param.shape) == 2:
+                        min_dim = min(param.shape[0], new_state[name].shape[0])
+                        new_state[name][:min_dim, :] = param[:min_dim, :]
+                    elif len(param.shape) == 1:
+                        min_dim = min(param.shape[0], new_state[name].shape[0])
+                        new_state[name][:min_dim] = param[:min_dim]
         new_model.load_state_dict(new_state)
 
     def load_training_state(self):
@@ -789,14 +810,19 @@ class PPOWalkingNode(Node):
                 if done:
                     reward -= 100.0
 
-                self.ppo.buffer_rewards.append(reward)
-                self.ppo.buffer_is_terminals.append(done)
+                # CHỈ LƯU VÀO BUFFER KHI KHÔNG PHẢI PHASE 1
+                if TRAINING_PHASE != 1:
+                    self.ppo.buffer_rewards.append(reward)
+                    self.ppo.buffer_is_terminals.append(done)
+                    if len(self.ppo.buffer_states) >= MAX_UPDATE_STEPS:
+                        self.ppo.update()
+                else:
+                    # Ở Phase 1, làm sạch buffer liên tục để không tốn RAM và tránh học sai
+                    self.ppo.clear_buffer()
+
                 self.ep_reward += reward
                 prev_raw_action = raw_action.copy()
                 self.step_in_episode += 1
-
-                if len(self.ppo.buffer_states) >= MAX_UPDATE_STEPS:
-                    self.ppo.update()
 
                 if done:
                     self.episode_reason = "FALL"

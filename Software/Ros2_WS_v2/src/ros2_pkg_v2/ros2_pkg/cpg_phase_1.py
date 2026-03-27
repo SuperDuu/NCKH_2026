@@ -56,8 +56,8 @@ CPG_AMP_LIFT   = 0.03  # mét — độ nhấc chân
 CPG_AMP_DY     = 0.01  # mét — lắc hông nhẹ
 
 # ─── PPO Residual ─────────────────────────────────────────────
-RESIDUAL_SCALE = 0.3   # PPO chỉ can thiệp ±30% biên độ CPG
-EMA_ALPHA      = 0.15  # Smoothing mạnh: 15% mới + 85% lịch sử
+RESIDUAL_SCALE = 1.0   # Full can thiệp cho stepping balance
+EMA_ALPHA      = 0.85  # Smoothing nhanh cho stepping
 
 # ─── BNO055 Contact Estimation ────────────────────────────────
 LIN_ACC_Z_IMPACT_THRESHOLD = 1.5   # m/s² — ngưỡng phát hiện chân chạm đất
@@ -95,12 +95,8 @@ MAX_GYRO = 10.0
 # --- IMU Watchdog ---
 IMU_TIMEOUT = 0.1               # 100ms không có IMU → cảnh báo
 
-# LỘ TRÌNH TRAIN (Giai đoạn)
-# 0 = Đứng thẳng qua push test (không dùng intent, physics)
-# 1 = CPG thuần (hạn chế PPO action)
-# 2 = PPO nhẹ (RESIDUAL_SCALE = 0.1)
-# 3 = Đầy đủ (RESIDUAL_SCALE = 0.3)
-TRAINING_PHASE = 1
+# LỘ TRÌNH TRAIN: Stepping Balance Recovery (Fixed Height)
+STEPPING_BALANCE_MODE = True
 
 # =============================================================================
 # MODULE CPG & CONTACT ESTIMATOR
@@ -114,24 +110,17 @@ class GaitCPG:
     def step(self):
         """
         GỌI ĐÚNG 1 LẦN DUY NHẤT mỗi timestep — ở đầu vòng lặp train_loop.
-        KHÔNG gọi bên trong compute_reward hay check_safety.
         """
         self.phase = (self.phase + 2 * math.pi * self.dt / self.T) % (2 * math.pi)
         phi = self.phase
 
-        dx_l   =  CPG_AMP_DX   * math.sin(phi)
-        dx_r   =  CPG_AMP_DX   * math.sin(phi + math.pi)   
-        
-        # ĐÃ SỬA: Đổi thành dấu DƯƠNG. 
-        # Cứ chân trái nhấc (sin > 0) thì dy > 0 (đẩy chân sang trái, người nghiêng sang phải)
-        dy     =  CPG_AMP_DY   * math.sin(phi)              
-        
+        # CPG disabled for Step Balance Recovery
+        dx_l   =  0.0
+        dx_r   =  0.0   
+        dy     =  0.0              
         dz     =  0.0                                        
-        lift_l =  CPG_AMP_LIFT * max(0.0, math.sin(phi))
-        lift_r =  CPG_AMP_LIFT * max(0.0, math.sin(phi + math.pi))
-
-        if TRAINING_PHASE == 0:
-            return np.zeros(6, dtype=np.float32)
+        lift_l =  0.0
+        lift_r =  0.0
 
         return np.array([dx_l, dx_r, dy, dz, lift_l, lift_r], dtype=np.float32)
 
@@ -323,7 +312,7 @@ class PPOWalkingNode(Node):
 
         # --- Paths ---
         self.base_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights"
-        self.weight_dir = os.path.join(self.base_dir, "phase_1_cpg_only")
+        self.weight_dir = os.path.join(self.base_dir, "balancing_step_ppo")
         os.makedirs(self.weight_dir, exist_ok=True)
         self.latest_model_path = os.path.join(self.weight_dir, "latest_model.pth")
         self.best_model_path = os.path.join(self.weight_dir, "best_model.pth")
@@ -377,14 +366,14 @@ class PPOWalkingNode(Node):
         self.smoothed_action = np.zeros(ACTION_DIM, dtype=np.float32)
         self.prev_smoothed = np.zeros(ACTION_DIM, dtype=np.float32)
         
-        # CPG Scale array 
+        # CPG Scale array (Modified for Step Balance)
         self.scale_array = np.array([
-            CPG_AMP_DX,    # res_dx_l → mét
-            CPG_AMP_DX,    # res_dx_r → mét
-            CPG_AMP_DY,    # res_dy   → mét
-            0.02,          # res_dz   → mét
-            CPG_AMP_LIFT,  # res_lift_l → mét
-            CPG_AMP_LIFT,  # res_lift_r → mét
+            0.05,    # res_dx_l -> mét
+            0.05,    # res_dx_r -> mét
+            0.03,    # res_dy   -> mét
+            0.0,     # res_dz   TẮT DZ ĐỂ CẤM NHÚN CỔ CHÂN
+            0.04,    # res_lift_l -> mét
+            0.04,    # res_lift_r -> mét
         ], dtype=np.float32)
 
         # Trạng thái episode
@@ -399,6 +388,14 @@ class PPOWalkingNode(Node):
         
         self.cpg_ref = np.zeros(6, dtype=np.float32)
 
+        self.is_pushing = False
+        self.push_current_step = 0
+        self.push_total_steps = 0
+        self.push_max_f = 0.0
+        self.push_axis = 'y'
+        self.push_dir = 1
+        self.next_push_step = -1
+
         # --- PPO ---
         self.ppo = PPO(STATE_DIM, ACTION_DIM)
         self.load_training_state()
@@ -407,7 +404,7 @@ class PPOWalkingNode(Node):
             with open(self.history_path, 'w', newline='') as f:
                 csv.writer(f).writerow(["Episode", "Reward", "Steps", "Reason", "Time"])
 
-        self.get_logger().info(f">>> PPO Waling Ready | CPG Phase {TRAINING_PHASE} | EMA={EMA_ALPHA} | RESIDUAL_SCALE={RESIDUAL_SCALE}")
+        self.get_logger().info(f">>> Stepping Balance Mode Active | EMA={EMA_ALPHA} | RESIDUAL_SCALE={RESIDUAL_SCALE}")
 
         self.state_lock = threading.Lock()
         threading.Thread(target=self.train_loop, daemon=True).start()
@@ -474,33 +471,18 @@ class PPOWalkingNode(Node):
 
     def train_loop_step(self, raw_ppo_action):
         """
-        Tự động điều chỉnh Scale và CPG dựa trên TRAINING_PHASE
+        Tự động điều chỉnh Scale và CPG
         """
         cpg_ref = self.cpg_ref 
 
-        if TRAINING_PHASE == 0:
-            # Giai đoạn đứng: CPG = 0, PPO học giữ thăng bằng (scale nhỏ 0.1)
-            res = np.clip(raw_ppo_action, -1.0, 1.0) * 0.1 * self.scale_array
-            final_raw = res 
-        elif TRAINING_PHASE == 1:
-            # CPG thuần: PPO bị khóa output về 0
-            res = np.zeros(ACTION_DIM, dtype=np.float32)
-            final_raw = cpg_ref
-        elif TRAINING_PHASE == 2:
-            # PPO nhẹ: Bắt đầu cho PPO can thiệp biên độ nhỏ (0.1)
-            res = np.clip(raw_ppo_action, -1.0, 1.0) * 0.1 * self.scale_array
-            final_raw = cpg_ref + res
-        else: # Phase 3
-            # Full PPO: Can thiệp tối đa theo RESIDUAL_SCALE (0.3)
-            res = np.clip(raw_ppo_action, -1.0, 1.0) * RESIDUAL_SCALE * self.scale_array
-            final_raw = cpg_ref + res
+        # Full PPO can thiệp tối đa với scale_array cho Stepping Balance
+        res = np.clip(raw_ppo_action, -1.0, 1.0) * RESIDUAL_SCALE * self.scale_array
+        final_raw = cpg_ref + res
 
         # Cập nhật hành động mượt (Smoothing)
         self.prev_smoothed = self.smoothed_action.copy()
         
-        # Ở Phase 1, CPG đã mượt sẵn nên dùng ema=1.0 để xác thực gait chuẩn.
-        # Các phase có PPO cần EMA_ALPHA (0.15) để bảo vệ nhông servo MG996R.
-        ema = 1.0 if TRAINING_PHASE == 1 else EMA_ALPHA 
+        ema = EMA_ALPHA 
         self.smoothed_action = ema * final_raw + (1 - ema) * self.smoothed_action
 
         cmd = self._to_joint_angles(self.smoothed_action)
@@ -540,35 +522,33 @@ class PPOWalkingNode(Node):
             lift_r_cmd  = self.smoothed_action[5]
         )
 
-        r_alive = 1.0
-        r_balance = -3.0 * (pitch**2 + roll**2)
+        r_alive = 3.0
+        r_balance = -5.0 * (pitch**2 + roll**2)
         
         # Hình phạt rung lắc (Jitter) luôn bật để bảo vệ phần cứng
         jerk = float(np.sum((self.smoothed_action - self.prev_smoothed)**2))
-        r_jitter = -0.1 * jerk
+        r_jitter = -0.5 * jerk
 
-        if TRAINING_PHASE == 0:
-            # Phase đứng chỉ cần sống sót và thăng bằng
-            return r_alive + r_balance + r_jitter
-
-        # Các Phase di chuyển (1, 2, 3)
-        r_intent = 0.0
-        r_physics = 0.0
-        r_fly = 0.0
-
-        if abs(cpg_ref[0]) > 1e-3:
-            r_intent = 0.4 * float(np.sign(cpg_ref[0]) == np.sign(real_vel_x))
-
-        v_error = cmd_vel_x - real_vel_x
-        r_physics = 2.0 * math.exp(-5.0 * v_error**2)
+        # Stepping Balance Reward
+        r_step = 0.0
+        if abs(pitch) > 0.15 or abs(roll) > 0.15:
+            # Khen thưởng lấy lại thăng bằng bằng cách nhấc chân và di chuyển (stepping)
+            lift_val = np.sum(np.maximum(0, self.smoothed_action[4:6]))
+            dx_dy_val = abs(self.smoothed_action[0]) + abs(self.smoothed_action[1]) + abs(self.smoothed_action[2])
+            r_step = 2.0 * (lift_val + dx_dy_val)
+        else:
+            # Đang ổn định -> Khen thưởng khi thu chân về vị trí nghỉ (0)
+            action_sq = float(np.sum(self.smoothed_action**2))
+            r_step = -1.0 * action_sq
 
         # Hình phạt "bay" (cả 2 chân rời đất)
+        r_fly = 0.0
         if contact_info['imu_flight'] and contact_info['cpg_flight']:
             r_fly = -3.0
         elif contact_info['imu_flight'] or contact_info['cpg_flight']:
             r_fly = -1.5
 
-        return r_alive + r_balance + r_intent + r_physics + r_fly + r_jitter
+        return r_alive + r_balance + r_step + r_fly + r_jitter
 
     def is_fallen(self):
         with self.state_lock:
@@ -588,6 +568,52 @@ class PPOWalkingNode(Node):
         
         return abs(roll) > FALL_ROLL_THRESHOLD or abs(pitch) > FALL_PITCH_THRESHOLD or tz > 0.288
 
+    def trigger_push_event(self):
+        min_f = 300.0
+        max_f = min(500.0, 300.0 + (self.current_episode // 40) * 4.0)
+
+        self.push_max_f = np.random.uniform(min_f, max_f)
+        self.push_dir = np.random.choice([-1, 1])
+        self.push_axis = np.random.choice(['y', 'x', 'xy'], p=[0.7, 0.1, 0.2])
+        
+        self.is_pushing = True
+        self.push_current_step = 0
+        self.push_total_steps = max(1, int(2.0 / DT))  # 2.0s duration
+        
+        self.get_logger().info(f"🖐️ BẮT ĐẦU ĐẨY TỪ TỪ: Max {self.push_max_f:.0f}N theo trục {self.push_axis.upper()} trong 2.0s")
+
+    def process_continuous_push(self):
+        if not self.is_pushing:
+            return
+
+        progress = self.push_current_step / float(self.push_total_steps)
+        sine_multiplier = math.sin(math.pi * progress)
+        current_f = self.push_max_f * sine_multiplier * self.push_dir
+        
+        model_name = "humanoid_robot"
+        if self.push_axis == 'y':
+            force_str = f"{{y: {current_f:.1f}}}"
+        elif self.push_axis == 'x':
+            force_str = f"{{x: {current_f:.1f}}}"
+        else:
+            f_val_x = current_f * 0.707
+            f_val_y = current_f * 0.707 * float(np.random.choice([-1, 1]))
+            force_str = f"{{x: {f_val_x:.1f}, y: {f_val_y:.1f}}}"
+
+        msg_str = (f"entity: {{name: '{model_name}', type: MODEL}}, wrench: {{force: {force_str}}}")
+
+        cmd_on = ["gz", "topic", "-t", "/world/empty/wrench", "-m", "gz.msgs.EntityWrench", "-p", msg_str]
+        subprocess.Popen(cmd_on, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+        self.push_current_step += 1
+
+        if self.push_current_step > self.push_total_steps:
+            self.is_pushing = False
+            msg_zero = (f"entity: {{name: '{model_name}', type: MODEL}}, wrench: {{force: {{x: 0, y: 0, z: 0}}}}")
+            cmd_off = ["gz", "topic", "-t", "/world/empty/wrench", "-m", "gz.msgs.EntityWrench", "-p", msg_zero]
+            subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            self.get_logger().info("🛑 BUÔNG TAY (Kết thúc lực đẩy)")
+
     def sim_sleep(self, duration):
         start = self.current_sim_time
         while self.current_sim_time - start < duration:
@@ -596,6 +622,11 @@ class PPOWalkingNode(Node):
     def reset_simulation(self):
         while not self.w_cli.wait_for_service(timeout_sec=1.0):
             pass
+
+        msg_zero = "entity: {name: 'humanoid_robot', type: MODEL}, wrench: {force: {x: 0, y: 0, z: 0}}"
+        cmd_off = ["gz", "topic", "-t", "/world/empty/wrench", "-m", "gz.msgs.EntityWrench", "-p", msg_zero]
+        subprocess.Popen(cmd_off, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        self.is_pushing = False
 
         req_u = ControlWorld.Request()
         req_u.world_control = WorldControl(pause=False)
@@ -649,6 +680,9 @@ class PPOWalkingNode(Node):
         self.episode_reason = "TIME_LIMIT"
         self.cpg.phase = 0.0
         self.contact_est.reset()
+        
+        self.is_pushing = False
+        self.next_push_step = np.random.randint(150, 230)
         
         return self.stabilize_robot()
 
@@ -780,6 +814,12 @@ class PPOWalkingNode(Node):
                     break
 
                 self.action_pub.publish(msg)
+
+                self.process_continuous_push()
+                if self.next_push_step > 0 and self.step_in_episode >= self.next_push_step and not self.is_pushing:
+                    self.trigger_push_event()
+                    self.next_push_step = self.step_in_episode + np.random.randint(150, 230)
+
                 self.sim_sleep(DT)
 
                 done = self.is_fallen()
@@ -810,15 +850,11 @@ class PPOWalkingNode(Node):
                 if done:
                     reward -= 100.0
 
-                # CHỈ LƯU VÀO BUFFER KHI KHÔNG PHẢI PHASE 1
-                if TRAINING_PHASE != 1:
-                    self.ppo.buffer_rewards.append(reward)
-                    self.ppo.buffer_is_terminals.append(done)
-                    if len(self.ppo.buffer_states) >= MAX_UPDATE_STEPS:
-                        self.ppo.update()
-                else:
-                    # Ở Phase 1, làm sạch buffer liên tục để không tốn RAM và tránh học sai
-                    self.ppo.clear_buffer()
+                # Cập nhật buffer (PPO Step Balance)
+                self.ppo.buffer_rewards.append(reward)
+                self.ppo.buffer_is_terminals.append(done)
+                if len(self.ppo.buffer_states) >= MAX_UPDATE_STEPS:
+                    self.ppo.update()
 
                 self.ep_reward += reward
                 prev_raw_action = raw_action.copy()

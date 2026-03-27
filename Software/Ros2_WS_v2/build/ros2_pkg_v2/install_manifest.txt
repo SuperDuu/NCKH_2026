@@ -9,10 +9,10 @@
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/reactive_balance.py
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/visual.py
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/ppo_balance_sim_20hz_phase2.py
-/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase_1_cpg_only/latest_model.pth
-/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase_1_cpg_only/training_meta.json
-/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase_1_cpg_only/best_model.pth
-/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase_1_cpg_only/training_history.csv
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/balancing_step_ppo/latest_model.pth
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/balancing_step_ppo/training_meta.json
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/balancing_step_ppo/best_model.pth
+/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/balancing_step_ppo/training_history.csv
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase2_balance/latest_model.pth
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase2_balance/training_meta.json
 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/install/ros2_pkg_v2/lib/python3.12/site-packages/ros2_pkg/weights/phase2_balance/best_model.pth

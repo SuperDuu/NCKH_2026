@@ -1,0 +1,170 @@
+ST Edge AI Core v2.1.0-20194 329b0e98d
+Created date          : 2026-04-07 09:39:12
+Parameters            : generate --target stm32h7 --name network_1752296348456 -m /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights/balancing_step_ppo/model.onnx --compression none --verbosity 1 --workspace /tmp/mxAI_workspace18666344853087934818217417769836 --output /home/du/.stm32cubemx/network_1752296348456_output
+
+Exec/report summary (generate)
+---------------------------------------------------------------------------------------------------------------------------------------
+model file         :   /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights/balancing_step_ppo/model.onnx   
+type               :   onnx                                                                                                            
+c_name             :   network_1752296348456                                                                                           
+compression        :   none                                                                                                            
+options            :   allocate-inputs, allocate-outputs                                                                               
+optimization       :   balanced                                                                                                        
+target/series      :   stm32h7                                                                                                         
+workspace dir      :   /tmp/mxAI_workspace18666344853087934818217417769836                                                             
+output dir         :   /home/du/.stm32cubemx/network_1752296348456_output                                                              
+model_fmt          :   float                                                                                                           
+model_name         :   model                                                                                                           
+model_hash         :   0x4b68373ab3bf93d2cbde0c0b433b35e5                                                                              
+params #           :   99,846 items (390.02 KiB)                                                                                       
+---------------------------------------------------------------------------------------------------------------------------------------
+input 1/1          :   'input_state', f32(1x126), 504 Bytes, activations                                                               
+output 1/1         :   'output_action', f32(1x6), 24 Bytes, activations                                                                
+macc               :   105,538                                                                                                         
+weights (ro)       :   399,384 B (390.02 KiB) (1 segment)                                                                              
+activations (rw)   :   2,048 B (2.00 KiB) (1 segment) *                                                                                
+ram (total)        :   2,048 B (2.00 KiB) = 2,048 + 0 + 0                                                                              
+---------------------------------------------------------------------------------------------------------------------------------------
+(*) 'input'/'output' buffers can be used from the activations buffer
+
+Model name - model
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+m_id   layer (type,original)                oshape          param/size           macc     connected to   | c_size            c_macc             c_type                
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+1      actor_0_weight (Placeholder, Gemm)   [b:256,c:126]   32,256/129,024                               | +1,024(+0.8%)     +32,512(+100.0%)   Dense_[0]             
+       actor_0_bias (Placeholder, Gemm)     [b:256]         256/1,024                                    | -1,024(-100.0%)                      
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+3      actor_2_weight (Placeholder, Gemm)   [b:256,c:256]   65,536/262,144                               | +1,024(+0.4%)     +65,792(+100.0%)   Dense_[2]             
+       actor_2_bias (Placeholder, Gemm)     [b:256]         256/1,024                                    | -1,024(-100.0%)                      
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+5      actor_4_weight (Placeholder, Gemm)   [b:6,c:256]     1,536/6,144                                  | +24(+0.4%)        +1,542(+100.0%)    Dense_[4]             
+       actor_4_bias (Placeholder, Gemm)     [b:6]           6/24                                         | -24(-100.0%)                         
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+0      input_state (Input, )                [b:1,c:126]                                                  |                                      
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+1      linear (Gemm, Gemm)                  [b:1,c:256]                        32,512      input_state   |                   -32,512(-100.0%)   
+                                                                                        actor_0_weight   | 
+                                                                                          actor_0_bias   | 
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+2      val_4 (Nonlinearity, Elu)            [b:1,c:256]                         3,072           linear   |                   -256(-8.3%)        Nonlinearity_[1]      
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+3      linear_1 (Gemm, Gemm)                [b:1,c:256]                        65,792            val_4   |                   -65,792(-100.0%)   
+                                                                                        actor_2_weight   | 
+                                                                                          actor_2_bias   | 
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+4      val_8 (Nonlinearity, Elu)            [b:1,c:256]                         3,072         linear_1   |                   -256(-8.3%)        Nonlinearity_[3]      
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+5      linear_2 (Gemm, Gemm)                [b:1,c:6]                           1,542            val_8   |                   -1,542(-100.0%)    
+                                                                                        actor_4_weight   | 
+                                                                                          actor_4_bias   | 
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+6      output_action (Nonlinearity, Tanh)   [b:1,c:6]                              60         linear_2   |                                      Nonlinearity_[o][5]   
+------ ------------------------------------ --------------- ---------------- -------- ---------------- --- ----------------- ------------------ --------------------- 
+model/c-model: macc=106,050/105,538 -512(-0.5%) weights=399,384/399,384  activations=--/2,048 io=--/0
+
+
+
+Generated C-graph summary
+------------------------------------------------------------------------------------------------------------------------
+model name            : model
+c-name                : network_1752296348456
+c-node #              : 6
+c-array #             : 13
+activations size      : 2048 (1 segment)
+weights size          : 399384 (1 segment)
+macc                  : 105538
+inputs                : ['input_state_output']
+outputs               : ['output_action_output']
+
+C-Arrays (13)
+------ ---------------------- -------------- ------------------------- ------------- --------- 
+c_id   name (*_array)         item/size      domain/mem-pool           c-type        comment   
+------ ---------------------- -------------- ------------------------- ------------- --------- 
+0      input_state_output     126/504        activations/**default**   float         /input    
+1      linear_1_bias          256/1024       weights/weights           const float             
+2      linear_1_output        256/1024       activations/**default**   float                   
+3      linear_1_weights       65536/262144   weights/weights           const float             
+4      linear_2_bias          6/24           weights/weights           const float             
+5      linear_2_output        6/24           activations/**default**   float                   
+6      linear_2_weights       1536/6144      weights/weights           const float             
+7      linear_bias            256/1024       weights/weights           const float             
+8      linear_output          256/1024       activations/**default**   float                   
+9      linear_weights         32256/129024   weights/weights           const float             
+10     output_action_output   6/24           activations/**default**   float         /output   
+11     val_4_output           256/1024       activations/**default**   float                   
+12     val_8_output           256/1024       activations/**default**   float                   
+------ ---------------------- -------------- ------------------------- ------------- --------- 
+
+C-Layers (6)
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+c_id   name (*_layer)   id   layer_type      macc    rom      tensors                   shape (array id)   
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+0      linear           1    Dense           32512   130048   I: input_state_output     f32(1x126) (0)     
+                                                              W: linear_weights         f32(256x126) (9)   
+                                                              W: linear_bias            f32(256) (7)       
+                                                              O: linear_output          f32(1x256) (8)     
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+1      val_4            2    Nonlinearity    2816    0        I: linear_output          f32(1x256) (8)     
+                                                              O: val_4_output           f32(1x256) (11)    
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+2      linear_1         3    Dense           65792   263168   I: val_4_output           f32(1x256) (11)    
+                                                              W: linear_1_weights       f32(256x256) (3)   
+                                                              W: linear_1_bias          f32(256) (1)       
+                                                              O: linear_1_output        f32(1x256) (2)     
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+3      val_8            4    Nonlinearity    2816    0        I: linear_1_output        f32(1x256) (2)     
+                                                              O: val_8_output           f32(1x256) (12)    
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+4      linear_2         5    Dense           1542    6168     I: val_8_output           f32(1x256) (12)    
+                                                              W: linear_2_weights       f32(6x256) (6)     
+                                                              W: linear_2_bias          f32(6) (4)         
+                                                              O: linear_2_output        f32(1x6) (5)       
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+5      output_action    6    Nonlinearity    60      0        I: linear_2_output        f32(1x6) (5)       
+                                                              O: output_action_output   f32(1x6) (10)      
+------ ---------------- ---- --------------- ------- -------- ------------------------- ------------------ 
+
+
+
+Number of operations per c-layer
+------- ------ ------------------------------ --------- -------------- 
+c_id    m_id   name (type)                          #op           type 
+------- ------ ------------------------------ --------- -------------- 
+0       1      linear (Dense)                    32,512   smul_f32_f32 
+1       2      val_4 (Nonlinearity)               2,816     op_f32_f32 
+2       3      linear_1 (Dense)                  65,792   smul_f32_f32 
+3       4      val_8 (Nonlinearity)               2,816     op_f32_f32 
+4       5      linear_2 (Dense)                   1,542   smul_f32_f32 
+5       6      output_action (Nonlinearity)          60     op_f32_f32 
+------- ------ ------------------------------ --------- -------------- 
+total                                           105,538 
+
+Number of operation types
+---------------- -------- ----------- 
+operation type          #           % 
+---------------- -------- ----------- 
+smul_f32_f32       99,846       94.6% 
+op_f32_f32          5,692        5.4% 
+
+Complexity report (model)
+------ ---------------- ------------------------- ------------------------- ------ 
+m_id   name             c_macc                    c_rom                     c_id   
+------ ---------------- ------------------------- ------------------------- ------ 
+1      actor_0_weight   ||||||||          30.8%   ||||||||          32.6%   [0]    
+3      actor_2_weight   ||||||||||||||||  62.3%   ||||||||||||||||  65.9%   [2]    
+5      actor_4_weight   |                  1.5%   |                  1.5%   [4]    
+2      val_4            |                  2.7%   |                  0.0%   [1]    
+4      val_8            |                  2.7%   |                  0.0%   [3]    
+6      output_action    |                  0.1%   |                  0.0%   [5]    
+------ ---------------- ------------------------- ------------------------- ------ 
+macc=105,538 weights=399,384 act=2,048 ram_io=0
+
+Generated files (7)
+---------------------------------------------------------------------------------------- 
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456_data_params.h   
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456_data_params.c   
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456_data.h          
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456_data.c          
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456_config.h        
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456.h               
+/home/du/.stm32cubemx/network_1752296348456_output/network_1752296348456.c               

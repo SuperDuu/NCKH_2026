@@ -1,0 +1,5 @@
+../Core/Src/button.c:67:16:Button_Init	32	static
+../Core/Src/button.c:100:6:Button_RegisterCallback	32	static
+../Core/Src/button.c:132:6:Button_HandleInterrupt	32	static
+../Core/Src/button.c:175:6:Button_Process	16	static
+../Core/Src/button.c:250:6:Button_Main	24	static,ignoring_inline_asm

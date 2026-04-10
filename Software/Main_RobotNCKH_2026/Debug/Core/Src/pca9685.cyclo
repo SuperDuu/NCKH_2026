@@ -1,0 +1,7 @@
+../Core/Src/pca9685.c:9:13:PCA9685_Write8	1
+../Core/Src/pca9685.c:13:16:PCA9685_Read8	1
+../Core/Src/pca9685.c:19:6:PCA9685_Init	1
+../Core/Src/pca9685.c:24:6:PCA9685_Reset	1
+../Core/Src/pca9685.c:27:6:PCA9685_SetPWMFreq	1
+../Core/Src/pca9685.c:41:6:PCA9685_SetPWM	1
+../Core/Src/pca9685.c:49:6:PCA9685_SetPin	6

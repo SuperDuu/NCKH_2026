@@ -311,7 +311,7 @@ class PPOWalkingNode(Node):
         super().__init__('ppo_walking_node')
 
         # --- Paths ---
-        self.base_dir = "/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights"
+        self.base_dir = "/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights"
         self.weight_dir = os.path.join(self.base_dir, "balancing_step_ppo")
         os.makedirs(self.weight_dir, exist_ok=True)
         self.latest_model_path = os.path.join(self.weight_dir, "latest_model.pth")

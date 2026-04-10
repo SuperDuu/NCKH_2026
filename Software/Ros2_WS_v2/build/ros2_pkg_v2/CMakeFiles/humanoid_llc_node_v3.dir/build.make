@@ -53,10 +53,10 @@ RM = /usr/bin/cmake -E rm -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
+CMAKE_SOURCE_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
+CMAKE_BINARY_DIR = /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2
 
 # Include any dependencies generated for this target.
 include CMakeFiles/humanoid_llc_node_v3.dir/depend.make
@@ -70,18 +70,18 @@ include CMakeFiles/humanoid_llc_node_v3.dir/progress.make
 include CMakeFiles/humanoid_llc_node_v3.dir/flags.make
 
 CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o: CMakeFiles/humanoid_llc_node_v3.dir/flags.make
-CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o: /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp
+CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o: /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp
 CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o: CMakeFiles/humanoid_llc_node_v3.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o -MF CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o.d -o CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o -c /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o -MF CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o.d -o CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o -c /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp
 
 CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp > CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.i
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp > CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.i
 
 CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp -o CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.s
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp -o CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.s
 
 # Object files for target humanoid_llc_node_v3
 humanoid_llc_node_v3_OBJECTS = \
@@ -191,7 +191,7 @@ humanoid_llc_node_v3: /opt/ros/jazzy/lib/librcpputils.so
 humanoid_llc_node_v3: /opt/ros/jazzy/lib/librosidl_runtime_c.so
 humanoid_llc_node_v3: /opt/ros/jazzy/lib/librcutils.so
 humanoid_llc_node_v3: CMakeFiles/humanoid_llc_node_v3.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable humanoid_llc_node_v3"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable humanoid_llc_node_v3"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/humanoid_llc_node_v3.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -203,6 +203,6 @@ CMakeFiles/humanoid_llc_node_v3.dir/clean:
 .PHONY : CMakeFiles/humanoid_llc_node_v3.dir/clean
 
 CMakeFiles/humanoid_llc_node_v3.dir/depend:
-	cd /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/humanoid_llc_node_v3.dir/DependInfo.cmake "--color=$(COLOR)"
+	cd /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2 /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/build/ros2_pkg_v2/CMakeFiles/humanoid_llc_node_v3.dir/DependInfo.cmake "--color=$(COLOR)"
 .PHONY : CMakeFiles/humanoid_llc_node_v3.dir/depend
 

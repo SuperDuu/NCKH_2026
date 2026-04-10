@@ -1,0 +1,7 @@
+../Core/Src/OV7670.c:347:6:OV7670_Init	2
+../Core/Src/OV7670.c:396:6:OV7670_Start	1
+../Core/Src/OV7670.c:413:6:OV7670_Stop	2
+../Core/Src/OV7670.c:441:9:OV7670_isDriverBusy	1
+../Core/Src/OV7670.c:461:26:SCCB_Write	2
+../Core/Src/OV7670.c:474:26:SCCB_Read	2
+../Core/Src/OV7670.c:489:16:isFrameCaptured	1

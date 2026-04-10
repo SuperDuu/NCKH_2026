@@ -1,5 +1,5 @@
 CMakeFiles/humanoid_llc_node_v3.dir/src/humanoid_llc_node_v3.cpp.o: \
- /home/nckh/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp \
+ /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/src/humanoid_llc_node_v3.cpp \
  /usr/include/stdc-predef.h \
  /opt/ros/jazzy/include/rclcpp/rclcpp/rclcpp.hpp \
  /usr/include/c++/13/csignal \

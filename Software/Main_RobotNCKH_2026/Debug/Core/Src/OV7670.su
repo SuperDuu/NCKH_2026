@@ -1,0 +1,7 @@
+../Core/Src/OV7670.c:347:6:OV7670_Init	32	static
+../Core/Src/OV7670.c:396:6:OV7670_Start	8	static,ignoring_inline_asm
+../Core/Src/OV7670.c:413:6:OV7670_Stop	8	static,ignoring_inline_asm
+../Core/Src/OV7670.c:441:9:OV7670_isDriverBusy	16	static,ignoring_inline_asm
+../Core/Src/OV7670.c:461:26:SCCB_Write	40	static
+../Core/Src/OV7670.c:474:26:SCCB_Read	32	static
+../Core/Src/OV7670.c:489:16:isFrameCaptured	16	static,ignoring_inline_asm

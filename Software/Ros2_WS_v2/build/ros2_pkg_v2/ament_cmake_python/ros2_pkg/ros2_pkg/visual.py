@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
 # Đường dẫn tuyệt đối của bạn
-CSV_PATH = '/home/du/Desktop/NCKH_2026/Software/Ros2_WS/humanoid_workspace.csv'
+CSV_PATH = '/home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights/balancing_step_ppo/training_history.csv'
 
 def visualize_workspace():
     x, y, z = [], [], []

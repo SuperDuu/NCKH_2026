@@ -1,6 +1,6 @@
 ST Edge AI Core v2.1.0-20194 329b0e98d
-Created date          : 2026-04-07 09:39:12
-Parameters            : generate --target stm32h7 --name network_1752296348456 -m /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights/balancing_step_ppo/model.onnx --compression none --verbosity 1 --workspace /tmp/mxAI_workspace18666344853087934818217417769836 --output /home/du/.stm32cubemx/network_1752296348456_output
+Created date          : 2026-04-17 17:15:48
+Parameters            : generate --target stm32h7 --name network_1752296348456 -m /home/du/Desktop/NCKH_2026/Software/Ros2_WS_v2/src/ros2_pkg_v2/ros2_pkg/weights/balancing_step_ppo/model.onnx --compression none --verbosity 1 --workspace /tmp/mxAI_workspace228133244267211779209423201037221 --output /home/du/.stm32cubemx/network_1752296348456_output
 
 Exec/report summary (generate)
 ---------------------------------------------------------------------------------------------------------------------------------------
@@ -11,7 +11,7 @@ compression        :   none
 options            :   allocate-inputs, allocate-outputs                                                                               
 optimization       :   balanced                                                                                                        
 target/series      :   stm32h7                                                                                                         
-workspace dir      :   /tmp/mxAI_workspace18666344853087934818217417769836                                                             
+workspace dir      :   /tmp/mxAI_workspace228133244267211779209423201037221                                                            
 output dir         :   /home/du/.stm32cubemx/network_1752296348456_output                                                              
 model_fmt          :   float                                                                                                           
 model_name         :   model                                                                                                           

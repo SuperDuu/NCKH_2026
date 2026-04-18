@@ -64,6 +64,7 @@ void DCMI_IRQHandler(void);
 void FPU_IRQHandler(void);
 void DMA2D_IRQHandler(void);
 void OTG_FS_IRQHandler(void);
+void BDMA_Channel0_IRQHandler(void);
 /* USER CODE BEGIN EFP */
 
 /* USER CODE END EFP */

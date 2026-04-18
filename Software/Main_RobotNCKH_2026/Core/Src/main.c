@@ -24,6 +24,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "ov7670.h"
+#include "ssd1306.h"
 #include "LED.h"
 #include "SD_Card.h"
 #include "ILI9341.h"
@@ -76,6 +77,7 @@ I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
 I2C_HandleTypeDef hi2c3;
 I2C_HandleTypeDef hi2c4;
+DMA_HandleTypeDef hdma_i2c4_tx;
 
 SPI_HandleTypeDef hspi2;
 DMA_HandleTypeDef hdma_spi2_tx;
@@ -115,6 +117,7 @@ void PeriphCommonClock_Config(void);
 static void MPU_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_DMA_Init(void);
+static void MX_BDMA_Init(void);
 static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_FDCAN1_Init(void);
@@ -503,19 +506,19 @@ void Update_Observation_Buffer(void) {
     
     // [0-3] Quaternion chuẩn hóa
     current_frame[0] = (float)q.w;
-    current_frame[1] = (float)q.x;
-    current_frame[2] = (float)q.y;
-    current_frame[3] = (float)q.z;
+    current_frame[1] = (float)-q.x;
+    current_frame[2] = (float)-q.z;
+    current_frame[3] = (float)q.y;
     
     // [4-6] Vận tốc góc / MAX_GYRO=10.0 -> [-1, 1]
-    current_frame[4] = my_clamp((float)gyro.x, -10.0f, 10.0f) / 10.0f;
-    current_frame[5] = my_clamp((float)gyro.y, -10.0f, 10.0f) / 10.0f;
-    current_frame[6] = my_clamp((float)gyro.z, -10.0f, 10.0f) / 10.0f;
+    current_frame[4] = my_clamp((float)-gyro.x, -10.0f, 10.0f) / 10.0f;
+    current_frame[5] = my_clamp((float)-gyro.z, -10.0f, 10.0f) / 10.0f;
+    current_frame[6] = my_clamp((float)gyro.y, -10.0f, 10.0f) / 10.0f;
     
     // [7-9] Gia tốc tuyến tính / 20.0 -> [-1, 1]
-    current_frame[7] = my_clamp((float)lin.x, -20.0f, 20.0f) / 20.0f;
-    current_frame[8] = my_clamp((float)lin.y, -20.0f, 20.0f) / 20.0f;
-    current_frame[9] = my_clamp((float)lin.z, -20.0f, 20.0f) / 20.0f;
+    current_frame[7] = my_clamp((float)-lin.x, -20.0f, 20.0f) / 20.0f;
+    current_frame[8] = my_clamp((float)-lin.z, -20.0f, 20.0f) / 20.0f;
+    current_frame[9] = my_clamp((float)lin.y, -20.0f, 20.0f) / 20.0f;
     
     // [10-15] Hành động thô bước trước 
     for(int i = 0; i < 6; i++) {
@@ -582,6 +585,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_DMA_Init();
+  MX_BDMA_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
   MX_FDCAN1_Init();
@@ -608,45 +612,47 @@ int main(void)
 //  ILI9341_DrawFrame(LOGO, LOGO_size);
 //  dev_count = I2C2_Scan_To_Array(my_i2c_devices, 10);
   PCA9685_Init(&hi2c2, PCA9685_I2C_ADDRESS_1);
-  PCA9685_SetPWMFreq(&hi2c2,PCA9685_I2C_ADDRESS_1, 50.0);
+  PCA9685_SetPWMFreq(&hi2c2, PCA9685_I2C_ADDRESS_1, 50.0);
   PCA9685_Init(&hi2c2, PCA9685_I2C_ADDRESS_2);
-  PCA9685_SetPWMFreq(&hi2c2,PCA9685_I2C_ADDRESS_2, 50.0);
+  PCA9685_SetPWMFreq(&hi2c2, PCA9685_I2C_ADDRESS_2, 50.0);
+  bno055_assignI2C(&hi2c3);
+  bno055_setup();
+  bno055_setOperationModeNDOF();
+   SSD1306_Init(&hi2c4);SSD1306_Clear();
 
-//  OV7670_Init(&hdcmi, &hi2c1, &htim5, TIM_CHANNEL_3);
-//  HAL_Delay(100);
-//  OV7670_Start();
-	bno055_assignI2C(&hi2c3);
-	bno055_setup();
-	bno055_setOperationModeNDOF();
-	SetServoAngle_1(9, 95);//than
-	SetServoAngle_2(9, 105);
-	if (solve_ik(0, 0.01, 0.265, l_a, false) &&
-			solve_ik(0, -0.01, 0.265, r_a, true)) {
+   // Layer 1
+   SSD1306_FillRect(20, 39, 19, 8, White);
 
-		SetServoAngle_1(0, 90 + l_a[4]);
-		SetServoAngle_1(1, 90 - (-15+l_a[3]));
-		SetServoAngle_1(2, 90 + l_a[2]);
-		SetServoAngle_1(3, 90 - l_a[1]);
-		SetServoAngle_1(4, 55 + l_a[0]);
-		SetServoAngle_1(5, 80);
-		SetServoAngle_1(6, 92);
-		SetServoAngle_1(7, 98);
-		SetServoAngle_1(8, 60);
+   // Layer 2
+   SSD1306_FillCircle(29, 38, 9, White);
 
+   // Layer 2 copy
+   SSD1306_FillCircle(29, 45, 9, White);
 
-		SetServoAngle_2(0, 90-r_a[4]);
-		SetServoAngle_2(1, 85+(-15+r_a[3]));
-		SetServoAngle_2(2, 90+r_a[2]);
-		SetServoAngle_2(3, 90-r_a[1]);
-		SetServoAngle_2(4, 70+r_a[0]);
-		SetServoAngle_2(5, 80);
-		SetServoAngle_2(6, 86);
-		SetServoAngle_2(7, 86);
-		SetServoAngle_2(8, 65);
+   // Layer 1 copy
+   SSD1306_FillRect(89, 17, 19, 30, White);
 
-		HAL_Delay(100);
-	}
+   // Layer 2 copy
+   SSD1306_FillCircle(98, 18, 9, White);
 
+   // Layer 2 copy (Dòng lỗi 628 đã fix)
+   SSD1306_FillCircle(98, 45, 9, White);
+
+   SSD1306_UpdateScreen(&hi2c4);
+   SetServoAngle_1(0, 90 + l_a[4]);
+   SetServoAngle_1(1, 90 - (-15 + l_a[3]));
+   SetServoAngle_1(2, 90 + l_a[2]);
+   SetServoAngle_1(3, 90 - l_a[1]);
+   SetServoAngle_1(4, 55 + l_a[0]);
+   SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
+
+   SetServoAngle_2(0, 90 - r_a[4]);
+   SetServoAngle_2(1, 85 + (-15 + r_a[3]));
+   SetServoAngle_2(2, 90 + r_a[2]);
+   SetServoAngle_2(3, 90 - r_a[1]);
+   SetServoAngle_2(4, 70 + r_a[0]);
+   SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+   HAL_Delay(1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -657,8 +663,7 @@ int main(void)
   {
     /* USER CODE END WHILE */
 
-  // MX_X_CUBE_AI_Process(); // Default location (disabled to control frequency)
-
+//  MX_X_CUBE_AI_Process();
     /* USER CODE BEGIN 3 */
     // --- 20Hz TIME-STEP (50ms) ---
     if (HAL_GetTick() - last_inference_time >= 50) {
@@ -700,7 +705,22 @@ int main(void)
         // E -> Publish to Servos
         if (solve_ik(tx_l, target_y_l, tz_l, l_a, false) &&
             solve_ik(tx_r, target_y_r, tz_r, r_a, true)) {
-            
+//
+//            // Servo Action
+//            SetServoAngle_1(0, 90 + l_a[4]);
+//            SetServoAngle_1(1, 90 - (-15 + l_a[3]));
+//            SetServoAngle_1(2, 90 + l_a[2]);
+//            SetServoAngle_1(3, 90 - l_a[1]);
+//            SetServoAngle_1(4, 55 + l_a[0]);
+//            SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
+//
+//            SetServoAngle_2(0, 90 - r_a[4]);
+//            SetServoAngle_2(1, 85 + (-15 + r_a[3]));
+//            SetServoAngle_2(2, 90 + r_a[2]);
+//            SetServoAngle_2(3, 90 - r_a[1]);
+//            SetServoAngle_2(4, 70 + r_a[0]);
+//            SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+
             // Servo Action
             SetServoAngle_1(0, 90 + l_a[4]);
             SetServoAngle_1(1, 90 - (-15 + l_a[3]));
@@ -744,12 +764,12 @@ void SystemClock_Config(void)
   * in the RCC_OscInitTypeDef structure.
   */
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI48|RCC_OSCILLATORTYPE_HSE;
-  RCC_OscInitStruct.HSEState = RCC_HSE_BYPASS;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSI48State = RCC_HSI48_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 1;
-  RCC_OscInitStruct.PLL.PLLN = 120;
+  RCC_OscInitStruct.PLL.PLLM = 2;
+  RCC_OscInitStruct.PLL.PLLN = 80;
   RCC_OscInitStruct.PLL.PLLP = 2;
   RCC_OscInitStruct.PLL.PLLQ = 15;
   RCC_OscInitStruct.PLL.PLLR = 2;
@@ -791,8 +811,8 @@ void PeriphCommonClock_Config(void)
   /** Initializes the peripherals clock
   */
   PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_ADC|RCC_PERIPHCLK_SPI2;
-  PeriphClkInitStruct.PLL3.PLL3M = 1;
-  PeriphClkInitStruct.PLL3.PLL3N = 19;
+  PeriphClkInitStruct.PLL3.PLL3M = 2;
+  PeriphClkInitStruct.PLL3.PLL3N = 13;
   PeriphClkInitStruct.PLL3.PLL3P = 1;
   PeriphClkInitStruct.PLL3.PLL3Q = 2;
   PeriphClkInitStruct.PLL3.PLL3R = 2;
@@ -1517,6 +1537,22 @@ static void MX_USART3_UART_Init(void)
   /* USER CODE BEGIN USART3_Init 2 */
 
   /* USER CODE END USART3_Init 2 */
+
+}
+
+/**
+  * Enable DMA controller clock
+  */
+static void MX_BDMA_Init(void)
+{
+
+  /* DMA controller clock enable */
+  __HAL_RCC_BDMA_CLK_ENABLE();
+
+  /* DMA interrupt init */
+  /* BDMA_Channel0_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(BDMA_Channel0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(BDMA_Channel0_IRQn);
 
 }
 

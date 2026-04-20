@@ -54,8 +54,8 @@ bno055_vector_t d;
 #define TEST_CHUNK_SIZE   (1024 * 1024)
 #define SERVO_MIN_ANGLE 0
 #define SERVO_MAX_ANGLE 180
-#define SERVOMIN  125 // ~0.6ms (Góc 0)
-#define SERVOMAX  490 // ~2.4ms (Góc 180)
+#define SERVOMIN  85 // ~0.6ms (Góc 0)
+#define SERVOMAX  522 // ~2.4ms (Góc 180)
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -639,19 +639,25 @@ int main(void)
    SSD1306_FillCircle(98, 45, 9, White);
 
    SSD1306_UpdateScreen(&hi2c4);
-   SetServoAngle_1(0, 90 + l_a[4]);
-   SetServoAngle_1(1, 90 - (-15 + l_a[3]));
-   SetServoAngle_1(2, 90 + l_a[2]);
-   SetServoAngle_1(3, 90 - l_a[1]);
-   SetServoAngle_1(4, 55 + l_a[0]);
-   SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
 
-   SetServoAngle_2(0, 90 - r_a[4]);
-   SetServoAngle_2(1, 85 + (-15 + r_a[3]));
-   SetServoAngle_2(2, 90 + r_a[2]);
-   SetServoAngle_2(3, 90 - r_a[1]);
-   SetServoAngle_2(4, 70 + r_a[0]);
+//while(1){
+//
+   SetServoAngle_1(0, 90 - l_a[4]);//mcn
+   SetServoAngle_1(1, 90 - (-3 + l_a[3]));//mct
+   SetServoAngle_1(2, 91 + l_a[2]);//dg
+   SetServoAngle_1(3, 95 - l_a[1]);//ht
+   SetServoAngle_1(4, 65 + l_a[0]);//hn
+   SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
+   SetServoAngle_1(9, 97);//than
+
+   SetServoAngle_2(0, 90 + r_a[4]);
+   SetServoAngle_2(1, 85 - (-4 + r_a[3]));
+   SetServoAngle_2(2, 90 + 1.5*r_a[2]);
+   SetServoAngle_2(3, 87 - r_a[1]);
+   SetServoAngle_2(4, 78 + r_a[0]);
    SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+   SetServoAngle_2(9, 90);//dau
+//}
    HAL_Delay(1000);
   /* USER CODE END 2 */
 
@@ -705,36 +711,21 @@ int main(void)
         // E -> Publish to Servos
         if (solve_ik(tx_l, target_y_l, tz_l, l_a, false) &&
             solve_ik(tx_r, target_y_r, tz_r, r_a, true)) {
-//
-//            // Servo Action
-//            SetServoAngle_1(0, 90 + l_a[4]);
-//            SetServoAngle_1(1, 90 - (-15 + l_a[3]));
-//            SetServoAngle_1(2, 90 + l_a[2]);
-//            SetServoAngle_1(3, 90 - l_a[1]);
-//            SetServoAngle_1(4, 55 + l_a[0]);
-//            SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
-//
-//            SetServoAngle_2(0, 90 - r_a[4]);
-//            SetServoAngle_2(1, 85 + (-15 + r_a[3]));
-//            SetServoAngle_2(2, 90 + r_a[2]);
-//            SetServoAngle_2(3, 90 - r_a[1]);
-//            SetServoAngle_2(4, 70 + r_a[0]);
-//            SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+        	 SetServoAngle_1(0, 90 + l_a[4]);//mcn
+		   SetServoAngle_1(1, 90 - (-3 + l_a[3]));//mct
+		   SetServoAngle_1(2, 91 + l_a[2]);//dg
+		   SetServoAngle_1(3, 95 - l_a[1]);//ht
+		   SetServoAngle_1(4, 65 + l_a[0]);//hn
+		   SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
+		   SetServoAngle_1(9, 97);//than
 
-            // Servo Action
-            SetServoAngle_1(0, 90 + l_a[4]);
-            SetServoAngle_1(1, 90 - (-15 + l_a[3]));
-            SetServoAngle_1(2, 90 + l_a[2]);
-            SetServoAngle_1(3, 90 - l_a[1]);
-            SetServoAngle_1(4, 55 + l_a[0]);
-            SetServoAngle_1(5, 80); SetServoAngle_1(6, 92); SetServoAngle_1(7, 98); SetServoAngle_1(8, 60);
-
-            SetServoAngle_2(0, 90 - r_a[4]);
-            SetServoAngle_2(1, 85 + (-15 + r_a[3]));
-            SetServoAngle_2(2, 90 + r_a[2]);
-            SetServoAngle_2(3, 90 - r_a[1]);
-            SetServoAngle_2(4, 70 + r_a[0]);
-            SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+		   SetServoAngle_2(0, 90 - r_a[4]);
+		   SetServoAngle_2(1, 85 - (-4 + r_a[3]));
+		   SetServoAngle_2(2, 90 + 1.5*r_a[2]);
+		   SetServoAngle_2(3, 87 - r_a[1]);
+		   SetServoAngle_2(4, 78 + r_a[0]);
+		   SetServoAngle_2(5, 80); SetServoAngle_2(6, 86); SetServoAngle_2(7, 86); SetServoAngle_2(8, 65);
+		   SetServoAngle_2(9, 90);//dau
         }
     }
   }
